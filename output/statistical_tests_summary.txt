@@ -1,0 +1,82 @@
+======================================================================
+STATISTICAL SIGNIFICANCE TESTS FOR FEATURE IMPORTANCE
+======================================================================
+
+1. BOOTSTRAP CONFIDENCE INTERVALS
+----------------------------------------------------------------------
+Model: XGBoost
+Number of bootstrap iterations: 100
+
+Top 10 features with 95% confidence intervals:
+
+Rank   Feature                                  Mean Imp.    95% CI                   
+-------------------------------------------------------------------------------------
+1      EG.ELC.ACCS.RU.ZS                        0.3745       [0.2631, 0.4633]         
+2      EG.ELC.ACCS.ZS                           0.0507       [0.0088, 0.1512]         
+3      ER.H2O.FWST.ZS                           0.0309       [0.0110, 0.0668]         
+4      NE.EXP.GNFS.ZS                           0.0305       [0.0094, 0.0553]         
+5      trade_openness                           0.0254       [0.0030, 0.0628]         
+6      EG.ELC.RNEW.ZS                           0.0253       [0.0043, 0.0580]         
+7      AG.LND.FRST.ZS                           0.0234       [0.0143, 0.0417]         
+8      NV.AGR.TOTL.ZS                           0.0209       [0.0059, 0.0488]         
+9      gender_labor_gap                         0.0206       [0.0104, 0.0373]         
+10     NV.SRV.TOTL.ZS                           0.0203       [0.0047, 0.0461]         
+
+Interpretation: Features whose 95% CI does not include zero are
+statistically significantly different from zero importance.
+
+
+2. PERMUTATION IMPORTANCE TEST
+----------------------------------------------------------------------
+Model: XGBoost
+
+Features ranked by performance drop when permuted:
+
+Rank   Feature                                  Score Drop      p-value   
+---------------------------------------------------------------------------
+1      EG.ELC.ACCS.RU.ZS                        0.2784          0.0000     ***
+2      EG.ELC.ACCS.ZS                           0.0440          0.0000     ***
+3      AG.LND.FRST.ZS                           0.0427          0.0000     ***
+4      gender_labor_gap                         0.0409          0.0000     ***
+5      SP.URB.GROW                              0.0407          0.0000     ***
+6      NE.EXP.GNFS.ZS                           0.0384          0.0000     ***
+7      SL.TLF.CACT.MA.ZS                        0.0345          0.0000     ***
+8      ER.H2O.FWST.ZS                           0.0278          0.0000     ***
+9      NV.SRV.TOTL.ZS                           0.0274          0.0000     ***
+10     NV.AGR.TOTL.ZS                           0.0226          0.0000     ***
+
+Significance codes: *** p<0.001, ** p<0.01, * p<0.05, ns not significant
+Interpretation: Larger score drops indicate more important features.
+
+
+3. CROSS-MODEL CONSISTENCY
+----------------------------------------------------------------------
+Overall consistency score: 0.668
+
+Spearman rank correlation matrix:
+
+Model               Random Forest     Gradient Boosti   XGBoost           LightGBM          
+------------------------------------------------------------------------------------------
+Random Forest       1.000             0.780             0.748             0.568             
+Gradient Boosting   0.780             1.000             0.899             0.535             
+XGBoost             0.748             0.899             1.000             0.479             
+LightGBM            0.568             0.535             0.479             1.000             
+
+Interpretation: High correlations (>0.7) indicate consistent feature
+importance rankings across different modeling approaches.
+
+
+4. KEY FINDINGS
+----------------------------------------------------------------------
+
+- 58 features have 95% CIs excluding zero
+- 20 features show significant permutation importance (p<0.05)
+- Mean cross-model correlation: 0.668
+
+Top 5 consensus features (appear in top 10 for all tests):
+  1. ER.H2O.FWST.ZS
+  2. gender_labor_gap
+  3. NV.SRV.TOTL.ZS
+  4. NV.AGR.TOTL.ZS
+  5. NE.EXP.GNFS.ZS
+

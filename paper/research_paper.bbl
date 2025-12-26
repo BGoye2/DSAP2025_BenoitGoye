@@ -1,0 +1,127 @@
+\begin{thebibliography}{19}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Acemoglu(2002)]{acemoglu2002technical}
+Daron Acemoglu.
+\newblock Technical change, inequality, and the labor market.
+\newblock \emph{Journal of Economic Literature}, 40\penalty0 (1):\penalty0
+  7--72, 2002.
+
+\bibitem[Acemoglu et~al.(2005)Acemoglu, Johnson, and
+  Robinson]{acemoglu2005institutions}
+Daron Acemoglu, Simon Johnson, and James~A. Robinson.
+\newblock Institutions as a fundamental cause of long-run growth.
+\newblock In \emph{Handbook of Economic Growth}, volume~1, pages 385--472.
+  Elsevier, 2005.
+
+\bibitem[Alvaredo et~al.(2018)Alvaredo, Chancel, Piketty, Saez, and
+  Zucman]{alvaredo2018world}
+Facundo Alvaredo, Lucas Chancel, Thomas Piketty, Emmanuel Saez, and Gabriel
+  Zucman.
+\newblock \emph{World inequality report 2018}.
+\newblock Harvard University Press, 2018.
+
+\bibitem[Becker(1964)]{becker1964human}
+Gary~S. Becker.
+\newblock \emph{Human capital: A theoretical and empirical analysis}.
+\newblock University of Chicago Press, 1964.
+
+\bibitem[Beutel et~al.(2019)Beutel, List, and von
+  Schweinitz]{beutel2019machine}
+Johannes Beutel, Sophia List, and Gregor von Schweinitz.
+\newblock Does machine learning help to predict financial crises?
+\newblock \emph{Journal of Financial Stability}, 45:\penalty0 100693, 2019.
+
+\bibitem[Breiman(2001)]{breiman2001random}
+Leo Breiman.
+\newblock Random forests.
+\newblock \emph{Machine Learning}, 45\penalty0 (1):\penalty0 5--32, 2001.
+
+\bibitem[Chen and Guestrin(2016)]{chen2016xgboost}
+Tianqi Chen and Carlos Guestrin.
+\newblock Xgboost: A scalable tree boosting system.
+\newblock In \emph{Proceedings of the 22nd ACM SIGKDD International Conference
+  on Knowledge Discovery and Data Mining}, pages 785--794, 2016.
+
+\bibitem[Freeman(2009)]{freeman2009labor}
+Richard~B. Freeman.
+\newblock Labor regulations, unions, and social protection in developing
+  countries: Market distortions or efficient institutions?
+\newblock In \emph{Handbook of Development Economics}, volume~4, pages
+  4657--4702. Elsevier, 2009.
+
+\bibitem[Friedman(2001)]{friedman2001greedy}
+Jerome~H. Friedman.
+\newblock Greedy function approximation: A gradient boosting machine.
+\newblock \emph{Annals of Statistics}, 29\penalty0 (5):\penalty0 1189--1232,
+  2001.
+
+\bibitem[Galor and Tsiddon(2000)]{galor2000income}
+Oded Galor and Daniel Tsiddon.
+\newblock Income distribution and growth: The kuznets hypothesis revisited.
+\newblock \emph{Economica}, 67\penalty0 (265):\penalty0 87--108, 2000.
+
+\bibitem[Helpman(2018)]{helpman2018globalization}
+Elhanan Helpman.
+\newblock \emph{Globalization and inequality}.
+\newblock Harvard University Press, 2018.
+
+\bibitem[Jean et~al.(2016)Jean, Burke, Xie, Davis, Lobell, and
+  Ermon]{jean2016combining}
+Neal Jean, Marshall Burke, Michael Xie, W.~Matthew Davis, David~B. Lobell, and
+  Stefano Ermon.
+\newblock Combining satellite imagery and machine learning to predict poverty.
+\newblock \emph{Science}, 353\penalty0 (6301):\penalty0 790--794, 2016.
+
+\bibitem[Ke et~al.(2017)Ke, Meng, Finley, Wang, Chen, Ma, Ye, and
+  Liu]{ke2017lightgbm}
+Guolin Ke, Qi~Meng, Thomas Finley, Taifeng Wang, Wei Chen, Weidong Ma, Qiwei
+  Ye, and Tie-Yan Liu.
+\newblock Lightgbm: A highly efficient gradient boosting decision tree.
+\newblock In \emph{Advances in Neural Information Processing Systems},
+  volume~30, pages 3146--3154, 2017.
+
+\bibitem[Koomson et~al.(2020)Koomson, Villano, and Hadley]{koomson2020mobile}
+Isaac Koomson, Renato~A. Villano, and David Hadley.
+\newblock Effect of financial inclusion on poverty and vulnerability to
+  poverty: Evidence using a multidimensional measure of financial inclusion.
+\newblock \emph{Social Indicators Research}, 149\penalty0 (2):\penalty0
+  613--639, 2020.
+
+\bibitem[Kuznets(1955)]{kuznets1955economic}
+Simon Kuznets.
+\newblock Economic growth and income inequality.
+\newblock \emph{American Economic Review}, 45\penalty0 (1):\penalty0 1--28,
+  1955.
+
+\bibitem[Piketty(2014)]{piketty2014capital}
+Thomas Piketty.
+\newblock \emph{Capital in the twenty-first century}.
+\newblock Harvard University Press, 2014.
+
+\bibitem[Richardson et~al.(2021)Richardson, Mulder, and
+  Vehbi]{richardson2021nowcasting}
+Adam Richardson, Thomas Mulder, and Tugrul Vehbi.
+\newblock Nowcasting gdp using machine learning algorithms: A real-time
+  assessment.
+\newblock \emph{International Journal of Forecasting}, 37\penalty0
+  (2):\penalty0 643--694, 2021.
+
+\bibitem[Stiglitz(2012)]{stiglitz2012price}
+Joseph~E. Stiglitz.
+\newblock \emph{The price of inequality: How today's divided society endangers
+  our future}.
+\newblock W. W. Norton \& Company, 2012.
+
+\bibitem[Strobl et~al.(2007)Strobl, Boulesteix, Zeileis, and
+  Hothorn]{strobl2007bias}
+Carolin Strobl, Anne-Laure Boulesteix, Achim Zeileis, and Torsten Hothorn.
+\newblock Bias in random forest variable importance measures: Illustrations,
+  sources and a solution.
+\newblock \emph{BMC Bioinformatics}, 8\penalty0 (1):\penalty0 25, 2007.
+
+\end{thebibliography}

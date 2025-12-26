@@ -1,0 +1,6 @@
+Model,Train RMSE,Test RMSE,Train R²,Test R²,CV RMSE,Overfit Gap
+Decision Tree,1.939,4.447,0.942,0.72,4.667,-2.508
+Random Forest,1.386,2.783,0.97,0.89,3.037,-1.397
+Gradient Boosting,0.831,2.626,0.989,0.902,2.872,-1.795
+Xgboost,0.904,2.694,0.987,0.897,2.842,-1.79
+Lightgbm,1.281,2.858,0.975,0.884,3.021,-1.577
