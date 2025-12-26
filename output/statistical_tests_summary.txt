@@ -11,16 +11,16 @@ Top 10 features with 95% confidence intervals:
 
 Rank   Feature                                  Mean Imp.    95% CI                   
 -------------------------------------------------------------------------------------
-1      EG.ELC.ACCS.RU.ZS                        0.3714       [0.2647, 0.4784]         
-2      EG.ELC.ACCS.ZS                           0.0521       [0.0055, 0.1703]         
-3      ER.H2O.FWST.ZS                           0.0356       [0.0134, 0.0757]         
-4      NE.EXP.GNFS.ZS                           0.0317       [0.0055, 0.0530]         
-5      trade_openness                           0.0288       [0.0048, 0.0789]         
-6      EG.ELC.RNEW.ZS                           0.0263       [0.0055, 0.0630]         
-7      AG.LND.FRST.ZS                           0.0203       [0.0107, 0.0350]         
-8      gender_labor_gap                         0.0202       [0.0100, 0.0373]         
-9      NV.AGR.TOTL.ZS                           0.0200       [0.0065, 0.0488]         
-10     NV.SRV.TOTL.ZS                           0.0193       [0.0056, 0.0445]         
+1      EG.ELC.ACCS.RU.ZS                        0.3685       [0.2841, 0.4750]         
+2      EG.ELC.ACCS.ZS                           0.0458       [0.0086, 0.1141]         
+3      ER.H2O.FWST.ZS                           0.0332       [0.0142, 0.0619]         
+4      trade_openness                           0.0326       [0.0024, 0.0820]         
+5      NE.EXP.GNFS.ZS                           0.0301       [0.0074, 0.0549]         
+6      EG.ELC.RNEW.ZS                           0.0259       [0.0050, 0.0685]         
+7      NV.AGR.TOTL.ZS                           0.0224       [0.0073, 0.0487]         
+8      AG.LND.FRST.ZS                           0.0224       [0.0127, 0.0464]         
+9      gender_labor_gap                         0.0204       [0.0099, 0.0343]         
+10     SH.XPD.GHED.GD.ZS                        0.0198       [0.0065, 0.0357]         
 
 Interpretation: Features whose 95% CI does not include zero are
 statistically significantly different from zero importance.
@@ -34,16 +34,16 @@ Features ranked by performance drop when permuted:
 
 Rank   Feature                                  Score Drop      p-value   
 ---------------------------------------------------------------------------
-1      EG.ELC.ACCS.RU.ZS                        0.2783          0.0000     ***
-2      EG.ELC.ACCS.ZS                           0.0444          0.0000     ***
-3      AG.LND.FRST.ZS                           0.0416          0.0000     ***
-4      SP.URB.GROW                              0.0404          0.0000     ***
-5      gender_labor_gap                         0.0400          0.0000     ***
-6      NE.EXP.GNFS.ZS                           0.0393          0.0000     ***
-7      SL.TLF.CACT.MA.ZS                        0.0351          0.0000     ***
-8      ER.H2O.FWST.ZS                           0.0278          0.0000     ***
-9      NV.SRV.TOTL.ZS                           0.0266          0.0000     ***
-10     NV.AGR.TOTL.ZS                           0.0231          0.0000     ***
+1      EG.ELC.ACCS.RU.ZS                        0.2789          0.0000     ***
+2      EG.ELC.ACCS.ZS                           0.0451          0.0000     ***
+3      AG.LND.FRST.ZS                           0.0430          0.0000     ***
+4      gender_labor_gap                         0.0406          0.0000     ***
+5      SP.URB.GROW                              0.0405          0.0000     ***
+6      NE.EXP.GNFS.ZS                           0.0378          0.0000     ***
+7      SL.TLF.CACT.MA.ZS                        0.0344          0.0000     ***
+8      ER.H2O.FWST.ZS                           0.0282          0.0000     ***
+9      NV.SRV.TOTL.ZS                           0.0278          0.0000     ***
+10     NV.AGR.TOTL.ZS                           0.0234          0.0000     ***
 
 Significance codes: *** p<0.001, ** p<0.01, * p<0.05, ns not significant
 Interpretation: Larger score drops indicate more important features.
@@ -74,9 +74,9 @@ importance rankings across different modeling approaches.
 - Mean cross-model correlation: 0.668
 
 Top 5 consensus features (appear in top 10 for all tests):
-  1. EG.ELC.ACCS.ZS
-  2. gender_labor_gap
-  3. NV.SRV.TOTL.ZS
-  4. AG.LND.FRST.ZS
-  5. NV.AGR.TOTL.ZS
+  1. ER.H2O.FWST.ZS
+  2. NV.AGR.TOTL.ZS
+  3. NE.EXP.GNFS.ZS
+  4. gender_labor_gap
+  5. EG.ELC.ACCS.ZS
 

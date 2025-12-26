@@ -2,7 +2,7 @@
 COMPREHENSIVE MODEL COMPARISON REPORT
 ================================================================================
 
-Generated: 2025-12-26 20:46:23.410618
+Generated: 2025-12-26 20:52:16.884950
 Dataset: output/processed_data.csv
 Number of models: 5
 Test set size: 365

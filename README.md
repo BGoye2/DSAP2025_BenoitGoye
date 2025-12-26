@@ -27,9 +27,9 @@ The project uses five tree-based regression models:
 │   ├── *.csv                      # Data and metrics
 │   ├── *.png                      # Visualizations
 │   └── *.txt                      # Reports
-├── paper/                          # LaTeX paper and PDF
-│   ├── research_paper.tex         # Main research paper
-│   └── gini_prediction_paper.*    # Additional paper files
+├── report/                         # LaTeX report and PDF
+│   ├── research_paper.tex         # Main research report
+│   └── gini_prediction_paper.*    # Additional report files
 ├── main.py                         # Master pipeline script (run from root)
 ├── requirements.txt                # Python dependencies
 └── README.md                       # This file
@@ -63,7 +63,7 @@ This will:
 4. Generate comprehensive comparison
 5. Run segmentation analysis (income-level and geographic regional)
 6. Perform statistical significance tests
-7. Populate LaTeX tables for research paper
+7. Populate LaTeX tables for research report
 8. Save all outputs to `output/` folder
 
 **What runs automatically:**
@@ -73,7 +73,7 @@ This will:
 - Comprehensive model comparison and evaluation
 - **Segmentation analysis** (income-level and 7 geographic regions using World Bank classification)
 - **Statistical significance tests** (bootstrap, permutation, consistency)
-- **LaTeX table population** (generates table content for research paper)
+- **LaTeX table population** (generates table content for research report)
 
 **Pipeline Options:**
 
@@ -302,14 +302,14 @@ This will:
 - **Automatically update research_paper.tex** to include the tables using `\input{}` commands
 - Replace placeholder "XX" values with real statistics
 
-**Outputs in `paper/tables/` folder:**
+**Outputs in `report/tables/` folder:**
 - `summary_text.tex` - Summary text for descriptive statistics section
 - `table1_descriptive.tex` - LaTeX table for descriptive statistics
 - `table2_performance.tex` - LaTeX table for model performance comparison
 - `table4_income.tex` - LaTeX table for income-level segmentation results
 
 **How it works:**
-The script automatically modifies [paper/research_paper.tex](paper/research_paper.tex) to use `\input{tables/table1_descriptive.tex}` instead of hardcoded placeholder tables. When you compile the PDF, LaTeX will automatically include the generated tables with real data.
+The script automatically modifies [report/research_paper.tex](report/research_paper.tex) to use `\input{tables/table1_descriptive.tex}` instead of hardcoded placeholder tables. When you compile the PDF, LaTeX will automatically include the generated tables with real data.
 
 **Time:** <1 minute
 
@@ -477,8 +477,8 @@ All generated files are saved in the `output/` folder:
 - `statistical_tests_consistency.csv` - Cross-model correlations
 - `statistical_tests_summary.txt` - Statistical tests summary
 
-### LaTeX Tables (in `paper/tables/` folder)
-- `summary_text.tex` - Summary text for paper descriptive statistics
+### LaTeX Tables (in `report/tables/` folder)
+- `summary_text.tex` - Summary text for report descriptive statistics
 - `table1_descriptive.tex` - LaTeX table for descriptive statistics
 - `table2_performance.tex` - LaTeX table for model performance
 - `table4_income.tex` - LaTeX table for income segmentation
@@ -530,13 +530,13 @@ This project uses **on-demand model training** instead of saving models as `.pkl
 - Always uses latest training data
 - Trade-off: Takes a few seconds to train when making predictions
 
-### Research Paper
-The `paper/` folder contains a comprehensive LaTeX research paper:
+### Research Report
+The `report/` folder contains a comprehensive LaTeX research report:
 
-**`research_paper.tex`** - Academic paper exploring the research question:
+**`research_paper.tex`** - Academic report exploring the research question:
 *"What socioeconomic factors are the strongest predictors of income inequality across countries, and how does their relative importance vary across different machine learning models?"*
 
-The paper includes:
+The report includes:
 - Full literature review on inequality and ML methods
 - Detailed methodology for all 5 models
 - Complete results including 26 key findings
@@ -547,12 +547,12 @@ The paper includes:
 
 **To compile the PDF:**
 ```bash
-cd paper
+cd report
 pdflatex research_paper.tex
 pdflatex research_paper.tex  # Run twice for references
 ```
 
-The paper integrates findings from all analysis scripts and provides academic-level documentation suitable for publication or presentation.
+The report integrates findings from all analysis scripts and provides academic-level documentation suitable for publication or presentation.
 
 ## Data Sources
 

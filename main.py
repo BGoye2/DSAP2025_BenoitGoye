@@ -351,7 +351,7 @@ def run_pipeline(collect_data=True, preprocess_data=True, train_models=True,
         print("  6. View output/segmentation_income_features.png for context-specific patterns")
         print("  7. Examine output/statistical_tests_bootstrap.png for confidence intervals")
         print("  8. Use src/04_predict.py to make predictions on new data")
-        print("  9. Compile paper/research_paper.tex to get the full academic paper")
+        print("  9. Compile report/research_paper.tex to get the full academic report")
         print("─"*70)
         
     except Exception as e:

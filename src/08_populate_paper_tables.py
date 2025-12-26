@@ -218,29 +218,29 @@ class PaperTablePopulator:
 
         # Generate Table 1
         table1 = self.generate_descriptive_table()
-        with open('paper/tables/table1_descriptive.tex', 'w') as f:
+        with open('report/tables/table1_descriptive.tex', 'w') as f:
             f.write(table1)
-        print("✓ Saved to: paper/tables/table1_descriptive.tex")
+        print("✓ Saved to: report/tables/table1_descriptive.tex")
 
         # Generate Table 2
         table2 = self.generate_performance_table()
-        with open('paper/tables/table2_performance.tex', 'w') as f:
+        with open('report/tables/table2_performance.tex', 'w') as f:
             f.write(table2)
-        print("✓ Saved to: paper/tables/table2_performance.tex")
+        print("✓ Saved to: report/tables/table2_performance.tex")
 
         # Generate summary text
         summary = self.generate_summary_text()
-        with open('paper/tables/summary_text.tex', 'w') as f:
+        with open('report/tables/summary_text.tex', 'w') as f:
             f.write(summary)
-        print("✓ Saved to: paper/tables/summary_text.tex")
+        print("✓ Saved to: report/tables/summary_text.tex")
 
         # Generate Table 4 if data available
         if self.income_results is not None:
             table4 = self.generate_income_performance_table()
             if table4:
-                with open('paper/tables/table4_income.tex', 'w') as f:
+                with open('report/tables/table4_income.tex', 'w') as f:
                     f.write(table4)
-                print("✓ Saved to: paper/tables/table4_income.tex")
+                print("✓ Saved to: report/tables/table4_income.tex")
 
     def update_latex_paper(self):
         """Update research_paper.tex to include the generated tables"""
@@ -248,7 +248,7 @@ class PaperTablePopulator:
         print("UPDATING RESEARCH PAPER")
         print("="*60)
 
-        paper_path = 'paper/research_paper.tex'
+        paper_path = 'report/research_paper.tex'
 
         # Read the current paper
         with open(paper_path, 'r') as f:
@@ -296,7 +296,7 @@ class PaperTablePopulator:
 
         # Create tables directory if it doesn't exist
         import os
-        os.makedirs('paper/tables', exist_ok=True)
+        os.makedirs('report/tables', exist_ok=True)
 
         # Generate and save table files
         self.save_table_files()
@@ -307,8 +307,8 @@ class PaperTablePopulator:
         print("\n" + "="*60)
         print("TABLE POPULATION COMPLETE")
         print("="*60)
-        print("\nYou can now compile the paper with:")
-        print("  cd paper")
+        print("\nYou can now compile the report with:")
+        print("  cd report")
         print("  pdflatex research_paper.tex")
         print("  pdflatex research_paper.tex")
 
