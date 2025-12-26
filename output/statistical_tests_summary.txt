@@ -11,16 +11,16 @@ Top 10 features with 95% confidence intervals:
 
 Rank   Feature                                  Mean Imp.    95% CI                   
 -------------------------------------------------------------------------------------
-1      EG.ELC.ACCS.RU.ZS                        0.3669       [0.2485, 0.4465]         
-2      EG.ELC.ACCS.ZS                           0.0525       [0.0098, 0.1728]         
-3      ER.H2O.FWST.ZS                           0.0321       [0.0141, 0.0675]         
-4      trade_openness                           0.0316       [0.0045, 0.0876]         
-5      NE.EXP.GNFS.ZS                           0.0294       [0.0062, 0.0548]         
-6      EG.ELC.RNEW.ZS                           0.0234       [0.0042, 0.0632]         
-7      AG.LND.FRST.ZS                           0.0225       [0.0124, 0.0508]         
-8      NV.AGR.TOTL.ZS                           0.0216       [0.0054, 0.0508]         
-9      gender_labor_gap                         0.0210       [0.0114, 0.0357]         
-10     NV.SRV.TOTL.ZS                           0.0205       [0.0056, 0.0441]         
+1      EG.ELC.ACCS.RU.ZS                        0.3682       [0.2498, 0.4460]         
+2      EG.ELC.ACCS.ZS                           0.0490       [0.0092, 0.1597]         
+3      ER.H2O.FWST.ZS                           0.0327       [0.0142, 0.0685]         
+4      trade_openness                           0.0318       [0.0046, 0.0879]         
+5      NE.EXP.GNFS.ZS                           0.0297       [0.0062, 0.0563]         
+6      EG.ELC.RNEW.ZS                           0.0235       [0.0042, 0.0635]         
+7      AG.LND.FRST.ZS                           0.0226       [0.0125, 0.0516]         
+8      NV.AGR.TOTL.ZS                           0.0217       [0.0054, 0.0509]         
+9      NV.SRV.TOTL.ZS                           0.0212       [0.0057, 0.0460]         
+10     gender_labor_gap                         0.0211       [0.0116, 0.0359]         
 
 Interpretation: Features whose 95% CI does not include zero are
 statistically significantly different from zero importance.
@@ -34,16 +34,16 @@ Features ranked by performance drop when permuted:
 
 Rank   Feature                                  Score Drop      p-value   
 ---------------------------------------------------------------------------
-1      EG.ELC.ACCS.RU.ZS                        0.2743          0.0000     ***
-2      AG.LND.FRST.ZS                           0.0439          0.0000     ***
-3      EG.ELC.ACCS.ZS                           0.0429          0.0000     ***
-4      SP.URB.GROW                              0.0413          0.0000     ***
-5      gender_labor_gap                         0.0409          0.0000     ***
-6      NE.EXP.GNFS.ZS                           0.0380          0.0000     ***
-7      SL.TLF.CACT.MA.ZS                        0.0346          0.0000     ***
-8      NV.SRV.TOTL.ZS                           0.0277          0.0000     ***
-9      ER.H2O.FWST.ZS                           0.0271          0.0000     ***
-10     NV.AGR.TOTL.ZS                           0.0231          0.0000     ***
+1      EG.ELC.ACCS.RU.ZS                        0.2791          0.0000     ***
+2      EG.ELC.ACCS.ZS                           0.0435          0.0000     ***
+3      AG.LND.FRST.ZS                           0.0432          0.0000     ***
+4      SP.URB.GROW                              0.0398          0.0000     ***
+5      NE.EXP.GNFS.ZS                           0.0395          0.0000     ***
+6      gender_labor_gap                         0.0395          0.0000     ***
+7      SL.TLF.CACT.MA.ZS                        0.0338          0.0000     ***
+8      NV.SRV.TOTL.ZS                           0.0276          0.0000     ***
+9      ER.H2O.FWST.ZS                           0.0274          0.0000     ***
+10     NV.AGR.TOTL.ZS                           0.0214          0.0000     ***
 
 Significance codes: *** p<0.001, ** p<0.01, * p<0.05, ns not significant
 Interpretation: Larger score drops indicate more important features.
@@ -51,16 +51,16 @@ Interpretation: Larger score drops indicate more important features.
 
 3. CROSS-MODEL CONSISTENCY
 ----------------------------------------------------------------------
-Overall consistency score: 0.664
+Overall consistency score: 0.665
 
 Spearman rank correlation matrix:
 
 Model               Random Forest     Gradient Boosti   XGBoost           LightGBM          
 ------------------------------------------------------------------------------------------
-Random Forest       1.000             0.789             0.730             0.567             
-Gradient Boosting   0.789             1.000             0.891             0.552             
-XGBoost             0.730             0.891             1.000             0.456             
-LightGBM            0.567             0.552             0.456             1.000             
+Random Forest       1.000             0.799             0.757             0.560             
+Gradient Boosting   0.799             1.000             0.891             0.531             
+XGBoost             0.757             0.891             1.000             0.455             
+LightGBM            0.560             0.531             0.455             1.000             
 
 Interpretation: High correlations (>0.7) indicate consistent feature
 importance rankings across different modeling approaches.
@@ -71,12 +71,12 @@ importance rankings across different modeling approaches.
 
 - 58 features have 95% CIs excluding zero
 - 20 features show significant permutation importance (p<0.05)
-- Mean cross-model correlation: 0.664
+- Mean cross-model correlation: 0.665
 
 Top 5 consensus features (appear in top 10 for all tests):
-  1. gender_labor_gap
-  2. NE.EXP.GNFS.ZS
-  3. AG.LND.FRST.ZS
-  4. ER.H2O.FWST.ZS
-  5. EG.ELC.ACCS.ZS
+  1. AG.LND.FRST.ZS
+  2. ER.H2O.FWST.ZS
+  3. NE.EXP.GNFS.ZS
+  4. EG.ELC.ACCS.RU.ZS
+  5. gender_labor_gap
 
