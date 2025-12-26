@@ -1,6 +1,38 @@
 """
 Regional and Income-Level Segmentation Analysis
-Analyzes how model performance and feature importance vary across different country segments
+
+This script investigates whether model performance and feature importance vary across
+different country contexts, providing insights for context-specific policy interventions.
+
+Segmentation Approaches:
+
+1. Income-Level Segmentation:
+   - Divides countries into quartiles based on GDP per capita
+   - Categories: Low Income, Lower-Middle Income, Upper-Middle Income, High Income
+   - Reveals whether inequality drivers differ by development stage
+
+2. Regional Segmentation:
+   - Groups countries by World Bank regional classification
+   - Regions: East Asia & Pacific, Europe & Central Asia, Latin America & Caribbean,
+             Middle East & North Africa, North America, South Asia, Sub-Saharan Africa
+   - Identifies geographic patterns in inequality predictors
+
+Analysis for Each Segment:
+- Train separate models (Random Forest, XGBoost, LightGBM)
+- Compare performance metrics (RMSE, MAE, R²)
+- Identify top 10 most important features
+- Generate visualizations showing performance and feature importance variations
+
+Key Insights:
+- Do models perform better in developed vs developing economies?
+- Are inequality drivers universal or context-specific?
+- Which features matter most in different regions/income levels?
+
+Input: output/processed_data.csv, output/feature_names.csv
+Output: segmentation_income_results.csv, segmentation_income_performance.png,
+        segmentation_income_features.png, segmentation_regional_results.csv,
+        segmentation_regional_performance.png, segmentation_regional_features.png,
+        segmentation_summary_report.txt
 """
 
 import pandas as pd

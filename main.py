@@ -11,50 +11,100 @@ from datetime import datetime
 
 
 def print_header(text):
-    """Print formatted header"""
+    """
+    Print a formatted header with border lines for visual separation.
+
+    Parameters:
+    -----------
+    text : str
+        The header text to display
+    """
     print("\n" + "="*70)
     print(f"  {text}")
     print("="*70 + "\n")
 
 
 def print_step(step_num, total_steps, description):
-    """Print step information"""
+    """
+    Print progress information for a pipeline step.
+
+    Parameters:
+    -----------
+    step_num : int
+        Current step number
+    total_steps : int
+        Total number of steps in the pipeline
+    description : str
+        Description of the current step
+    """
     print(f"\n{'─'*70}")
     print(f"STEP {step_num}/{total_steps}: {description}")
     print(f"{'─'*70}\n")
 
 
 class Spinner:
-    """Simple loading spinner for long-running tasks"""
+    """
+    A simple loading spinner for long-running tasks.
+
+    Displays an animated spinner in the terminal to indicate progress
+    during operations that take significant time to complete.
+    """
 
     def __init__(self, message="Processing"):
+        """
+        Initialize the spinner.
+
+        Parameters:
+        -----------
+        message : str
+            Message to display next to the spinner animation
+        """
+        # Unicode Braille patterns for smooth animation
         self.spinner_chars = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏']
         self.message = message
         self.running = False
         self.thread = None
 
     def _spin(self):
-        """Internal method to animate the spinner"""
+        """
+        Internal method to animate the spinner.
+
+        Runs in a separate thread and cycles through spinner characters
+        until stopped by the stop() method.
+        """
         i = 0
         while self.running:
+            # Display current spinner character with message
             sys.stdout.write(f'\r{self.spinner_chars[i % len(self.spinner_chars)]} {self.message}...')
             sys.stdout.flush()
-            time.sleep(0.1)
+            time.sleep(0.1)  # Animation speed
             i += 1
 
     def start(self):
-        """Start the spinner animation"""
+        """
+        Start the spinner animation in a background thread.
+
+        Creates a daemon thread to avoid blocking the main program execution.
+        """
         self.running = True
         self.thread = threading.Thread(target=self._spin)
-        self.thread.daemon = True
+        self.thread.daemon = True  # Thread will terminate when main program exits
         self.thread.start()
 
     def stop(self, final_message=None):
-        """Stop the spinner animation"""
+        """
+        Stop the spinner animation and optionally display a final message.
+
+        Parameters:
+        -----------
+        final_message : str, optional
+            Message to display after stopping the spinner
+        """
         self.running = False
         if self.thread:
-            self.thread.join()
-        sys.stdout.write('\r' + ' ' * (len(self.message) + 10) + '\r')  # Clear the line
+            self.thread.join()  # Wait for spinner thread to finish
+        # Clear the spinner line
+        sys.stdout.write('\r' + ' ' * (len(self.message) + 10) + '\r')
         if final_message:
             print(final_message)
         sys.stdout.flush()
@@ -84,7 +134,10 @@ def run_pipeline(collect_data=True, preprocess_data=True, train_models=True,
         End year for data collection
     """
     
+    # Record start time for performance tracking
     start_time = datetime.now()
+
+    # Calculate total number of steps for progress tracking
     # Total steps includes segmentation, statistical tests, and table population if compare_models is True
     total_steps = sum([collect_data, preprocess_data, train_models, compare_models])
     if compare_models:
@@ -106,36 +159,47 @@ def run_pipeline(collect_data=True, preprocess_data=True, train_models=True,
     
     try:
         # Step 1: Data Collection
+        # -------------------------------------------------------------------------
+        # Fetches economic and social indicators from the World Bank API
+        # Output: output/world_bank_data.csv
         if collect_data:
             current_step += 1
             print_step(current_step, total_steps, "Data Collection from World Bank API")
 
-            # Run as subprocess to avoid namespace issues
+            # Run as subprocess to avoid namespace issues and ensure clean execution
             import subprocess
 
             spinner = Spinner("Fetching data from World Bank API")
             spinner.start()
 
+            # Execute the data collection script
             result = subprocess.run([sys.executable, 'src/01_data_collection.py'],
                                   capture_output=True, text=True)
 
             spinner.stop()
 
+            # Check for errors during data collection
             if result.returncode != 0:
                 print("STDOUT:", result.stdout)
                 print("STDERR:", result.stderr)
                 raise RuntimeError(f"Data collection failed with return code {result.returncode}")
 
+            # Verify that the output file was created successfully
             if not os.path.exists('output/world_bank_data.csv'):
                 raise FileNotFoundError("Data collection failed - world_bank_data.csv not found")
 
             print("✓ Data collection completed successfully")
         
         # Step 2: Data Preprocessing
+        # -------------------------------------------------------------------------
+        # Cleans data, handles missing values, engineers features, and prepares for modeling
+        # Input: output/world_bank_data.csv
+        # Output: output/processed_data.csv, output/feature_names.csv
         if preprocess_data:
             current_step += 1
             print_step(current_step, total_steps, "Data Preprocessing")
 
+            # Check that previous step completed successfully
             if not os.path.exists('output/world_bank_data.csv'):
                 raise FileNotFoundError("world_bank_data.csv not found. Run data collection first.")
 
@@ -145,33 +209,41 @@ def run_pipeline(collect_data=True, preprocess_data=True, train_models=True,
             spinner = Spinner("Cleaning and preprocessing data")
             spinner.start()
 
+            # Execute the preprocessing script
             result = subprocess.run([sys.executable, 'src/02_data_preprocessing.py'],
                                   capture_output=True, text=True)
 
             spinner.stop()
 
+            # Check for errors during preprocessing
             if result.returncode != 0:
                 print("STDOUT:", result.stdout)
                 print("STDERR:", result.stderr)
                 raise RuntimeError(f"Preprocessing failed with return code {result.returncode}")
 
+            # Verify that the output file was created successfully
             if not os.path.exists('output/processed_data.csv'):
                 raise FileNotFoundError("Preprocessing failed - processed_data.csv not found")
 
             print("✓ Data preprocessing completed successfully")
         
         # Step 3: Model Training
+        # -------------------------------------------------------------------------
+        # Trains Decision Tree, Random Forest, Gradient Boosting, XGBoost, and LightGBM
+        # Input: output/processed_data.csv, output/feature_names.csv
+        # Output: output/model_comparison.csv, plots (feature_importance.png, predictions_plot.png, residuals_plot.png)
         if train_models:
             current_step += 1
             print_step(current_step, total_steps, "Model Training and Evaluation")
 
+            # Check that previous step completed successfully
             if not os.path.exists('output/processed_data.csv'):
                 raise FileNotFoundError("processed_data.csv not found. Run preprocessing first.")
 
             # Run as subprocess to avoid namespace issues
             import subprocess
 
-            # For now, run with default settings (tune_hyperparameters would need to be handled differently)
+            # Note: Hyperparameter tuning is controlled within the script itself
             if tune_hyperparameters:
                 print("Note: Hyperparameter tuning setting will use default from src/03_model_training.py")
                 print("To enable tuning, edit the tune_hyperparameters variable in src/03_model_training.py")
@@ -179,11 +251,13 @@ def run_pipeline(collect_data=True, preprocess_data=True, train_models=True,
             spinner = Spinner("Training models")
             spinner.start()
 
+            # Execute the model training script
             result = subprocess.run([sys.executable, 'src/03_model_training.py'],
                                   capture_output=True, text=True)
 
             spinner.stop()
 
+            # Check for errors during training
             if result.returncode != 0:
                 print("STDOUT:", result.stdout)
                 print("STDERR:", result.stderr)
@@ -196,6 +270,12 @@ def run_pipeline(collect_data=True, preprocess_data=True, train_models=True,
                 print("Warning: model_comparison.csv not found")
         
         # Step 4: Comprehensive Model Comparison
+        # -------------------------------------------------------------------------
+        # Performs statistical analysis and comprehensive evaluation of all models
+        # Input: output/processed_data.csv
+        # Output: comprehensive_metrics.csv, statistical_comparison.csv, segment_performance.csv,
+        #         comprehensive_comparison.png, error_analysis.png, segment_performance.png,
+        #         model_comparison_report.txt
         if compare_models:
             current_step += 1
             print_step(current_step, total_steps, "Model Comparison")
@@ -210,11 +290,13 @@ def run_pipeline(collect_data=True, preprocess_data=True, train_models=True,
                 spinner = Spinner("Running model analysis")
                 spinner.start()
 
+                # Execute the comprehensive comparison script
                 result = subprocess.run([sys.executable, 'src/05_comprehensive_comparison.py'],
                                       capture_output=True, text=True)
 
                 spinner.stop()
 
+                # Check for errors during comparison
                 if result.returncode != 0:
                     print("STDOUT:", result.stdout)
                     print("STDERR:", result.stderr)
@@ -223,6 +305,12 @@ def run_pipeline(collect_data=True, preprocess_data=True, train_models=True,
                 print("✓ Model comparison completed successfully")
 
         # Step 5: Segmentation Analysis
+        # -------------------------------------------------------------------------
+        # Analyzes model performance across different income levels and geographic regions
+        # Identifies context-specific patterns and feature importance differences
+        # Input: output/processed_data.csv, output/feature_names.csv
+        # Output: segmentation_income_*.csv/png, segmentation_regional_*.csv/png,
+        #         segmentation_summary_report.txt
         if compare_models:  # Run if we're doing comprehensive analysis
             current_step += 1
             print_step(current_step, total_steps, "Segmentation Analysis")
@@ -236,11 +324,13 @@ def run_pipeline(collect_data=True, preprocess_data=True, train_models=True,
                 spinner = Spinner("Analyzing performance across income levels and regions")
                 spinner.start()
 
+                # Execute the segmentation analysis script
                 result = subprocess.run([sys.executable, 'src/06_segmentation_analysis.py'],
                                       capture_output=True, text=True)
 
                 spinner.stop()
 
+                # Check for errors (but don't stop pipeline if this fails)
                 if result.returncode != 0:
                     print("STDOUT:", result.stdout)
                     print("STDERR:", result.stderr)
@@ -249,6 +339,12 @@ def run_pipeline(collect_data=True, preprocess_data=True, train_models=True,
                     print("✓ Segmentation analysis completed successfully")
 
         # Step 6: Statistical Significance Tests
+        # -------------------------------------------------------------------------
+        # Performs bootstrap confidence intervals, permutation tests, and cross-model consistency
+        # Validates feature importance and model significance
+        # Input: output/processed_data.csv, output/feature_names.csv
+        # Output: statistical_tests_bootstrap.csv/png, statistical_tests_permutation.csv,
+        #         statistical_tests_consistency.csv/png, statistical_tests_summary.txt
         if compare_models:  # Run if we're doing comprehensive analysis
             current_step += 1
             print_step(current_step, total_steps, "Statistical Significance Tests")
@@ -262,11 +358,13 @@ def run_pipeline(collect_data=True, preprocess_data=True, train_models=True,
                 spinner = Spinner("Running bootstrap, permutation, and consistency tests")
                 spinner.start()
 
+                # Execute the statistical tests script
                 result = subprocess.run([sys.executable, 'src/07_statistical_tests.py'],
                                       capture_output=True, text=True)
 
                 spinner.stop()
 
+                # Check for errors (but don't stop pipeline if this fails)
                 if result.returncode != 0:
                     print("STDOUT:", result.stdout)
                     print("STDERR:", result.stderr)
@@ -274,7 +372,12 @@ def run_pipeline(collect_data=True, preprocess_data=True, train_models=True,
                 else:
                     print("✓ Statistical significance tests completed successfully")
 
-        # Step 7: Populate LaTeX Tables (if compare_models was run)
+        # Step 7: Populate LaTeX Tables
+        # -------------------------------------------------------------------------
+        # Generates LaTeX tables from results and updates the research paper
+        # Input: output/processed_data.csv, output/model_comparison.csv,
+        #        output/segmentation_income_results.csv
+        # Output: report/tables/*.tex files, updated report/research_paper.tex
         if compare_models:
             current_step += 1
             print_step(current_step, total_steps, "Populating LaTeX Tables")
@@ -284,11 +387,13 @@ def run_pipeline(collect_data=True, preprocess_data=True, train_models=True,
             spinner = Spinner("Generating LaTeX table content from results")
             spinner.start()
 
+            # Execute the table population script
             result = subprocess.run([sys.executable, 'src/08_populate_paper_tables.py'],
                                   capture_output=True, text=True)
 
             spinner.stop()
 
+            # Check for errors (but don't stop pipeline if this fails)
             if result.returncode != 0:
                 print("STDOUT:", result.stdout)
                 print("STDERR:", result.stderr)
@@ -296,14 +401,16 @@ def run_pipeline(collect_data=True, preprocess_data=True, train_models=True,
             else:
                 print("✓ LaTeX tables generated and inserted into research_paper.tex")
 
-        # Final summary
+        # Final Summary
+        # -------------------------------------------------------------------------
+        # Display execution summary and list all generated output files
         end_time = datetime.now()
         duration = end_time - start_time
-        
+
         print_header("PIPELINE COMPLETED SUCCESSFULLY")
         print(f"End time: {end_time.strftime('%Y-%m-%d %H:%M:%S')}")
         print(f"Total duration: {duration}")
-        
+
         print("\nGenerated files in output/ folder:")
         output_files = [
             'world_bank_data.csv',
@@ -364,7 +471,12 @@ def run_pipeline(collect_data=True, preprocess_data=True, train_models=True,
 
 
 def quick_run():
-    """Quick run with default settings"""
+    """
+    Quick run with default settings (recommended for most users).
+
+    Runs full pipeline from 2000-2023 without hyperparameter tuning.
+    Completes in ~10-15 minutes depending on system.
+    """
     run_pipeline(
         collect_data=True,
         preprocess_data=True,
@@ -377,7 +489,12 @@ def quick_run():
 
 
 def fast_run():
-    """Fast run with recent data only"""
+    """
+    Fast run with recent data only (2015-2023).
+
+    Use for quick testing or when only recent data is needed.
+    Completes faster due to smaller dataset.
+    """
     run_pipeline(
         collect_data=True,
         preprocess_data=True,
@@ -390,7 +507,12 @@ def fast_run():
 
 
 def optimized_run():
-    """Run with hyperparameter tuning for best results (slow)"""
+    """
+    Run with hyperparameter tuning for best results (slow).
+
+    Performs grid search for optimal model parameters.
+    Produces best accuracy but takes significantly longer (~1-2 hours).
+    """
     run_pipeline(
         collect_data=True,
         preprocess_data=True,

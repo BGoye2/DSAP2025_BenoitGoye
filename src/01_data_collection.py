@@ -14,12 +14,27 @@ warnings.filterwarnings('ignore')
 
 
 class WorldBankDataCollector:
-    """Collects data from World Bank API"""
-    
+    """
+    Collects economic and social indicator data from the World Bank API.
+
+    This class handles the parallel fetching of multiple economic indicators
+    from the World Bank's public API, managing rate limiting, error handling,
+    and data merging.
+    """
+
     def __init__(self):
+        """
+        Initialize the data collector with API base URL and indicator codes.
+
+        Sets up the list of World Bank indicator codes to fetch. Each indicator
+        represents a socioeconomic metric (GDP, education, health, employment, etc.)
+        that may influence income inequality (GINI coefficient).
+        """
         self.base_url = "https://api.worldbank.org/v2"
+        # List of World Bank indicator codes to fetch
+        # Format: 'INDICATOR.CODE' with descriptive comments
         self.indicators = [
-            'SI.POV.GINI',         # GINI coefficient (TARGET VARIABLE)
+            'SI.POV.GINI',         # GINI coefficient (TARGET VARIABLE - what we're predicting)
             'NY.GDP.MKTP.CD',      # GDP (current US$)
             'NY.GDP.MKTP.KD.ZG',   # GDP growth (annual %)
             'NY.GDP.PCAP.CD',      # GDP per capita (current US$)
@@ -135,7 +150,11 @@ class WorldBankDataCollector:
                         save_path: str = 'output/world_bank_data.csv',
                         max_workers: int = 5) -> pd.DataFrame:
         """
-        Collect all indicators and merge into a single dataset (parallelized)
+        Collect all indicators and merge into a single dataset (parallelized).
+
+        This method uses parallel processing to fetch multiple indicators simultaneously,
+        significantly reducing data collection time (6x speedup with 5 workers).
+        Results are merged on country_code, country_name, and year.
 
         Parameters:
         -----------
@@ -147,11 +166,12 @@ class WorldBankDataCollector:
             Path to save the collected data
         max_workers : int
             Number of parallel workers for API calls (default: 5)
+            More workers = faster, but risk of rate limiting
 
         Returns:
         --------
         pd.DataFrame
-            Merged dataset with all indicators
+            Merged dataset with all indicators across countries and years
         """
         print(f"Collecting World Bank data from {start_year} to {end_year}")
         print(f"Total indicators to fetch: {len(self.indicators)}")
@@ -162,19 +182,34 @@ class WorldBankDataCollector:
 
         # Parallel API calls with rate limiting per worker
         def fetch_with_delay(indicator):
-            """Fetch single indicator with built-in rate limiting"""
+            """
+            Fetch single indicator with built-in rate limiting.
+
+            Parameters:
+            -----------
+            indicator : str
+                World Bank indicator code
+
+            Returns:
+            --------
+            tuple
+                (indicator_code, dataframe with fetched data)
+            """
             df = self.fetch_indicator_data(indicator, start_year, end_year)
-            time.sleep(0.1)  # Small delay per thread (5 workers * 0.1s = 0.5s effective)
+            # Small delay to avoid overwhelming the API
+            # With 5 workers, effective rate is 1 request per 0.5s
+            time.sleep(0.1)
             return indicator, df
 
+        # Use ThreadPoolExecutor for parallel API calls
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
-            # Submit all tasks
+            # Submit all indicator fetch tasks
             future_to_indicator = {
                 executor.submit(fetch_with_delay, indicator): indicator
                 for indicator in self.indicators
             }
 
-            # Process results as they complete
+            # Process results as they complete (not in submission order)
             for future in as_completed(future_to_indicator):
                 completed += 1
                 indicator, df = future.result()
@@ -187,7 +222,8 @@ class WorldBankDataCollector:
 
         print(f"\nMerging {len(all_dfs)} datasets...")
 
-        # Batch merge - much faster than sequential merges
+        # Merge all dataframes on common keys
+        # Uses outer join to preserve all available data points
         all_data = None
         if all_dfs:
             all_data = all_dfs[0]
@@ -196,7 +232,7 @@ class WorldBankDataCollector:
                     all_data,
                     df,
                     on=['country_code', 'country_name', 'year'],
-                    how='outer'
+                    how='outer'  # Keep all rows from both dataframes
                 )
         
         if all_data is not None:

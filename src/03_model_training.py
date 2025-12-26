@@ -1,6 +1,26 @@
 """
 Machine Learning Models for GINI Coefficient Prediction
-Implements Decision Tree, Random Forest, and Gradient Boosting models
+
+This script trains and evaluates five tree-based regression models to predict income inequality:
+- Decision Tree: Simple, interpretable baseline model
+- Random Forest: Ensemble of decision trees with bagging
+- Gradient Boosting: Sequential ensemble with boosting
+- XGBoost: Optimized gradient boosting with regularization
+- LightGBM: Fast gradient boosting with leaf-wise growth
+
+Features:
+- Optional hyperparameter tuning via GridSearchCV
+- Cross-validation for robust performance estimation
+- Comprehensive metrics (RMSE, MAE, R²)
+- Feature importance analysis
+- Prediction and residual visualization
+
+Input: output/processed_data.csv, output/feature_names.csv
+Output: output/model_comparison.csv, output/feature_importance.png,
+        output/predictions_plot.png, output/residuals_plot.png
+
+Note: Models are trained on-demand and not saved to disk (.pkl files).
+      This avoids compatibility issues and ensures reproducibility.
 """
 
 import pandas as pd

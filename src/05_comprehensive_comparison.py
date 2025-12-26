@@ -1,6 +1,41 @@
 """
-Comprehensive Model Comparison and Analysis
-Provides detailed performance comparison and statistical analysis of all models
+Comprehensive Model Comparison and Statistical Analysis
+
+This script performs in-depth evaluation and comparison of all trained models,
+going beyond basic metrics to provide statistical rigor and actionable insights.
+
+Analysis Components:
+
+1. Comprehensive Metrics:
+   - Training and test performance (RMSE, MAE, R², MAPE)
+   - Cross-validation scores with confidence intervals
+   - Residual analysis (mean, std, skewness, kurtosis)
+   - Maximum and median absolute errors
+
+2. Statistical Comparison:
+   - Paired t-tests comparing absolute errors between models
+   - Wilcoxon signed-rank tests (non-parametric alternative)
+   - Identifies statistically significant performance differences
+
+3. Segmentation Analysis:
+   - Performance breakdown by GINI ranges (low, moderate, high inequality)
+   - Identifies where each model excels or struggles
+
+4. Visualization:
+   - Side-by-side metric comparisons
+   - Prediction scatter plots for all models
+   - Residual distributions and Q-Q plots
+   - Box plots of error distributions
+
+5. Summary Report:
+   - Model rankings by multiple criteria
+   - Best model recommendations
+   - Detailed performance statistics
+
+Input: output/processed_data.csv, output/feature_names.csv
+Output: comprehensive_metrics.csv, statistical_comparison.csv, segment_performance.csv,
+        comprehensive_comparison.png, error_analysis.png, segment_performance.png,
+        model_comparison_report.txt
 """
 
 import pandas as pd

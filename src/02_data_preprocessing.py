@@ -12,20 +12,32 @@ warnings.filterwarnings('ignore')
 
 
 class DataPreprocessor:
-    """Preprocesses World Bank data for modeling"""
-    
+    """
+    Preprocesses World Bank data for machine learning models.
+
+    This class handles data cleaning, missing value imputation, feature engineering,
+    and outlier removal to prepare the dataset for GINI coefficient prediction.
+
+    Key responsibilities:
+    - Filter rows with GINI coefficient data (target variable)
+    - Handle missing values via imputation or column removal
+    - Engineer domain-specific features (urbanization rate, trade openness, etc.)
+    - Remove statistical outliers using IQR or Z-score methods
+    - Scale and standardize features for modeling
+    """
+
     def __init__(self, data_path: str = 'output/world_bank_data.csv'):
         """
-        Initialize preprocessor
-        
+        Initialize preprocessor with data path.
+
         Parameters:
         -----------
         data_path : str
-            Path to the raw data CSV file
+            Path to the raw data CSV file from World Bank API
         """
         self.data_path = data_path
         self.data = None
-        self.scaler = StandardScaler()
+        self.scaler = StandardScaler()  # For feature normalization if needed
         
     def load_data(self) -> pd.DataFrame:
         """Load data from CSV"""
@@ -111,49 +123,67 @@ class DataPreprocessor:
     
     def create_engineered_features(self) -> pd.DataFrame:
         """
-        Create additional engineered features
+        Create additional engineered features from raw World Bank indicators.
+
+        These features are designed to capture complex economic relationships
+        that may influence income inequality:
+        - Urbanization rate: Urban/rural population balance
+        - Log GDP per capita: Handles skewness in income distribution
+        - Trade openness: Economic globalization measure
+        - Health-to-education ratio: Government spending priorities
+        - Gender labor gap: Gender equality in workforce
+        - Economic diversity: Sector distribution entropy (agriculture, industry, services)
+
+        Returns:
+        --------
+        pd.DataFrame
+            Data with engineered features added
         """
         print("\nCreating engineered features...")
-        
-        # Urbanization rate
+
+        # Urbanization rate: Urban population as % of total
         if 'SP.URB.TOTL' in self.data.columns and 'SP.POP.TOTL' in self.data.columns:
-            self.data['urbanization_rate'] = (self.data['SP.URB.TOTL'] / 
+            self.data['urbanization_rate'] = (self.data['SP.URB.TOTL'] /
                                               self.data['SP.POP.TOTL'] * 100)
-        
-        # GDP per capita log (to handle skewness)
+
+        # GDP per capita log transformation (reduces skewness, stabilizes variance)
         if 'NY.GDP.PCAP.CD' in self.data.columns:
             self.data['log_gdp_per_capita'] = np.log1p(self.data['NY.GDP.PCAP.CD'])
-        
-        # Trade openness (exports + imports as % of GDP)
+
+        # Trade openness: Sum of exports and imports as % of GDP
+        # Higher values indicate more integrated economies
         if 'NE.EXP.GNFS.ZS' in self.data.columns and 'NE.IMP.GNFS.ZS' in self.data.columns:
-            self.data['trade_openness'] = (self.data['NE.EXP.GNFS.ZS'] + 
+            self.data['trade_openness'] = (self.data['NE.EXP.GNFS.ZS'] +
                                           self.data['NE.IMP.GNFS.ZS'])
-        
-        # Health to education spending ratio
+
+        # Health-to-education spending ratio: Policy priorities indicator
         if 'SH.XPD.CHEX.GD.ZS' in self.data.columns and 'SE.XPD.TOTL.GD.ZS' in self.data.columns:
-            self.data['health_to_edu_ratio'] = (self.data['SH.XPD.CHEX.GD.ZS'] / 
+            self.data['health_to_edu_ratio'] = (self.data['SH.XPD.CHEX.GD.ZS'] /
                                                 (self.data['SE.XPD.TOTL.GD.ZS'] + 1e-5))
-        
-        # Gender labor gap
+
+        # Gender labor gap: Difference in male vs female labor force participation
+        # Positive values = more male participation
         if 'SL.TLF.CACT.MA.ZS' in self.data.columns and 'SL.TLF.CACT.FE.ZS' in self.data.columns:
-            self.data['gender_labor_gap'] = (self.data['SL.TLF.CACT.MA.ZS'] - 
+            self.data['gender_labor_gap'] = (self.data['SL.TLF.CACT.MA.ZS'] -
                                             self.data['SL.TLF.CACT.FE.ZS'])
-        
-        # Economic structure diversity (entropy-like measure)
+
+        # Economic structure diversity: Shannon entropy of sector distribution
+        # Higher entropy = more diverse economy (less reliant on single sector)
         if all(col in self.data.columns for col in ['NV.AGR.TOTL.ZS', 'NV.IND.TOTL.ZS', 'NV.SRV.TOTL.ZS']):
+            # Convert percentages to proportions
             agr = self.data['NV.AGR.TOTL.ZS'] / 100
             ind = self.data['NV.IND.TOTL.ZS'] / 100
             srv = self.data['NV.SRV.TOTL.ZS'] / 100
-            
-            # Calculate Shannon entropy
+
+            # Calculate Shannon entropy: H = -Σ(p_i * log(p_i))
             self.data['economic_diversity'] = -(
-                agr * np.log(agr + 1e-5) + 
-                ind * np.log(ind + 1e-5) + 
+                agr * np.log(agr + 1e-5) +  # Add small constant to avoid log(0)
+                ind * np.log(ind + 1e-5) +
                 srv * np.log(srv + 1e-5)
             )
-        
+
         print(f"Total features after engineering: {len(self.data.columns)}")
-        
+
         return self.data
     
     def remove_outliers(self, method: str = 'iqr', threshold: float = 3.0) -> pd.DataFrame:

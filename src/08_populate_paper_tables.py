@@ -1,6 +1,45 @@
 """
-Populate LaTeX Tables Script
-Generates LaTeX table files and automatically updates research_paper.tex to include them
+LaTeX Table Population for Research Paper
+
+This script automatically generates LaTeX tables from analysis results and inserts them
+into the research paper, eliminating manual copy-paste errors and ensuring reproducibility.
+
+Generated Tables:
+
+1. Table 1 - Descriptive Statistics:
+   - Summary statistics for key variables (GINI, GDP, education, health, etc.)
+   - Includes N, mean, std dev, min, max, and missing data percentage
+   - Provides overview of dataset characteristics
+
+2. Table 2 - Model Performance Comparison:
+   - Training and test RMSE for all models
+   - Test R² scores
+   - Cross-validation RMSE
+   - Enables comparison of model accuracy
+
+3. Table 4 - Model Performance by Income Level:
+   - Segmented performance across income quartiles
+   - Shows RMSE and R² for each income level
+   - Reveals whether models work better for certain economic contexts
+   - Uses multirow formatting for readability
+
+4. Summary Text:
+   - Dynamically generated summary statistics text
+   - Inserted into descriptive statistics section
+   - Updates automatically when data changes
+
+Process:
+1. Load results from CSV files (model_comparison, segmentation_income, etc.)
+2. Generate LaTeX table code with proper formatting
+3. Save to report/tables/*.tex files
+4. Update research_paper.tex to \\input{} these tables
+5. Ensures paper always reflects latest results
+
+Input: output/processed_data.csv, output/model_comparison.csv,
+       output/segmentation_income_results.csv
+Output: report/tables/table1_descriptive.tex, report/tables/table2_performance.tex,
+        report/tables/table4_income.tex, report/tables/summary_text.tex,
+        updated report/research_paper.tex
 """
 
 import pandas as pd

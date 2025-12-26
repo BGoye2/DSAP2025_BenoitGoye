@@ -1,6 +1,30 @@
 """
-Prediction Script
-Train models on-demand and use them to predict GINI coefficient for new data
+Prediction Script - On-Demand Model Training and Inference
+
+This script provides an interface for making GINI coefficient predictions on new data.
+Models are trained on-demand from processed data rather than loaded from saved files.
+
+Key Features:
+- On-demand model training: No .pkl files needed, trains fresh models when first called
+- Single prediction: Predict GINI for one observation (country-year)
+- Batch prediction: Predict for multiple observations from CSV
+- Ensemble prediction: Get predictions from all models and compute weighted average
+- Automatic feature alignment: Ensures input data matches training feature order
+
+Supported Models:
+- Decision Tree, Random Forest, Gradient Boosting, XGBoost, LightGBM
+
+Usage Example:
+    predictor = GINIPredictor()
+    # Single prediction
+    gini_pred = predictor.predict_single(features_dict, model_name='XGBoost')
+    # Ensemble prediction
+    predictions = predictor.predict_ensemble(features_dict)
+    # Batch prediction from CSV
+    predictor.predict_from_csv('new_data.csv', 'predictions.csv')
+
+Input: output/processed_data.csv, output/feature_names.csv, user-provided new data
+Output: GINI coefficient predictions
 """
 
 import pandas as pd
