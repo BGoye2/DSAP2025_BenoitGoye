@@ -15,6 +15,7 @@ from scipy.stats import spearmanr
 import matplotlib.pyplot as plt
 import seaborn as sns
 from typing import Dict, List, Tuple
+from joblib import Parallel, delayed
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -63,9 +64,10 @@ class FeatureImportanceTester:
         print(f"Train: {len(self.X_train)}, Test: {len(self.X_test)}")
 
     def bootstrap_feature_importance(self, model_name: str = 'XGBoost',
-                                     n_iterations: int = 100) -> Dict:
+                                     n_iterations: int = 100,
+                                     n_jobs: int = -1) -> Dict:
         """
-        Calculate bootstrap confidence intervals for feature importance
+        Calculate bootstrap confidence intervals for feature importance (parallelized)
 
         Parameters:
         -----------
@@ -73,6 +75,8 @@ class FeatureImportanceTester:
             Model to use ('RandomForest', 'GradientBoosting', 'XGBoost', 'LightGBM')
         n_iterations : int
             Number of bootstrap iterations
+        n_jobs : int
+            Number of parallel jobs (-1 uses all cores)
 
         Returns:
         --------
@@ -82,41 +86,43 @@ class FeatureImportanceTester:
         print(f"\n{'='*60}")
         print(f"Bootstrap Feature Importance Analysis ({model_name})")
         print(f"{'='*60}")
-        print(f"Running {n_iterations} bootstrap iterations...")
+        print(f"Running {n_iterations} bootstrap iterations in parallel...")
 
         # Initialize model
         models = {
-            'RandomForest': RandomForestRegressor(n_estimators=100, max_depth=15, random_state=42, n_jobs=-1),
+            'RandomForest': RandomForestRegressor(n_estimators=100, max_depth=15, random_state=42, n_jobs=1),
             'GradientBoosting': GradientBoostingRegressor(n_estimators=100, learning_rate=0.1, max_depth=5, random_state=42),
-            'XGBoost': xgb.XGBRegressor(n_estimators=100, learning_rate=0.1, max_depth=5, random_state=42, n_jobs=-1),
-            'LightGBM': lgb.LGBMRegressor(n_estimators=100, learning_rate=0.1, max_depth=5, random_state=42, n_jobs=-1, verbose=-1)
+            'XGBoost': xgb.XGBRegressor(n_estimators=100, learning_rate=0.1, max_depth=5, random_state=42, n_jobs=1),
+            'LightGBM': lgb.LGBMRegressor(n_estimators=100, learning_rate=0.1, max_depth=5, random_state=42, n_jobs=1, verbose=-1)
         }
 
         if model_name not in models:
             raise ValueError(f"Model {model_name} not supported")
 
-        # Store importance from each iteration
-        importance_samples = []
+        # Parallel bootstrap iterations
+        def bootstrap_single_iteration(i, X_train, y_train, model_class, model_params):
+            """Single bootstrap iteration"""
+            np.random.seed(i)  # Ensure reproducibility
+            indices = np.random.choice(len(X_train), size=len(X_train), replace=True)
+            X_boot = X_train[indices]
+            y_boot = y_train[indices]
 
-        for i in range(n_iterations):
-            if (i + 1) % 20 == 0:
-                print(f"  Iteration {i+1}/{n_iterations}...")
-
-            # Bootstrap sample
-            indices = np.random.choice(len(self.X_train), size=len(self.X_train), replace=True)
-            X_boot = self.X_train[indices]
-            y_boot = self.y_train[indices]
-
-            # Train model
-            model = models[model_name]
-            if hasattr(model, 'random_state'):
-                model.random_state = i  # Different seed for each iteration
-
+            # Create fresh model instance for this iteration
+            model = model_class(**model_params)
             model.fit(X_boot, y_boot)
+            return model.feature_importances_
 
-            # Get feature importance
-            importance = model.feature_importances_
-            importance_samples.append(importance)
+        # Get model class and parameters
+        base_model = models[model_name]
+        model_class = type(base_model)
+        model_params = base_model.get_params()
+
+        # Run parallel bootstrap
+        importance_samples = Parallel(n_jobs=n_jobs, verbose=5)(
+            delayed(bootstrap_single_iteration)(
+                i, self.X_train, self.y_train, model_class, model_params
+            ) for i in range(n_iterations)
+        )
 
         importance_samples = np.array(importance_samples)
 

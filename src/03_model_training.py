@@ -371,10 +371,11 @@ class GINIPredictor:
             'r2': r2_score(self.y_test, y_test_pred)
         }
         
-        # Cross-validation score
+        # Cross-validation score (parallelized)
         cv_scores = cross_val_score(
-            model, self.X_train, self.y_train, 
-            cv=5, scoring='neg_mean_squared_error'
+            model, self.X_train, self.y_train,
+            cv=5, scoring='neg_mean_squared_error',
+            n_jobs=-1  # Parallel cross-validation
         )
         cv_rmse = np.sqrt(-cv_scores.mean())
         

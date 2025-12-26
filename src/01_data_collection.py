@@ -8,6 +8,7 @@ import numpy as np
 import requests
 import time
 from typing import List, Dict
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -131,10 +132,11 @@ class WorldBankDataCollector:
             return pd.DataFrame()
     
     def collect_all_data(self, start_year: int = 2000, end_year: int = 2023,
-                        save_path: str = 'output/world_bank_data.csv') -> pd.DataFrame:
+                        save_path: str = 'output/world_bank_data.csv',
+                        max_workers: int = 5) -> pd.DataFrame:
         """
-        Collect all indicators and merge into a single dataset
-        
+        Collect all indicators and merge into a single dataset (parallelized)
+
         Parameters:
         -----------
         start_year : int
@@ -143,37 +145,59 @@ class WorldBankDataCollector:
             Ending year for data collection
         save_path : str
             Path to save the collected data
-            
+        max_workers : int
+            Number of parallel workers for API calls (default: 5)
+
         Returns:
         --------
         pd.DataFrame
             Merged dataset with all indicators
         """
         print(f"Collecting World Bank data from {start_year} to {end_year}")
-        print(f"Total indicators to fetch: {len(self.indicators)}\n")
-        
-        all_data = None
-        
-        for i, indicator in enumerate(self.indicators, 1):
-            print(f"[{i}/{len(self.indicators)}] Fetching {indicator}...")
-            
+        print(f"Total indicators to fetch: {len(self.indicators)}")
+        print(f"Using {max_workers} parallel workers for faster collection\n")
+
+        all_dfs = []
+        completed = 0
+
+        # Parallel API calls with rate limiting per worker
+        def fetch_with_delay(indicator):
+            """Fetch single indicator with built-in rate limiting"""
             df = self.fetch_indicator_data(indicator, start_year, end_year)
-            
-            if df.empty:
-                continue
-            
-            if all_data is None:
-                all_data = df
-            else:
+            time.sleep(0.1)  # Small delay per thread (5 workers * 0.1s = 0.5s effective)
+            return indicator, df
+
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            # Submit all tasks
+            future_to_indicator = {
+                executor.submit(fetch_with_delay, indicator): indicator
+                for indicator in self.indicators
+            }
+
+            # Process results as they complete
+            for future in as_completed(future_to_indicator):
+                completed += 1
+                indicator, df = future.result()
+
+                if not df.empty:
+                    all_dfs.append(df)
+                    print(f"[{completed}/{len(self.indicators)}] ✓ Fetched {indicator}")
+                else:
+                    print(f"[{completed}/{len(self.indicators)}] ✗ No data for {indicator}")
+
+        print(f"\nMerging {len(all_dfs)} datasets...")
+
+        # Batch merge - much faster than sequential merges
+        all_data = None
+        if all_dfs:
+            all_data = all_dfs[0]
+            for df in all_dfs[1:]:
                 all_data = pd.merge(
-                    all_data, 
-                    df, 
+                    all_data,
+                    df,
                     on=['country_code', 'country_name', 'year'],
                     how='outer'
                 )
-            
-            # Rate limiting to be respectful to the API
-            time.sleep(0.5)
         
         if all_data is not None:
             # Add year as a feature

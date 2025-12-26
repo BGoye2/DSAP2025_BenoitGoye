@@ -158,50 +158,53 @@ class DataPreprocessor:
     
     def remove_outliers(self, method: str = 'iqr', threshold: float = 3.0) -> pd.DataFrame:
         """
-        Remove outliers from the dataset
-        
+        Remove outliers from the dataset (vectorized for performance)
+
         Parameters:
         -----------
         method : str
             'iqr' for Interquartile Range or 'zscore' for Z-score
         threshold : float
             Threshold for outlier detection (IQR multiplier or Z-score)
-            
+
         Returns:
         --------
         pd.DataFrame
             Data without outliers
         """
-        print(f"\nRemoving outliers using {method} method...")
+        print(f"\nRemoving outliers using {method} method (vectorized)...")
         initial_count = len(self.data)
-        
+
         # Get numeric columns only
         numeric_cols = self.data.select_dtypes(include=[np.number]).columns
         id_cols = ['year', 'year_feature']
         feature_cols = [col for col in numeric_cols if col not in id_cols]
-        
+
         if method == 'iqr':
-            for col in feature_cols:
-                Q1 = self.data[col].quantile(0.25)
-                Q3 = self.data[col].quantile(0.75)
-                IQR = Q3 - Q1
-                lower_bound = Q1 - threshold * IQR
-                upper_bound = Q3 + threshold * IQR
-                
-                self.data = self.data[
-                    (self.data[col] >= lower_bound) & 
-                    (self.data[col] <= upper_bound)
-                ]
-        
+            # Vectorized computation for all columns at once
+            Q1 = self.data[feature_cols].quantile(0.25)
+            Q3 = self.data[feature_cols].quantile(0.75)
+            IQR = Q3 - Q1
+            lower_bounds = Q1 - threshold * IQR
+            upper_bounds = Q3 + threshold * IQR
+
+            # Create boolean mask for all columns simultaneously
+            mask = (
+                (self.data[feature_cols] >= lower_bounds) &
+                (self.data[feature_cols] <= upper_bounds)
+            ).all(axis=1)
+
+            self.data = self.data[mask]
+
         elif method == 'zscore':
             from scipy import stats
             z_scores = np.abs(stats.zscore(self.data[feature_cols], nan_policy='omit'))
             self.data = self.data[(z_scores < threshold).all(axis=1)]
-        
+
         final_count = len(self.data)
         print(f"Removed {initial_count - final_count} outlier rows")
         print(f"Remaining records: {final_count}")
-        
+
         return self.data
     
     def prepare_for_modeling(self, save_path: str = 'output/processed_data.csv') -> tuple:

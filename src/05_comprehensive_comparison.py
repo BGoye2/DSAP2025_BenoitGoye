@@ -133,12 +133,13 @@ class ModelComparator:
             train_metrics = self._calculate_metrics(self.y_train, y_train_pred)
             test_metrics = self._calculate_metrics(self.y_test, y_test_pred)
             
-            # Cross-validation metrics
+            # Cross-validation metrics (parallelized)
             cv_results = cross_validate(
                 model, self.X_train, self.y_train,
                 cv=5,
                 scoring=['neg_mean_squared_error', 'neg_mean_absolute_error', 'r2'],
-                return_train_score=True
+                return_train_score=True,
+                n_jobs=-1  # Parallel cross-validation
             )
             
             cv_metrics = {
