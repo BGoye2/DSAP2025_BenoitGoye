@@ -116,7 +116,7 @@ def run_pipeline(collect_data=True, preprocess_data=True, train_models=True,
             spinner = Spinner("Fetching data from World Bank API")
             spinner.start()
 
-            result = subprocess.run([sys.executable, 'code/01_data_collection.py'],
+            result = subprocess.run([sys.executable, 'src/01_data_collection.py'],
                                   capture_output=True, text=True)
 
             spinner.stop()
@@ -145,7 +145,7 @@ def run_pipeline(collect_data=True, preprocess_data=True, train_models=True,
             spinner = Spinner("Cleaning and preprocessing data")
             spinner.start()
 
-            result = subprocess.run([sys.executable, 'code/02_data_preprocessing.py'],
+            result = subprocess.run([sys.executable, 'src/02_data_preprocessing.py'],
                                   capture_output=True, text=True)
 
             spinner.stop()
@@ -173,13 +173,13 @@ def run_pipeline(collect_data=True, preprocess_data=True, train_models=True,
 
             # For now, run with default settings (tune_hyperparameters would need to be handled differently)
             if tune_hyperparameters:
-                print("Note: Hyperparameter tuning setting will use default from code/03_model_training.py")
-                print("To enable tuning, edit the tune_hyperparameters variable in code/03_model_training.py")
+                print("Note: Hyperparameter tuning setting will use default from src/03_model_training.py")
+                print("To enable tuning, edit the tune_hyperparameters variable in src/03_model_training.py")
 
             spinner = Spinner("Training models")
             spinner.start()
 
-            result = subprocess.run([sys.executable, 'code/03_model_training.py'],
+            result = subprocess.run([sys.executable, 'src/03_model_training.py'],
                                   capture_output=True, text=True)
 
             spinner.stop()
@@ -210,7 +210,7 @@ def run_pipeline(collect_data=True, preprocess_data=True, train_models=True,
                 spinner = Spinner("Running model analysis")
                 spinner.start()
 
-                result = subprocess.run([sys.executable, 'code/05_comprehensive_comparison.py'],
+                result = subprocess.run([sys.executable, 'src/05_comprehensive_comparison.py'],
                                       capture_output=True, text=True)
 
                 spinner.stop()
@@ -236,7 +236,7 @@ def run_pipeline(collect_data=True, preprocess_data=True, train_models=True,
                 spinner = Spinner("Analyzing performance across income levels and regions")
                 spinner.start()
 
-                result = subprocess.run([sys.executable, 'code/06_segmentation_analysis.py'],
+                result = subprocess.run([sys.executable, 'src/06_segmentation_analysis.py'],
                                       capture_output=True, text=True)
 
                 spinner.stop()
@@ -262,7 +262,7 @@ def run_pipeline(collect_data=True, preprocess_data=True, train_models=True,
                 spinner = Spinner("Running bootstrap, permutation, and consistency tests")
                 spinner.start()
 
-                result = subprocess.run([sys.executable, 'code/07_statistical_tests.py'],
+                result = subprocess.run([sys.executable, 'src/07_statistical_tests.py'],
                                       capture_output=True, text=True)
 
                 spinner.stop()
@@ -284,7 +284,7 @@ def run_pipeline(collect_data=True, preprocess_data=True, train_models=True,
             spinner = Spinner("Generating LaTeX table content from results")
             spinner.start()
 
-            result = subprocess.run([sys.executable, 'code/08_populate_paper_tables.py'],
+            result = subprocess.run([sys.executable, 'src/08_populate_paper_tables.py'],
                                   capture_output=True, text=True)
 
             spinner.stop()
@@ -350,7 +350,7 @@ def run_pipeline(collect_data=True, preprocess_data=True, train_models=True,
         print("  5. Check output/statistical_tests_summary.txt for significance tests")
         print("  6. View output/segmentation_income_features.png for context-specific patterns")
         print("  7. Examine output/statistical_tests_bootstrap.png for confidence intervals")
-        print("  8. Use code/04_predict.py to make predictions on new data")
+        print("  8. Use src/04_predict.py to make predictions on new data")
         print("  9. Compile paper/research_paper.tex to get the full academic paper")
         print("─"*70)
         

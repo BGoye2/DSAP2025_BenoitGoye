@@ -15,7 +15,7 @@ The project uses five tree-based regression models:
 
 ```
 .
-├── code/                           # Python scripts
+├── src/                            # Python scripts
 │   ├── 01_data_collection.py      # Fetch data from World Bank API
 │   ├── 02_data_preprocessing.py   # Clean and prepare data
 │   ├── 03_model_training.py       # Train and evaluate models
@@ -113,7 +113,7 @@ The additional time includes:
 Collect data from the World Bank API:
 
 ```bash
-cd code
+cd src
 python 01_data_collection.py
 ```
 
@@ -129,7 +129,7 @@ This will:
 Clean and prepare the data:
 
 ```bash
-cd code
+cd src
 python 02_data_preprocessing.py
 ```
 
@@ -150,7 +150,7 @@ This will:
 Train all five models:
 
 ```bash
-cd code
+cd src
 python 03_model_training.py
 ```
 
@@ -180,7 +180,7 @@ This will:
 Perform in-depth analysis and comparison of all models:
 
 ```bash
-cd code
+cd src
 python 05_comprehensive_comparison.py
 ```
 
@@ -215,7 +215,7 @@ This will:
 **Note:** This step runs automatically when using `python main.py`. You can also run it standalone:
 
 ```bash
-cd code
+cd src
 python 06_segmentation_analysis.py
 ```
 
@@ -256,7 +256,7 @@ This will:
 **Note:** This step runs automatically when using `python main.py`. You can also run it standalone:
 
 ```bash
-cd code
+cd src
 python 07_statistical_tests.py
 ```
 
@@ -292,7 +292,7 @@ This will:
 **Note:** This step runs automatically when using `python main.py`. You can also run it standalone:
 
 ```bash
-cd code
+cd src
 python 08_populate_paper_tables.py
 ```
 
@@ -318,7 +318,7 @@ The script automatically modifies [paper/research_paper.tex](paper/research_pape
 Use trained models to predict GINI for new data:
 
 ```bash
-cd code
+cd src
 python 04_predict.py
 ```
 
@@ -326,8 +326,8 @@ python 04_predict.py
 
 ```python
 import sys
-sys.path.append('code')
-from code.predict_04 import GINIPredictor
+sys.path.append('src')
+from src.predict_04 import GINIPredictor
 
 # Initialize predictor (models will be trained automatically)
 predictor = GINIPredictor()
@@ -428,28 +428,28 @@ Expected performance metrics (will vary based on data):
 ## Customization
 
 ### Modify data collection period:
-Edit `code/01_data_collection.py`:
+Edit `src/01_data_collection.py`:
 ```python
 collector.collect_all_data(start_year=2010, end_year=2023)
 ```
 
 ### Change train/test split:
-Edit `code/03_model_training.py`:
+Edit `src/03_model_training.py`:
 ```python
 predictor.load_and_split_data(test_size=0.3)  # 30% test set
 ```
 
 ### Add/remove features:
-Edit the `indicators` list in `code/01_data_collection.py`
+Edit the `indicators` list in `src/01_data_collection.py`
 
 ### Try different imputation strategies:
-Edit `code/02_data_preprocessing.py`:
+Edit `src/02_data_preprocessing.py`:
 ```python
 preprocessor.handle_missing_values(strategy='knn')  # or 'mean', 'drop'
 ```
 
 ### Enable outlier removal:
-Uncomment this line in `code/02_data_preprocessing.py`:
+Uncomment this line in `src/02_data_preprocessing.py`:
 ```python
 preprocessor.remove_outliers(method='iqr', threshold=3.0)
 ```
@@ -500,13 +500,13 @@ All generated files are saved in the `output/` folder:
 ## Troubleshooting
 
 ### API Rate Limiting
-If you get rate limit errors, increase the sleep time in `code/01_data_collection.py`:
+If you get rate limit errors, increase the sleep time in `src/01_data_collection.py`:
 ```python
 time.sleep(1.0)  # Instead of 0.5
 ```
 
 ### Missing Data Issues
-If too many features are dropped, lower the threshold in `code/02_data_preprocessing.py`:
+If too many features are dropped, lower the threshold in `src/02_data_preprocessing.py`:
 ```python
 preprocessor.handle_missing_values(threshold=0.8)  # Allow 80% missing
 ```
