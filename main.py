@@ -1,481 +1,405 @@
 """
-Main Pipeline Script
-Runs the entire GINI prediction workflow from data collection to model training
+GINI Coefficient Prediction Pipeline
+=====================================
+Main script to run the complete machine learning pipeline for predicting
+GINI coefficients using World Bank data.
+
+Usage:
+    python main.py                    # Quick run (recommended)
+    python main.py --mode fast        # Fast run with recent data only
+    python main.py --mode optimized   # With hyperparameter tuning (slower)
+    python main.py --mode custom --skip-collection --start-year 2010
+
+For more information, run: python main.py --help
 """
 
 import os
 import sys
-import time
-import threading
+import subprocess
 from datetime import datetime
+from src.utils import print_header, print_step, Spinner
 
 
-def print_header(text):
+def _run_script(script_path, spinner_message, success_message):
     """
-    Print a formatted header with border lines for visual separation.
+    Run a pipeline script with spinner animation and error handling.
 
     Parameters:
     -----------
-    text : str
-        The header text to display
+    script_path : str
+        Path to the script to execute
+    spinner_message : str
+        Message to display during execution
+    success_message : str
+        Message to display on successful completion
+
+    Returns:
+    --------
+    subprocess.CompletedProcess
+        The result of the subprocess execution
+
+    Raises:
+    -------
+    RuntimeError
+        If the script execution fails
     """
-    print("\n" + "="*70)
-    print(f"  {text}")
-    print("="*70 + "\n")
+    spinner = Spinner(spinner_message)
+    spinner.start()
+
+    result = subprocess.run(
+        [sys.executable, script_path],
+        capture_output=True,
+        text=True
+    )
+
+    spinner.stop()
+
+    if result.returncode != 0:
+        print("STDOUT:", result.stdout)
+        print("STDERR:", result.stderr)
+        raise RuntimeError(f"{script_path} failed with return code {result.returncode}")
+
+    print(f"✓ {success_message}")
+    return result
 
 
-def print_step(step_num, total_steps, description):
+def _validate_file_exists(filepath, error_message):
     """
-    Print progress information for a pipeline step.
+    Validate that a required file exists.
 
     Parameters:
     -----------
-    step_num : int
-        Current step number
-    total_steps : int
-        Total number of steps in the pipeline
-    description : str
-        Description of the current step
+    filepath : str
+        Path to the file to check
+    error_message : str
+        Error message to display if file doesn't exist
+
+    Raises:
+    -------
+    FileNotFoundError
+        If the file doesn't exist
     """
-    print(f"\n{'─'*70}")
-    print(f"STEP {step_num}/{total_steps}: {description}")
-    print(f"{'─'*70}\n")
+    if not os.path.exists(filepath):
+        raise FileNotFoundError(error_message)
 
 
-class Spinner:
+def run_pipeline(
+    collect_data=True,
+    preprocess_data=True,
+    train_models=True,
+    compare_models=True,
+    tune_hyperparameters=False,
+    start_year=2000,
+    end_year=2023
+):
     """
-    A simple loading spinner for long-running tasks.
+    Execute the complete GINI prediction pipeline.
 
-    Displays an animated spinner in the terminal to indicate progress
-    during operations that take significant time to complete.
-    """
+    The pipeline consists of the following stages:
+    1. Data Collection - Fetch data from World Bank API
+    2. Data Preprocessing - Clean and prepare data for modeling
+    3. Model Training - Train multiple ML models
+    4. Model Comparison - Compare and evaluate models
+    5. Segmentation Analysis - Analyze performance by income/region
+    6. Statistical Tests - Validate results with statistical tests
+    7. LaTeX Tables - Generate publication-ready tables
 
-    def __init__(self, message="Processing"):
-        """
-        Initialize the spinner.
-
-        Parameters:
-        -----------
-        message : str
-            Message to display next to the spinner animation
-        """
-        # Unicode Braille patterns for smooth animation
-        self.spinner_chars = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏']
-        self.message = message
-        self.running = False
-        self.thread = None
-
-    def _spin(self):
-        """
-        Internal method to animate the spinner.
-
-        Runs in a separate thread and cycles through spinner characters
-        until stopped by the stop() method.
-        """
-        i = 0
-        while self.running:
-            # Display current spinner character with message
-            sys.stdout.write(f'\r{self.spinner_chars[i % len(self.spinner_chars)]} {self.message}...')
-            sys.stdout.flush()
-            time.sleep(0.1)  # Animation speed
-            i += 1
-
-    def start(self):
-        """
-        Start the spinner animation in a background thread.
-
-        Creates a daemon thread to avoid blocking the main program execution.
-        """
-        self.running = True
-        self.thread = threading.Thread(target=self._spin)
-        self.thread.daemon = True  # Thread will terminate when main program exits
-        self.thread.start()
-
-    def stop(self, final_message=None):
-        """
-        Stop the spinner animation and optionally display a final message.
-
-        Parameters:
-        -----------
-        final_message : str, optional
-            Message to display after stopping the spinner
-        """
-        self.running = False
-        if self.thread:
-            self.thread.join()  # Wait for spinner thread to finish
-        # Clear the spinner line
-        sys.stdout.write('\r' + ' ' * (len(self.message) + 10) + '\r')
-        if final_message:
-            print(final_message)
-        sys.stdout.flush()
-
-
-def run_pipeline(collect_data=True, preprocess_data=True, train_models=True,
-                compare_models=True, tune_hyperparameters=False, 
-                start_year=2000, end_year=2023):
-    """
-    Run the complete pipeline
-    
     Parameters:
     -----------
-    collect_data : bool
+    collect_data : bool, default=True
         Whether to collect data from World Bank API
-    preprocess_data : bool
+    preprocess_data : bool, default=True
         Whether to preprocess the data
-    train_models : bool
+    train_models : bool, default=True
         Whether to train the models
-    compare_models : bool
-        Whether to run comprehensive model comparison
-    tune_hyperparameters : bool
-        Whether to perform hyperparameter tuning (slower but better)
-    start_year : int
+    compare_models : bool, default=True
+        Whether to run comprehensive model comparison and analysis
+    tune_hyperparameters : bool, default=False
+        Whether to perform hyperparameter tuning (slower but better results)
+    start_year : int, default=2000
         Start year for data collection
-    end_year : int
+    end_year : int, default=2023
         End year for data collection
     """
-    
-    # Record start time for performance tracking
     start_time = datetime.now()
 
-    # Calculate total number of steps for progress tracking
-    # Total steps includes segmentation, statistical tests, and table population if compare_models is True
+    # Calculate total steps for progress tracking
     total_steps = sum([collect_data, preprocess_data, train_models, compare_models])
     if compare_models:
-        total_steps += 3  # Add segmentation analysis, statistical tests, and LaTeX table population
+        total_steps += 3  # Segmentation, statistical tests, LaTeX tables
     current_step = 0
 
+    # Display configuration
     print_header("GINI COEFFICIENT PREDICTION PIPELINE")
     print(f"Start time: {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
-    print(f"Configuration:")
-    print(f"  - Collect data: {collect_data}")
-    print(f"  - Preprocess data: {preprocess_data}")
-    print(f"  - Train models: {train_models}")
-    print(f"  - Compare models: {compare_models}")
+    print(f"\nConfiguration:")
+    print(f"  • Collect data: {collect_data}")
+    print(f"  • Preprocess data: {preprocess_data}")
+    print(f"  • Train models: {train_models}")
+    print(f"  • Compare models: {compare_models}")
     if compare_models:
-        print(f"  - Segmentation analysis: Enabled")
-        print(f"  - Statistical tests: Enabled")
-    print(f"  - Hyperparameter tuning: {tune_hyperparameters}")
-    print(f"  - Year range: {start_year}-{end_year}")
-    
+        print(f"  • Segmentation analysis: Enabled")
+        print(f"  • Statistical tests: Enabled")
+        print(f"  • LaTeX table generation: Enabled")
+    print(f"  • Hyperparameter tuning: {tune_hyperparameters}")
+    print(f"  • Year range: {start_year}-{end_year}")
+
     try:
-        # Step 1: Data Collection
-        # -------------------------------------------------------------------------
-        # Fetches economic and social indicators from the World Bank API
-        # Output: output/world_bank_data.csv
+        # STEP 1: Data Collection
         if collect_data:
             current_step += 1
             print_step(current_step, total_steps, "Data Collection from World Bank API")
 
-            # Run as subprocess to avoid namespace issues and ensure clean execution
-            import subprocess
+            _run_script(
+                'src/01_data_collection.py',
+                "Fetching data from World Bank API",
+                "Data collection completed successfully"
+            )
 
-            spinner = Spinner("Fetching data from World Bank API")
-            spinner.start()
+            _validate_file_exists(
+                'output/world_bank_data.csv',
+                "Data collection failed - world_bank_data.csv not found"
+            )
 
-            # Execute the data collection script
-            result = subprocess.run([sys.executable, 'src/01_data_collection.py'],
-                                  capture_output=True, text=True)
-
-            spinner.stop()
-
-            # Check for errors during data collection
-            if result.returncode != 0:
-                print("STDOUT:", result.stdout)
-                print("STDERR:", result.stderr)
-                raise RuntimeError(f"Data collection failed with return code {result.returncode}")
-
-            # Verify that the output file was created successfully
-            if not os.path.exists('output/world_bank_data.csv'):
-                raise FileNotFoundError("Data collection failed - world_bank_data.csv not found")
-
-            print("✓ Data collection completed successfully")
-        
-        # Step 2: Data Preprocessing
-        # -------------------------------------------------------------------------
-        # Cleans data, handles missing values, engineers features, and prepares for modeling
-        # Input: output/world_bank_data.csv
-        # Output: output/processed_data.csv, output/feature_names.csv
+        # STEP 2: Data Preprocessing
         if preprocess_data:
             current_step += 1
             print_step(current_step, total_steps, "Data Preprocessing")
 
-            # Check that previous step completed successfully
-            if not os.path.exists('output/world_bank_data.csv'):
-                raise FileNotFoundError("world_bank_data.csv not found. Run data collection first.")
+            _validate_file_exists(
+                'output/world_bank_data.csv',
+                "world_bank_data.csv not found. Run data collection first."
+            )
 
-            # Run as subprocess to avoid namespace issues
-            import subprocess
+            _run_script(
+                'src/02_data_preprocessing.py',
+                "Cleaning and preprocessing data",
+                "Data preprocessing completed successfully"
+            )
 
-            spinner = Spinner("Cleaning and preprocessing data")
-            spinner.start()
+            _validate_file_exists(
+                'output/processed_data.csv',
+                "Preprocessing failed - processed_data.csv not found"
+            )
 
-            # Execute the preprocessing script
-            result = subprocess.run([sys.executable, 'src/02_data_preprocessing.py'],
-                                  capture_output=True, text=True)
-
-            spinner.stop()
-
-            # Check for errors during preprocessing
-            if result.returncode != 0:
-                print("STDOUT:", result.stdout)
-                print("STDERR:", result.stderr)
-                raise RuntimeError(f"Preprocessing failed with return code {result.returncode}")
-
-            # Verify that the output file was created successfully
-            if not os.path.exists('output/processed_data.csv'):
-                raise FileNotFoundError("Preprocessing failed - processed_data.csv not found")
-
-            print("✓ Data preprocessing completed successfully")
-        
-        # Step 3: Model Training
-        # -------------------------------------------------------------------------
-        # Trains Decision Tree, Random Forest, Gradient Boosting, XGBoost, and LightGBM
-        # Input: output/processed_data.csv, output/feature_names.csv
-        # Output: output/model_comparison.csv, plots (feature_importance.png, predictions_plot.png, residuals_plot.png)
+        # STEP 3: Model Training
         if train_models:
             current_step += 1
             print_step(current_step, total_steps, "Model Training and Evaluation")
 
-            # Check that previous step completed successfully
-            if not os.path.exists('output/processed_data.csv'):
-                raise FileNotFoundError("processed_data.csv not found. Run preprocessing first.")
+            _validate_file_exists(
+                'output/processed_data.csv',
+                "processed_data.csv not found. Run preprocessing first."
+            )
 
-            # Run as subprocess to avoid namespace issues
-            import subprocess
-
-            # Note: Hyperparameter tuning is controlled within the script itself
             if tune_hyperparameters:
                 print("Note: Hyperparameter tuning setting will use default from src/03_model_training.py")
-                print("To enable tuning, edit the tune_hyperparameters variable in src/03_model_training.py")
+                print("To enable tuning, edit the tune_hyperparameters variable in src/03_model_training.py\n")
 
-            spinner = Spinner("Training models")
-            spinner.start()
+            _run_script(
+                'src/03_model_training.py',
+                "Training models (Decision Tree, Random Forest, XGBoost, LightGBM)",
+                "Model training completed successfully"
+            )
 
-            # Execute the model training script
-            result = subprocess.run([sys.executable, 'src/03_model_training.py'],
-                                  capture_output=True, text=True)
+            if not os.path.exists('output/model_comparison.csv'):
+                print("⚠ Warning: model_comparison.csv not found")
 
-            spinner.stop()
-
-            # Check for errors during training
-            if result.returncode != 0:
-                print("STDOUT:", result.stdout)
-                print("STDERR:", result.stderr)
-                raise RuntimeError(f"Model training failed with return code {result.returncode}")
-
-            # Check if comparison file was created
-            if os.path.exists('output/model_comparison.csv'):
-                print("✓ Model training completed successfully")
-            else:
-                print("Warning: model_comparison.csv not found")
-        
-        # Step 4: Comprehensive Model Comparison
-        # -------------------------------------------------------------------------
-        # Performs statistical analysis and comprehensive evaluation of all models
-        # Input: output/processed_data.csv
-        # Output: comprehensive_metrics.csv, statistical_comparison.csv, segment_performance.csv,
-        #         comprehensive_comparison.png, error_analysis.png, segment_performance.png,
-        #         model_comparison_report.txt
+        # STEP 4: Comprehensive Model Comparison
         if compare_models:
             current_step += 1
-            print_step(current_step, total_steps, "Model Comparison")
+            print_step(current_step, total_steps, "Comprehensive Model Comparison")
 
             if not os.path.exists('output/processed_data.csv'):
-                print("Warning: processed_data.csv not found")
-                print("Skipping comparison step...")
+                print("⚠ Warning: processed_data.csv not found. Skipping comparison step...")
             else:
-                # Run as subprocess to avoid namespace issues
-                import subprocess
+                _run_script(
+                    'src/05_comprehensive_comparison.py',
+                    "Running comprehensive model analysis",
+                    "Model comparison completed successfully"
+                )
 
-                spinner = Spinner("Running model analysis")
-                spinner.start()
-
-                # Execute the comprehensive comparison script
-                result = subprocess.run([sys.executable, 'src/05_comprehensive_comparison.py'],
-                                      capture_output=True, text=True)
-
-                spinner.stop()
-
-                # Check for errors during comparison
-                if result.returncode != 0:
-                    print("STDOUT:", result.stdout)
-                    print("STDERR:", result.stderr)
-                    raise RuntimeError(f"Comparison failed with return code {result.returncode}")
-
-                print("✓ Model comparison completed successfully")
-
-        # Step 5: Segmentation Analysis
-        # -------------------------------------------------------------------------
-        # Analyzes model performance across different income levels and geographic regions
-        # Identifies context-specific patterns and feature importance differences
-        # Input: output/processed_data.csv, output/feature_names.csv
-        # Output: segmentation_income_*.csv/png, segmentation_regional_*.csv/png,
-        #         segmentation_summary_report.txt
-        if compare_models:  # Run if we're doing comprehensive analysis
+        # STEP 5: Segmentation Analysis
+        if compare_models:
             current_step += 1
             print_step(current_step, total_steps, "Segmentation Analysis")
 
             if not os.path.exists('output/processed_data.csv'):
-                print("Warning: processed_data.csv not found")
-                print("Skipping segmentation analysis...")
+                print("⚠ Warning: processed_data.csv not found. Skipping segmentation analysis...")
             else:
-                import subprocess
+                try:
+                    _run_script(
+                        'src/06_segmentation_analysis.py',
+                        "Analyzing performance across income levels and regions",
+                        "Segmentation analysis completed successfully"
+                    )
+                except RuntimeError as e:
+                    print(f"⚠ Warning: Segmentation analysis failed but continuing pipeline...")
+                    print(f"  Error: {e}")
 
-                spinner = Spinner("Analyzing performance across income levels and regions")
-                spinner.start()
-
-                # Execute the segmentation analysis script
-                result = subprocess.run([sys.executable, 'src/06_segmentation_analysis.py'],
-                                      capture_output=True, text=True)
-
-                spinner.stop()
-
-                # Check for errors (but don't stop pipeline if this fails)
-                if result.returncode != 0:
-                    print("STDOUT:", result.stdout)
-                    print("STDERR:", result.stderr)
-                    print("Warning: Segmentation analysis failed but continuing pipeline...")
-                else:
-                    print("✓ Segmentation analysis completed successfully")
-
-        # Step 6: Statistical Significance Tests
-        # -------------------------------------------------------------------------
-        # Performs bootstrap confidence intervals, permutation tests, and cross-model consistency
-        # Validates feature importance and model significance
-        # Input: output/processed_data.csv, output/feature_names.csv
-        # Output: statistical_tests_bootstrap.csv/png, statistical_tests_permutation.csv,
-        #         statistical_tests_consistency.csv/png, statistical_tests_summary.txt
-        if compare_models:  # Run if we're doing comprehensive analysis
+        # STEP 6: Statistical Significance Tests
+        if compare_models:
             current_step += 1
             print_step(current_step, total_steps, "Statistical Significance Tests")
 
             if not os.path.exists('output/processed_data.csv'):
-                print("Warning: processed_data.csv not found")
-                print("Skipping statistical tests...")
+                print("⚠ Warning: processed_data.csv not found. Skipping statistical tests...")
             else:
-                import subprocess
+                try:
+                    _run_script(
+                        'src/07_statistical_tests.py',
+                        "Running bootstrap, permutation, and consistency tests",
+                        "Statistical significance tests completed successfully"
+                    )
+                except RuntimeError as e:
+                    print(f"⚠ Warning: Statistical tests failed but continuing pipeline...")
+                    print(f"  Error: {e}")
 
-                spinner = Spinner("Running bootstrap, permutation, and consistency tests")
-                spinner.start()
-
-                # Execute the statistical tests script
-                result = subprocess.run([sys.executable, 'src/07_statistical_tests.py'],
-                                      capture_output=True, text=True)
-
-                spinner.stop()
-
-                # Check for errors (but don't stop pipeline if this fails)
-                if result.returncode != 0:
-                    print("STDOUT:", result.stdout)
-                    print("STDERR:", result.stderr)
-                    print("Warning: Statistical tests failed but continuing pipeline...")
-                else:
-                    print("✓ Statistical significance tests completed successfully")
-
-        # Step 7: Populate LaTeX Tables
-        # -------------------------------------------------------------------------
-        # Generates LaTeX tables from results and updates the research paper
-        # Input: output/processed_data.csv, output/model_comparison.csv,
-        #        output/segmentation_income_results.csv
-        # Output: report/tables/*.tex files, updated report/research_paper.tex
+        # STEP 7: Populate LaTeX Tables
         if compare_models:
             current_step += 1
-            print_step(current_step, total_steps, "Populating LaTeX Tables")
+            print_step(current_step, total_steps, "LaTeX Table Generation")
 
-            import subprocess
+            try:
+                _run_script(
+                    'src/08_populate_paper_tables.py',
+                    "Generating LaTeX table content from results",
+                    "LaTeX tables generated and inserted into research_paper.tex"
+                )
+            except RuntimeError as e:
+                print(f"⚠ Warning: Table population failed but continuing pipeline...")
+                print(f"  Error: {e}")
 
-            spinner = Spinner("Generating LaTeX table content from results")
-            spinner.start()
+        # Display final summary
+        _display_completion_summary(start_time)
 
-            # Execute the table population script
-            result = subprocess.run([sys.executable, 'src/08_populate_paper_tables.py'],
-                                  capture_output=True, text=True)
-
-            spinner.stop()
-
-            # Check for errors (but don't stop pipeline if this fails)
-            if result.returncode != 0:
-                print("STDOUT:", result.stdout)
-                print("STDERR:", result.stderr)
-                print("Warning: Table population failed but continuing pipeline...")
-            else:
-                print("✓ LaTeX tables generated and inserted into research_paper.tex")
-
-        # Final Summary
-        # -------------------------------------------------------------------------
-        # Display execution summary and list all generated output files
-        end_time = datetime.now()
-        duration = end_time - start_time
-
-        print_header("PIPELINE COMPLETED SUCCESSFULLY")
-        print(f"End time: {end_time.strftime('%Y-%m-%d %H:%M:%S')}")
-        print(f"Total duration: {duration}")
-
-        print("\nGenerated files in output/ folder:")
-        output_files = [
-            'world_bank_data.csv',
-            'processed_data.csv',
-            'feature_names.csv',
-            'model_comparison.csv',
-            'feature_importance.png',
-            'predictions_plot.png',
-            'residuals_plot.png',
-            'comprehensive_metrics.csv',
-            'statistical_comparison.csv',
-            'segment_performance.csv',
-            'comprehensive_comparison.png',
-            'error_analysis.png',
-            'segment_performance.png',
-            'model_comparison_report.txt',
-            'segmentation_income_performance.png',
-            'segmentation_income_features.png',
-            'segmentation_income_results.csv',
-            'segmentation_regional_performance.png',
-            'segmentation_regional_features.png',
-            'segmentation_regional_results.csv',
-            'segmentation_summary_report.txt',
-            'statistical_tests_bootstrap.csv',
-            'statistical_tests_bootstrap.png',
-            'statistical_tests_permutation.csv',
-            'statistical_tests_consistency.csv',
-            'statistical_tests_consistency.png',
-            'statistical_tests_summary.txt'
-        ]
-
-        for filename in output_files:
-            filepath = os.path.join('output', filename)
-            if os.path.exists(filepath):
-                size = os.path.getsize(filepath)
-                print(f"  ✓ {filename:35s} ({size:,} bytes)")
-
-        print("\n" + "─"*70)
-        print("Next steps:")
-        print("  1. Review output/model_comparison_report.txt for comprehensive analysis")
-        print("  2. Check output/comprehensive_metrics.csv for detailed performance metrics")
-        print("  3. Examine output/comprehensive_comparison.png for visual comparison")
-        print("  4. Review output/segmentation_summary_report.txt for income-level insights")
-        print("  5. Check output/statistical_tests_summary.txt for significance tests")
-        print("  6. View output/segmentation_income_features.png for context-specific patterns")
-        print("  7. Examine output/statistical_tests_bootstrap.png for confidence intervals")
-        print("  8. Use src/04_predict.py to make predictions on new data")
-        print("  9. Compile report/research_paper.tex to get the full academic report")
-        print("─"*70)
-        
     except Exception as e:
-        print_header("PIPELINE FAILED")
-        print(f"Error: {str(e)}")
-        print(f"\nFailed at step {current_step}/{total_steps}")
-        import traceback
-        traceback.print_exc()
+        _display_error_summary(e, current_step, total_steps)
         sys.exit(1)
 
 
+def _display_completion_summary(start_time):
+    """
+    Display pipeline completion summary and list generated files.
+
+    Parameters:
+    -----------
+    start_time : datetime
+        Pipeline start time for duration calculation
+    """
+    end_time = datetime.now()
+    duration = end_time - start_time
+
+    print_header("PIPELINE COMPLETED SUCCESSFULLY")
+    print(f"End time: {end_time.strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"Total duration: {duration}")
+
+    # List of expected output files
+    output_files = [
+        'world_bank_data.csv',
+        'processed_data.csv',
+        'feature_names.csv',
+        'model_comparison.csv',
+        'feature_importance.png',
+        'predictions_plot.png',
+        'residuals_plot.png',
+        'comprehensive_metrics.csv',
+        'statistical_comparison.csv',
+        'segment_performance.csv',
+        'comprehensive_comparison.png',
+        'error_analysis.png',
+        'segment_performance.png',
+        'model_comparison_report.txt',
+        'segmentation_income_performance.png',
+        'segmentation_income_features.png',
+        'segmentation_income_results.csv',
+        'segmentation_regional_performance.png',
+        'segmentation_regional_features.png',
+        'segmentation_regional_results.csv',
+        'segmentation_summary_report.txt',
+        'statistical_tests_bootstrap.csv',
+        'statistical_tests_bootstrap.png',
+        'statistical_tests_permutation.csv',
+        'statistical_tests_consistency.csv',
+        'statistical_tests_consistency.png',
+        'statistical_tests_summary.txt'
+    ]
+
+    print("\n" + "─"*70)
+    print("Generated files in output/ folder:")
+    print("─"*70)
+
+    for filename in output_files:
+        filepath = os.path.join('output', filename)
+        if os.path.exists(filepath):
+            size = os.path.getsize(filepath)
+            print(f"  ✓ {filename:40s} ({size:,} bytes)")
+
+    print("\n" + "─"*70)
+    print("Next Steps - Review Results:")
+    print("─"*70)
+    print("  1. Model Performance:")
+    print("     • output/model_comparison_report.txt - Comprehensive analysis")
+    print("     • output/comprehensive_metrics.csv - Detailed metrics")
+    print("     • output/comprehensive_comparison.png - Visual comparison")
+    print()
+    print("  2. Segmentation Insights:")
+    print("     • output/segmentation_summary_report.txt - Income-level insights")
+    print("     • output/segmentation_income_features.png - Context-specific patterns")
+    print()
+    print("  3. Statistical Validation:")
+    print("     • output/statistical_tests_summary.txt - Significance tests")
+    print("     • output/statistical_tests_bootstrap.png - Confidence intervals")
+    print()
+    print("  4. Make Predictions:")
+    print("     • Use src/04_predict.py to predict GINI on new data")
+    print()
+    print("  5. Academic Report:")
+    print("     • Compile report/research_paper.tex for full publication")
+    print("─"*70)
+
+
+def _display_error_summary(error, current_step, total_steps):
+    """
+    Display error summary when pipeline fails.
+
+    Parameters:
+    -----------
+    error : Exception
+        The exception that caused the failure
+    current_step : int
+        Step number where failure occurred
+    total_steps : int
+        Total number of steps in pipeline
+    """
+    print_header("PIPELINE FAILED")
+    print(f"Error: {str(error)}")
+    print(f"Failed at step {current_step}/{total_steps}")
+    print("\n" + "─"*70)
+    print("Troubleshooting:")
+    print("─"*70)
+    print("  • Check that all dependencies are installed")
+    print("  • Verify that output/ directory exists and is writable")
+    print("  • Review error messages above for specific issues")
+    print("  • Try running individual scripts in src/ to isolate the problem")
+    print("─"*70 + "\n")
+
+    import traceback
+    traceback.print_exc()
+
+
+# ============================================================================
+# PRESET PIPELINE CONFIGURATIONS
+# ============================================================================
+
 def quick_run():
     """
-    Quick run with default settings (recommended for most users).
+    Quick run with default settings (RECOMMENDED).
 
-    Runs full pipeline from 2000-2023 without hyperparameter tuning.
-    Completes in ~10-15 minutes depending on system.
+    • Full pipeline from 2000-2023
+    • No hyperparameter tuning
+    • Completes in ~10-15 minutes
+    • Good balance of speed and accuracy
     """
     run_pipeline(
         collect_data=True,
@@ -492,8 +416,9 @@ def fast_run():
     """
     Fast run with recent data only (2015-2023).
 
-    Use for quick testing or when only recent data is needed.
-    Completes faster due to smaller dataset.
+    • Smaller dataset for faster execution
+    • Good for quick testing and debugging
+    • Completes in ~5-8 minutes
     """
     run_pipeline(
         collect_data=True,
@@ -508,10 +433,12 @@ def fast_run():
 
 def optimized_run():
     """
-    Run with hyperparameter tuning for best results (slow).
+    Optimized run with hyperparameter tuning (SLOW).
 
-    Performs grid search for optimal model parameters.
-    Produces best accuracy but takes significantly longer (~1-2 hours).
+    • Full pipeline with grid search optimization
+    • Best possible model accuracy
+    • Completes in ~1-2 hours
+    • Use for final production models
     """
     run_pipeline(
         collect_data=True,
@@ -524,37 +451,89 @@ def optimized_run():
     )
 
 
+# ============================================================================
+# COMMAND LINE INTERFACE
+# ============================================================================
+
 if __name__ == "__main__":
     import argparse
-    
-    parser = argparse.ArgumentParser(description='Run GINI prediction pipeline')
-    parser.add_argument('--mode', type=str, default='quick',
-                       choices=['quick', 'fast', 'optimized', 'custom'],
-                       help='Pipeline mode: quick (default), fast (recent data), optimized (with tuning), or custom')
-    parser.add_argument('--skip-collection', action='store_true',
-                       help='Skip data collection step')
-    parser.add_argument('--skip-preprocessing', action='store_true',
-                       help='Skip preprocessing step')
-    parser.add_argument('--skip-training', action='store_true',
-                       help='Skip model training step')
-    parser.add_argument('--skip-comparison', action='store_true',
-                       help='Skip comprehensive model comparison step')
-    parser.add_argument('--tune', action='store_true',
-                       help='Enable hyperparameter tuning')
-    parser.add_argument('--start-year', type=int, default=2000,
-                       help='Start year for data collection')
-    parser.add_argument('--end-year', type=int, default=2023,
-                       help='End year for data collection')
-    
+
+    parser = argparse.ArgumentParser(
+        description='GINI Coefficient Prediction Pipeline',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  python main.py                              # Quick run (recommended)
+  python main.py --mode fast                  # Fast run with recent data
+  python main.py --mode optimized             # With hyperparameter tuning
+  python main.py --mode custom --skip-collection --start-year 2010
+
+For more information, see the README.md file.
+        """
+    )
+
+    parser.add_argument(
+        '--mode',
+        type=str,
+        default='quick',
+        choices=['quick', 'fast', 'optimized', 'custom'],
+        help='Pipeline mode (default: quick)'
+    )
+
+    parser.add_argument(
+        '--skip-collection',
+        action='store_true',
+        help='Skip data collection step'
+    )
+
+    parser.add_argument(
+        '--skip-preprocessing',
+        action='store_true',
+        help='Skip preprocessing step'
+    )
+
+    parser.add_argument(
+        '--skip-training',
+        action='store_true',
+        help='Skip model training step'
+    )
+
+    parser.add_argument(
+        '--skip-comparison',
+        action='store_true',
+        help='Skip comprehensive model comparison and analysis'
+    )
+
+    parser.add_argument(
+        '--tune',
+        action='store_true',
+        help='Enable hyperparameter tuning (slower but better)'
+    )
+
+    parser.add_argument(
+        '--start-year',
+        type=int,
+        default=2000,
+        help='Start year for data collection (default: 2000)'
+    )
+
+    parser.add_argument(
+        '--end-year',
+        type=int,
+        default=2023,
+        help='End year for data collection (default: 2023)'
+    )
+
     args = parser.parse_args()
-    
+
+    # Execute selected pipeline mode
     if args.mode == 'quick':
         quick_run()
     elif args.mode == 'fast':
         fast_run()
     elif args.mode == 'optimized':
         optimized_run()
-    else:  # custom
+    else:  # custom mode
         run_pipeline(
             collect_data=not args.skip_collection,
             preprocess_data=not args.skip_preprocessing,
