@@ -27,7 +27,9 @@ This project uses five tree-based regression models to predict income inequality
 │   ├── 09_populate_paper_tables.py     # Generate LaTeX tables
 │   ├── utils.py                    # Utility functions (Spinner, print helpers)
 │   └── config/                     # Configuration files
-│       └── country_regions.json   # World Bank regional classifications
+│       ├── constants.py            # Project constants and hyperparameters
+│       ├── country_regions.json   # World Bank regional classifications
+│       └── indicators.py           # World Bank indicator definitions
 ├── output/                         # Generated outputs
 │   ├── *.csv                      # Data and metrics
 │   ├── *.png                      # Visualizations

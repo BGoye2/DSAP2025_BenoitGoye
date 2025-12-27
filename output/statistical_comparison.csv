@@ -1,11 +1,11 @@
 Comparison,t-statistic,p-value,Significant (α=0.05),Better Model
-Decision Tree vs Random Forest,4.837587068545909,1.9438503593434453e-06,Yes,Random Forest
-Decision Tree vs Gradient Boosting,6.058173538192314,3.4366643619962937e-09,Yes,Gradient Boosting
-Decision Tree vs XGBoost,5.93294899959772,6.929540676191918e-09,Yes,XGBoost
-Decision Tree vs LightGBM,5.1175674650309615,5.021065944793353e-07,Yes,LightGBM
-Random Forest vs Gradient Boosting,2.331104872875324,0.0202932216792441,Yes,Gradient Boosting
-Random Forest vs XGBoost,1.886907159109948,0.05996838124642678,No,XGBoost
-Random Forest vs LightGBM,0.543176596610184,0.5873406814964286,No,LightGBM
-Gradient Boosting vs XGBoost,-0.8750690842285503,0.3821133488044518,No,Gradient Boosting
-Gradient Boosting vs LightGBM,-2.7451102606790956,0.006349049552272665,Yes,Gradient Boosting
-XGBoost vs LightGBM,-2.01955518947988,0.04416193052100728,Yes,XGBoost
+Decision Tree vs Random Forest,4.76921754434741,2.6801199623545974e-06,Yes,Random Forest
+Decision Tree vs Gradient Boosting,5.874638403817089,9.568534480336499e-09,Yes,Gradient Boosting
+Decision Tree vs XGBoost,5.514793525375374,6.632514487070746e-08,Yes,XGBoost
+Decision Tree vs LightGBM,4.985662345897991,9.573443859259568e-07,Yes,LightGBM
+Random Forest vs Gradient Boosting,2.1589389787815545,0.03150784767726282,Yes,Gradient Boosting
+Random Forest vs XGBoost,1.191196206746224,0.23435272017106185,No,XGBoost
+Random Forest vs LightGBM,0.43495161420179074,0.6638553072407571,No,LightGBM
+Gradient Boosting vs XGBoost,-1.511848659793346,0.13144003277229413,No,Gradient Boosting
+Gradient Boosting vs LightGBM,-2.67392109760925,0.007834867580308397,Yes,Gradient Boosting
+XGBoost vs LightGBM,-1.13345359522948,0.25776979232972247,No,XGBoost
