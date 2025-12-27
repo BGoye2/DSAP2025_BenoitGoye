@@ -1,7 +1,7 @@
 """
-Machine Learning Models for GINI Coefficient Prediction
-
-This script trains and evaluates five tree-based regression models to predict income inequality:
+Model Training for GINI Coefficient Prediction
+================================================
+This script trains five tree-based regression models:
 - Decision Tree: Simple, interpretable baseline model
 - Random Forest: Ensemble of decision trees with bagging
 - Gradient Boosting: Sequential ensemble with boosting
@@ -9,43 +9,54 @@ This script trains and evaluates five tree-based regression models to predict in
 - LightGBM: Fast gradient boosting with leaf-wise growth
 
 Features:
+- Train/test data splitting
 - Optional hyperparameter tuning via GridSearchCV
 - Cross-validation for robust performance estimation
-- Comprehensive metrics (RMSE, MAE, R²)
-- Feature importance analysis
-- Prediction and residual visualization
+- Model persistence via .pkl files
 
 Input: output/processed_data.csv, output/feature_names.csv
-Output: output/model_comparison.csv, output/feature_importance.png,
-        output/predictions_plot.png, output/residuals_plot.png
+Output: Trained models saved to output/trained_models.pkl
 
-Note: Models are trained on-demand and not saved to disk (.pkl files).
-      This avoids compatibility issues and ensures reproducibility.
+Note: Models are always saved to ensure single training per pipeline run.
+      Other scripts load these models instead of retraining.
 """
 
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
 from sklearn.model_selection import train_test_split, cross_val_score, GridSearchCV
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
-from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from sklearn.preprocessing import StandardScaler
 import xgboost as xgb
 import lightgbm as lgb
+from typing import Dict, Tuple
 import joblib
+import hashlib
+from datetime import datetime
 import warnings
+
+from config.constants import (
+    DEFAULT_RANDOM_SEED,
+    PROCESSED_DATA_PATH,
+    FEATURE_NAMES_PATH,
+    MODELS_PATH,
+    DEFAULT_HYPERPARAMETERS,
+    HYPERPARAMETER_GRIDS,
+    CV_FOLDS,
+    CV_SCORING,
+    SECTION_SEPARATOR
+)
+
 warnings.filterwarnings('ignore')
 
 
-class GINIPredictor:
-    """Train and evaluate tree-based models for GINI prediction"""
-    
-    def __init__(self, data_path: str = 'output/processed_data.csv'):
+class ModelTrainer:
+    """Train tree-based models for GINI coefficient prediction"""
+
+    def __init__(self, data_path: str = PROCESSED_DATA_PATH):
         """
-        Initialize predictor
-        
+        Initialize trainer
+
         Parameters:
         -----------
         data_path : str
@@ -58,16 +69,37 @@ class GINIPredictor:
         self.y_test = None
         self.feature_names = None
         self.scaler = StandardScaler()
-        
         self.models = {}
-        self.results = {}
-        
-    def load_and_split_data(self, test_size: float = 0.2, 
-                           random_state: int = 42,
-                           scale_features: bool = True) -> None:
+        self.data_hash = None
+
+    @staticmethod
+    def _compute_data_hash(X: np.ndarray, y: np.ndarray) -> str:
+        """
+        Compute SHA256 hash of training data for validation
+
+        Parameters:
+        -----------
+        X : np.ndarray
+            Feature matrix
+        y : np.ndarray
+            Target vector
+
+        Returns:
+        --------
+        str
+            Hexadecimal hash string
+        """
+        # Combine X and y into single array for hashing
+        combined = np.concatenate([X.flatten(), y.flatten()])
+        hash_obj = hashlib.sha256(combined.tobytes())
+        return hash_obj.hexdigest()
+
+    def load_and_split_data(self, test_size: float = 0.2,
+                           random_state: int = DEFAULT_RANDOM_SEED,
+                           scale_features: bool = False) -> None:
         """
         Load data and split into train/test sets
-        
+
         Parameters:
         -----------
         test_size : float
@@ -79,538 +111,326 @@ class GINIPredictor:
         """
         print("Loading processed data...")
         data = pd.read_csv(self.data_path)
-        
+
         # Load feature names
-        feature_names_df = pd.read_csv('output/feature_names.csv')
+        feature_names_df = pd.read_csv(FEATURE_NAMES_PATH)
         self.feature_names = feature_names_df['feature'].tolist()
-        
+
         # Separate features and target
         X = data[self.feature_names].values
         y = data['SI.POV.GINI'].values
-        
+
         # Split data
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
             X, y, test_size=test_size, random_state=random_state
         )
-        
+
         # Scale features if requested
         if scale_features:
             print("Scaling features...")
             self.X_train = self.scaler.fit_transform(self.X_train)
             self.X_test = self.scaler.transform(self.X_test)
-        
+
+        # Compute hash of training data for validation
+        self.data_hash = self._compute_data_hash(self.X_train, self.y_train)
+
         print(f"\nData split complete:")
         print(f"Training set: {self.X_train.shape}")
         print(f"Test set: {self.X_test.shape}")
         print(f"Number of features: {len(self.feature_names)}")
-    
-    def train_decision_tree(self, tune_hyperparameters: bool = True) -> None:
+        print(f"Data hash: {self.data_hash[:16]}...")
+
+    def _train_with_grid_search(self, model, param_grid: Dict, model_key: str,
+                               model_name: str) -> None:
         """
-        Train Decision Tree Regressor
-        
+        Train a model using GridSearchCV for hyperparameter tuning
+
         Parameters:
         -----------
-        tune_hyperparameters : bool
-            Whether to perform hyperparameter tuning
-        """
-        print("\n" + "="*60)
-        print("TRAINING DECISION TREE REGRESSOR")
-        print("="*60)
-        
-        if tune_hyperparameters:
-            print("Performing hyperparameter tuning...")
-            param_grid = {
-                'max_depth': [3, 5, 7, 10, None],
-                'min_samples_split': [2, 5, 10, 20],
-                'min_samples_leaf': [1, 2, 4, 8],
-                'max_features': ['sqrt', 'log2', None]
-            }
-            
-            dt = DecisionTreeRegressor(random_state=42)
-            grid_search = GridSearchCV(
-                dt, param_grid, cv=5, scoring='neg_mean_squared_error',
-                n_jobs=-1, verbose=1
-            )
-            grid_search.fit(self.X_train, self.y_train)
-            
-            print(f"\nBest parameters: {grid_search.best_params_}")
-            self.models['decision_tree'] = grid_search.best_estimator_
-        else:
-            print("Training with default parameters...")
-            self.models['decision_tree'] = DecisionTreeRegressor(
-                max_depth=10,
-                min_samples_split=10,
-                min_samples_leaf=4,
-                random_state=42
-            )
-            self.models['decision_tree'].fit(self.X_train, self.y_train)
-        
-        # Evaluate
-        self._evaluate_model('decision_tree')
-    
-    def train_random_forest(self, tune_hyperparameters: bool = True) -> None:
-        """
-        Train Random Forest Regressor
-        
-        Parameters:
-        -----------
-        tune_hyperparameters : bool
-            Whether to perform hyperparameter tuning
-        """
-        print("\n" + "="*60)
-        print("TRAINING RANDOM FOREST REGRESSOR")
-        print("="*60)
-        
-        if tune_hyperparameters:
-            print("Performing hyperparameter tuning...")
-            param_grid = {
-                'n_estimators': [100, 200, 300],
-                'max_depth': [10, 20, 30, None],
-                'min_samples_split': [2, 5, 10],
-                'min_samples_leaf': [1, 2, 4],
-                'max_features': ['sqrt', 'log2']
-            }
-            
-            rf = RandomForestRegressor(random_state=42, n_jobs=-1)
-            grid_search = GridSearchCV(
-                rf, param_grid, cv=5, scoring='neg_mean_squared_error',
-                n_jobs=-1, verbose=1
-            )
-            grid_search.fit(self.X_train, self.y_train)
-            
-            print(f"\nBest parameters: {grid_search.best_params_}")
-            self.models['random_forest'] = grid_search.best_estimator_
-        else:
-            print("Training with default parameters...")
-            self.models['random_forest'] = RandomForestRegressor(
-                n_estimators=200,
-                max_depth=20,
-                min_samples_split=5,
-                min_samples_leaf=2,
-                max_features='sqrt',
-                random_state=42,
-                n_jobs=-1
-            )
-            self.models['random_forest'].fit(self.X_train, self.y_train)
-        
-        # Evaluate
-        self._evaluate_model('random_forest')
-    
-    def train_gradient_boosting(self, tune_hyperparameters: bool = True) -> None:
-        """
-        Train Gradient Boosting Regressor
-        
-        Parameters:
-        -----------
-        tune_hyperparameters : bool
-            Whether to perform hyperparameter tuning
-        """
-        print("\n" + "="*60)
-        print("TRAINING GRADIENT BOOSTING REGRESSOR")
-        print("="*60)
-        
-        if tune_hyperparameters:
-            print("Performing hyperparameter tuning...")
-            param_grid = {
-                'n_estimators': [100, 200, 300],
-                'learning_rate': [0.01, 0.05, 0.1],
-                'max_depth': [3, 5, 7],
-                'min_samples_split': [2, 5, 10],
-                'min_samples_leaf': [1, 2, 4],
-                'subsample': [0.8, 0.9, 1.0]
-            }
-            
-            gb = GradientBoostingRegressor(random_state=42)
-            grid_search = GridSearchCV(
-                gb, param_grid, cv=5, scoring='neg_mean_squared_error',
-                n_jobs=-1, verbose=1
-            )
-            grid_search.fit(self.X_train, self.y_train)
-            
-            print(f"\nBest parameters: {grid_search.best_params_}")
-            self.models['gradient_boosting'] = grid_search.best_estimator_
-        else:
-            print("Training with default parameters...")
-            self.models['gradient_boosting'] = GradientBoostingRegressor(
-                n_estimators=200,
-                learning_rate=0.05,
-                max_depth=5,
-                min_samples_split=5,
-                min_samples_leaf=2,
-                subsample=0.9,
-                random_state=42
-            )
-            self.models['gradient_boosting'].fit(self.X_train, self.y_train)
-        
-        # Evaluate
-        self._evaluate_model('gradient_boosting')
-    
-    def train_xgboost(self, tune_hyperparameters: bool = True) -> None:
-        """
-        Train XGBoost Regressor
-        
-        Parameters:
-        -----------
-        tune_hyperparameters : bool
-            Whether to perform hyperparameter tuning
-        """
-        print("\n" + "="*60)
-        print("TRAINING XGBOOST REGRESSOR")
-        print("="*60)
-        
-        if tune_hyperparameters:
-            print("Performing hyperparameter tuning...")
-            param_grid = {
-                'n_estimators': [100, 200, 300],
-                'learning_rate': [0.01, 0.05, 0.1],
-                'max_depth': [3, 5, 7, 9],
-                'min_child_weight': [1, 3, 5],
-                'subsample': [0.8, 0.9, 1.0],
-                'colsample_bytree': [0.8, 0.9, 1.0],
-                'gamma': [0, 0.1, 0.2]
-            }
-            
-            xgboost = xgb.XGBRegressor(
-                random_state=42,
-                n_jobs=-1,
-                tree_method='hist'
-            )
-            grid_search = GridSearchCV(
-                xgboost, param_grid, cv=5, scoring='neg_mean_squared_error',
-                n_jobs=-1, verbose=1
-            )
-            grid_search.fit(self.X_train, self.y_train)
-            
-            print(f"\nBest parameters: {grid_search.best_params_}")
-            self.models['xgboost'] = grid_search.best_estimator_
-        else:
-            print("Training with default parameters...")
-            self.models['xgboost'] = xgb.XGBRegressor(
-                n_estimators=200,
-                learning_rate=0.05,
-                max_depth=5,
-                min_child_weight=3,
-                subsample=0.9,
-                colsample_bytree=0.9,
-                gamma=0.1,
-                random_state=42,
-                n_jobs=-1,
-                tree_method='hist'
-            )
-            self.models['xgboost'].fit(self.X_train, self.y_train)
-        
-        # Evaluate
-        self._evaluate_model('xgboost')
-    
-    def train_lightgbm(self, tune_hyperparameters: bool = True) -> None:
-        """
-        Train LightGBM Regressor
-        
-        Parameters:
-        -----------
-        tune_hyperparameters : bool
-            Whether to perform hyperparameter tuning
-        """
-        print("\n" + "="*60)
-        print("TRAINING LIGHTGBM REGRESSOR")
-        print("="*60)
-        
-        if tune_hyperparameters:
-            print("Performing hyperparameter tuning...")
-            param_grid = {
-                'n_estimators': [100, 200, 300],
-                'learning_rate': [0.01, 0.05, 0.1],
-                'max_depth': [3, 5, 7, 9, -1],
-                'num_leaves': [31, 50, 70, 100],
-                'min_child_samples': [20, 30, 50],
-                'subsample': [0.8, 0.9, 1.0],
-                'colsample_bytree': [0.8, 0.9, 1.0],
-                'reg_alpha': [0, 0.1, 0.5],
-                'reg_lambda': [0, 0.1, 0.5]
-            }
-            
-            lightgbm = lgb.LGBMRegressor(
-                random_state=42,
-                n_jobs=-1,
-                verbose=-1
-            )
-            grid_search = GridSearchCV(
-                lightgbm, param_grid, cv=5, scoring='neg_mean_squared_error',
-                n_jobs=-1, verbose=1
-            )
-            grid_search.fit(self.X_train, self.y_train)
-            
-            print(f"\nBest parameters: {grid_search.best_params_}")
-            self.models['lightgbm'] = grid_search.best_estimator_
-        else:
-            print("Training with default parameters...")
-            self.models['lightgbm'] = lgb.LGBMRegressor(
-                n_estimators=200,
-                learning_rate=0.05,
-                max_depth=5,
-                num_leaves=50,
-                min_child_samples=20,
-                subsample=0.9,
-                colsample_bytree=0.9,
-                reg_alpha=0.1,
-                reg_lambda=0.1,
-                random_state=42,
-                n_jobs=-1,
-                verbose=-1
-            )
-            self.models['lightgbm'].fit(self.X_train, self.y_train)
-        
-        # Evaluate
-        self._evaluate_model('lightgbm')
-    
-    def _evaluate_model(self, model_name: str) -> None:
-        """
-        Evaluate a trained model
-        
-        Parameters:
-        -----------
+        model
+            Model instance to tune
+        param_grid : Dict
+            Hyperparameter grid for search
+        model_key : str
+            Internal key for storing model (e.g., 'decision_tree')
         model_name : str
-            Name of the model to evaluate
+            Display name for logging (e.g., 'Decision Tree')
         """
-        model = self.models[model_name]
-        
-        # Make predictions
-        y_train_pred = model.predict(self.X_train)
-        y_test_pred = model.predict(self.X_test)
-        
-        # Calculate metrics
-        train_metrics = {
-            'rmse': np.sqrt(mean_squared_error(self.y_train, y_train_pred)),
-            'mae': mean_absolute_error(self.y_train, y_train_pred),
-            'r2': r2_score(self.y_train, y_train_pred)
-        }
-        
-        test_metrics = {
-            'rmse': np.sqrt(mean_squared_error(self.y_test, y_test_pred)),
-            'mae': mean_absolute_error(self.y_test, y_test_pred),
-            'r2': r2_score(self.y_test, y_test_pred)
-        }
-        
-        # Cross-validation score (parallelized)
-        cv_scores = cross_val_score(
-            model, self.X_train, self.y_train,
-            cv=5, scoring='neg_mean_squared_error',
-            n_jobs=-1  # Parallel cross-validation
+        print("Performing hyperparameter tuning...")
+        grid_search = GridSearchCV(
+            model, param_grid, cv=CV_FOLDS, scoring=CV_SCORING,
+            n_jobs=-1, verbose=1
         )
-        cv_rmse = np.sqrt(-cv_scores.mean())
-        
-        # Store results
-        self.results[model_name] = {
-            'train': train_metrics,
-            'test': test_metrics,
-            'cv_rmse': cv_rmse,
-            'predictions': {
-                'train': y_train_pred,
-                'test': y_test_pred
-            }
-        }
-        
-        # Print results
-        print(f"\n{model_name.upper()} RESULTS:")
-        print("-" * 60)
-        print(f"Training Set:")
-        print(f"  RMSE: {train_metrics['rmse']:.3f}")
-        print(f"  MAE:  {train_metrics['mae']:.3f}")
-        print(f"  R²:   {train_metrics['r2']:.3f}")
-        print(f"\nTest Set:")
-        print(f"  RMSE: {test_metrics['rmse']:.3f}")
-        print(f"  MAE:  {test_metrics['mae']:.3f}")
-        print(f"  R²:   {test_metrics['r2']:.3f}")
-        print(f"\nCross-Validation RMSE: {cv_rmse:.3f}")
-    
-    def compare_models(self) -> pd.DataFrame:
+        grid_search.fit(self.X_train, self.y_train)
+        print(f"\nBest parameters: {grid_search.best_params_}")
+        self.models[model_key] = grid_search.best_estimator_
+
+    def _train_with_defaults(self, model, model_key: str, model_name: str) -> None:
         """
-        Compare all trained models
-        
+        Train a model using default hyperparameters
+
+        Parameters:
+        -----------
+        model
+            Configured model instance
+        model_key : str
+            Internal key for storing model
+        model_name : str
+            Display name for logging
+        """
+        print("Training with default parameters...")
+        model.fit(self.X_train, self.y_train)
+        self.models[model_key] = model
+
+    def _evaluate_with_cv(self, model_key: str, model_name: str) -> float:
+        """
+        Perform cross-validation and print results
+
+        Parameters:
+        -----------
+        model_key : str
+            Internal key of trained model
+        model_name : str
+            Display name for logging
+
         Returns:
         --------
-        pd.DataFrame
-            Comparison of model performances
+        float
+            Cross-validated RMSE
         """
-        print("\n" + "="*60)
-        print("MODEL COMPARISON")
-        print("="*60)
-        
-        comparison_data = []
-        
-        for model_name, results in self.results.items():
-            comparison_data.append({
-                'Model': model_name.replace('_', ' ').title(),
-                'Train RMSE': results['train']['rmse'],
-                'Test RMSE': results['test']['rmse'],
-                'Train R²': results['train']['r2'],
-                'Test R²': results['test']['r2'],
-                'CV RMSE': results['cv_rmse'],
-                'Overfit Gap': results['train']['rmse'] - results['test']['rmse']
-            })
-        
-        comparison_df = pd.DataFrame(comparison_data)
-        comparison_df = comparison_df.round(3)
-        
-        print("\n", comparison_df.to_string(index=False))
-        
-        # Save comparison
-        comparison_df.to_csv('output/model_comparison.csv', index=False)
-        print("\nComparison saved to: model_comparison.csv")
-        
-        return comparison_df
-    
-    def plot_feature_importance(self, top_n: int = 20) -> None:
+        cv_scores = cross_val_score(
+            self.models[model_key], self.X_train, self.y_train,
+            cv=CV_FOLDS, scoring=CV_SCORING, n_jobs=-1
+        )
+        cv_rmse = np.sqrt(-cv_scores.mean())
+        print(f"✓ {model_name} trained | CV RMSE: {cv_rmse:.3f}")
+        return cv_rmse
+
+    @staticmethod
+    def _print_section_header(title: str) -> None:
+        """Print formatted section header"""
+        print(f"\n{SECTION_SEPARATOR}")
+        print(title)
+        print(SECTION_SEPARATOR)
+
+    def train_decision_tree(self, tune_hyperparameters: bool = False) -> None:
         """
-        Plot feature importance for tree-based models
-        
+        Train Decision Tree Regressor
+
         Parameters:
         -----------
-        top_n : int
-            Number of top features to display
+        tune_hyperparameters : bool
+            Whether to perform hyperparameter tuning
         """
-        n_models = len(self.models)
-        fig, axes = plt.subplots(1, n_models, figsize=(7*n_models, 6))
-        
-        # Handle single model case
-        if n_models == 1:
-            axes = [axes]
-        
-        for idx, (model_name, model) in enumerate(self.models.items()):
-            if hasattr(model, 'feature_importances_'):
-                importances = model.feature_importances_
-                indices = np.argsort(importances)[::-1][:top_n]
-                
-                axes[idx].barh(range(top_n), importances[indices])
-                axes[idx].set_yticks(range(top_n))
-                axes[idx].set_yticklabels([self.feature_names[i] for i in indices])
-                axes[idx].set_xlabel('Importance')
-                axes[idx].set_title(f'{model_name.replace("_", " ").title()}\nTop {top_n} Features')
-                axes[idx].invert_yaxis()
-        
-        plt.tight_layout()
-        plt.savefig('output/feature_importance.png', dpi=300, bbox_inches='tight')
-        print("\nFeature importance plot saved to: feature_importance.png")
-        plt.close()
-    
-    def plot_predictions(self) -> None:
-        """Plot actual vs predicted values for all models"""
-        n_models = len(self.results)
-        n_cols = min(3, n_models)
-        n_rows = (n_models + n_cols - 1) // n_cols
-        
-        fig, axes = plt.subplots(n_rows, n_cols, figsize=(6*n_cols, 5*n_rows))
-        
-        # Flatten axes array for easier indexing
-        if n_models == 1:
-            axes = [axes]
+        self._print_section_header("TRAINING DECISION TREE REGRESSOR")
+
+        if tune_hyperparameters:
+            dt = DecisionTreeRegressor(random_state=DEFAULT_RANDOM_SEED)
+            self._train_with_grid_search(
+                dt, HYPERPARAMETER_GRIDS['decision_tree'],
+                'decision_tree', 'Decision Tree'
+            )
         else:
-            axes = axes.flatten() if n_rows > 1 else axes
-        
-        for idx, (model_name, results) in enumerate(self.results.items()):
-            y_true = self.y_test
-            y_pred = results['predictions']['test']
-            
-            axes[idx].scatter(y_true, y_pred, alpha=0.6, edgecolors='k')
-            axes[idx].plot([y_true.min(), y_true.max()], 
-                          [y_true.min(), y_true.max()], 
-                          'r--', lw=2, label='Perfect Prediction')
-            
-            axes[idx].set_xlabel('Actual GINI')
-            axes[idx].set_ylabel('Predicted GINI')
-            axes[idx].set_title(f'{model_name.replace("_", " ").title()}\n'
-                               f'R² = {results["test"]["r2"]:.3f}')
-            axes[idx].legend()
-            axes[idx].grid(True, alpha=0.3)
-        
-        # Hide unused subplots
-        for idx in range(n_models, len(axes)):
-            axes[idx].set_visible(False)
-        
-        plt.tight_layout()
-        plt.savefig('output/predictions_plot.png', dpi=300, bbox_inches='tight')
-        print("Predictions plot saved to: predictions_plot.png")
-        plt.close()
-    
-    def plot_residuals(self) -> None:
-        """Plot residuals for all models"""
-        n_models = len(self.results)
-        n_cols = min(3, n_models)
-        n_rows = (n_models + n_cols - 1) // n_cols
-        
-        fig, axes = plt.subplots(n_rows, n_cols, figsize=(6*n_cols, 5*n_rows))
-        
-        # Flatten axes array for easier indexing
-        if n_models == 1:
-            axes = [axes]
+            dt = DecisionTreeRegressor(**DEFAULT_HYPERPARAMETERS['decision_tree'])
+            self._train_with_defaults(dt, 'decision_tree', 'Decision Tree')
+
+        self._evaluate_with_cv('decision_tree', 'Decision Tree')
+
+    def train_random_forest(self, tune_hyperparameters: bool = False) -> None:
+        """
+        Train Random Forest Regressor
+
+        Parameters:
+        -----------
+        tune_hyperparameters : bool
+            Whether to perform hyperparameter tuning
+        """
+        self._print_section_header("TRAINING RANDOM FOREST REGRESSOR")
+
+        if tune_hyperparameters:
+            rf = RandomForestRegressor(random_state=DEFAULT_RANDOM_SEED, n_jobs=-1)
+            self._train_with_grid_search(
+                rf, HYPERPARAMETER_GRIDS['random_forest'],
+                'random_forest', 'Random Forest'
+            )
         else:
-            axes = axes.flatten() if n_rows > 1 else axes
-        
-        for idx, (model_name, results) in enumerate(self.results.items()):
-            y_true = self.y_test
-            y_pred = results['predictions']['test']
-            residuals = y_true - y_pred
-            
-            axes[idx].scatter(y_pred, residuals, alpha=0.6, edgecolors='k')
-            axes[idx].axhline(y=0, color='r', linestyle='--', lw=2)
-            axes[idx].set_xlabel('Predicted GINI')
-            axes[idx].set_ylabel('Residuals')
-            axes[idx].set_title(f'{model_name.replace("_", " ").title()}\nResidual Plot')
-            axes[idx].grid(True, alpha=0.3)
-        
-        # Hide unused subplots
-        for idx in range(n_models, len(axes)):
-            axes[idx].set_visible(False)
-        
-        plt.tight_layout()
-        plt.savefig('output/residuals_plot.png', dpi=300, bbox_inches='tight')
-        print("Residuals plot saved to: residuals_plot.png")
-        plt.close()
-    
-    def save_models(self) -> None:
-        """Models are kept in memory only - no disk saving"""
-        print("\nModels trained and ready in memory (not saved to disk)")
-        print("Note: Models will be retrained when needed for predictions")
+            rf = RandomForestRegressor(**DEFAULT_HYPERPARAMETERS['random_forest'])
+            self._train_with_defaults(rf, 'random_forest', 'Random Forest')
+
+        self._evaluate_with_cv('random_forest', 'Random Forest')
+
+    def train_gradient_boosting(self, tune_hyperparameters: bool = False) -> None:
+        """
+        Train Gradient Boosting Regressor
+
+        Parameters:
+        -----------
+        tune_hyperparameters : bool
+            Whether to perform hyperparameter tuning
+        """
+        self._print_section_header("TRAINING GRADIENT BOOSTING REGRESSOR")
+
+        if tune_hyperparameters:
+            gb = GradientBoostingRegressor(random_state=DEFAULT_RANDOM_SEED)
+            self._train_with_grid_search(
+                gb, HYPERPARAMETER_GRIDS['gradient_boosting'],
+                'gradient_boosting', 'Gradient Boosting'
+            )
+        else:
+            gb = GradientBoostingRegressor(**DEFAULT_HYPERPARAMETERS['gradient_boosting'])
+            self._train_with_defaults(gb, 'gradient_boosting', 'Gradient Boosting')
+
+        self._evaluate_with_cv('gradient_boosting', 'Gradient Boosting')
+
+    def train_xgboost(self, tune_hyperparameters: bool = False) -> None:
+        """
+        Train XGBoost Regressor
+
+        Parameters:
+        -----------
+        tune_hyperparameters : bool
+            Whether to perform hyperparameter tuning
+        """
+        self._print_section_header("TRAINING XGBOOST REGRESSOR")
+
+        if tune_hyperparameters:
+            xgboost = xgb.XGBRegressor(
+                random_state=DEFAULT_RANDOM_SEED,
+                n_jobs=-1,
+                tree_method='hist'
+            )
+            self._train_with_grid_search(
+                xgboost, HYPERPARAMETER_GRIDS['xgboost'],
+                'xgboost', 'XGBoost'
+            )
+        else:
+            xgboost = xgb.XGBRegressor(**DEFAULT_HYPERPARAMETERS['xgboost'])
+            self._train_with_defaults(xgboost, 'xgboost', 'XGBoost')
+
+        self._evaluate_with_cv('xgboost', 'XGBoost')
+
+    def train_lightgbm(self, tune_hyperparameters: bool = False) -> None:
+        """
+        Train LightGBM Regressor
+
+        Parameters:
+        -----------
+        tune_hyperparameters : bool
+            Whether to perform hyperparameter tuning
+        """
+        self._print_section_header("TRAINING LIGHTGBM REGRESSOR")
+
+        if tune_hyperparameters:
+            lightgbm = lgb.LGBMRegressor(
+                random_state=DEFAULT_RANDOM_SEED,
+                n_jobs=-1,
+                verbose=-1
+            )
+            self._train_with_grid_search(
+                lightgbm, HYPERPARAMETER_GRIDS['lightgbm'],
+                'lightgbm', 'LightGBM'
+            )
+        else:
+            lightgbm = lgb.LGBMRegressor(**DEFAULT_HYPERPARAMETERS['lightgbm'])
+            self._train_with_defaults(lightgbm, 'lightgbm', 'LightGBM')
+
+        self._evaluate_with_cv('lightgbm', 'LightGBM')
+
+    def train_all_models(self, tune_hyperparameters: bool = False) -> None:
+        """
+        Train all models at once
+
+        Parameters:
+        -----------
+        tune_hyperparameters : bool
+            Whether to perform hyperparameter tuning (slower but better)
+        """
+        print("\nTraining all models...")
+        self.train_decision_tree(tune_hyperparameters)
+        self.train_random_forest(tune_hyperparameters)
+        self.train_gradient_boosting(tune_hyperparameters)
+        self.train_xgboost(tune_hyperparameters)
+        self.train_lightgbm(tune_hyperparameters)
+        print("\n✓ All models trained successfully")
+
+    def save_models(self, filepath: str = MODELS_PATH) -> None:
+        """
+        Save models and data splits to disk with metadata
+
+        Parameters:
+        -----------
+        filepath : str
+            Path to save models (default: output/trained_models.pkl)
+        """
+        # Create metadata
+        metadata = {
+            'version': '1.0',
+            'timestamp': datetime.now().isoformat(),
+            'data_hash': self.data_hash,
+            'n_train': len(self.X_train),
+            'n_test': len(self.X_test),
+            'n_features': len(self.feature_names),
+            'model_names': list(self.models.keys()),
+            'sklearn_version': joblib.__version__,
+            'data_source': self.data_path
+        }
+
+        # Save models, data, and metadata to pickle file
+        save_data = {
+            'models': self.models,
+            'X_train': self.X_train,
+            'X_test': self.X_test,
+            'y_train': self.y_train,
+            'y_test': self.y_test,
+            'feature_names': self.feature_names,
+            'metadata': metadata
+        }
+
+        joblib.dump(save_data, filepath)
+        print(f"\n✓ Models saved to {filepath}")
+        print(f"  Version: {metadata['version']}")
+        print(f"  Timestamp: {metadata['timestamp']}")
+        print(f"  Data hash: {metadata['data_hash'][:16]}...")
 
 
 def main():
-    """Main execution function"""
-    
-    # Initialize predictor
-    predictor = GINIPredictor('output/processed_data.csv')
-    
-    # Load and split data
-    predictor.load_and_split_data(test_size=0.2, scale_features=False)
-    
-    # Train models (set tune_hyperparameters=True for better results, but slower)
-    predictor.train_decision_tree(tune_hyperparameters=False)
-    predictor.train_random_forest(tune_hyperparameters=False)
-    predictor.train_gradient_boosting(tune_hyperparameters=False)
-    predictor.train_xgboost(tune_hyperparameters=False)
-    predictor.train_lightgbm(tune_hyperparameters=False)
-    
-    # Compare models
-    comparison = predictor.compare_models()
-    
-    # Generate visualizations
-    print("\nGenerating visualizations...")
-    predictor.plot_feature_importance(top_n=15)
-    predictor.plot_predictions()
-    predictor.plot_residuals()
-    
-    # Note: Models not saved to disk
-    print("\nModels trained successfully (kept in memory, not saved as .pkl files)")
+    """
+    Main execution function for model training
+    """
+    import argparse
 
-    print("\n" + "="*60)
-    print("TRAINING COMPLETE!")
-    print("="*60)
-    print("\nGenerated files:")
-    print("  - output/model_comparison.csv")
-    print("  - output/feature_importance.png")
-    print("  - output/predictions_plot.png")
-    print("  - output/residuals_plot.png")
-    print("\nNote: Models are NOT saved as .pkl files.")
-    print("They will be retrained on-demand when needed for predictions.")
+    # Parse command-line arguments
+    parser = argparse.ArgumentParser(description='Train GINI prediction models')
+    parser.add_argument(
+        '--tune',
+        action='store_true',
+        help='Enable hyperparameter tuning (slower but better results)'
+    )
+    args = parser.parse_args()
+
+    # Initialize trainer
+    trainer = ModelTrainer(PROCESSED_DATA_PATH)
+
+    # Load and split data
+    trainer.load_and_split_data(test_size=0.2, scale_features=False)
+
+    # Train all models with optional hyperparameter tuning
+    trainer.train_all_models(tune_hyperparameters=args.tune)
+
+    # Always save models to disk
+    trainer.save_models()
+
+    print(f"\n{SECTION_SEPARATOR}")
+    print("MODEL TRAINING COMPLETE!")
+    print(SECTION_SEPARATOR)
+    print(f"\nTrained {len(trainer.models)} models:")
+    for model_name in trainer.models.keys():
+        print(f"  • {model_name.replace('_', ' ').title()}")
+
+    print("\nModels saved and ready for use by downstream scripts")
+    print("Other scripts will load these models instead of retraining")
+
+    return trainer
 
 
 if __name__ == "__main__":

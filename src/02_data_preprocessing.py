@@ -39,7 +39,7 @@ class DataPreprocessor:
         self.data = None
         self.scaler = StandardScaler()  # For feature normalization if needed
         
-    def load_data(self) -> pd.DataFrame:
+    def load_data(self):
         """Load data from CSV"""
         print("Loading data...")
         self.data = pd.read_csv(self.data_path)
@@ -47,7 +47,7 @@ class DataPreprocessor:
         print(f"Shape: {self.data.shape}")
         return self.data
     
-    def filter_target_variable(self) -> pd.DataFrame:
+    def filter_target_variable(self):
         """
         Filter dataset to only include rows where GINI coefficient is available
         """
@@ -62,18 +62,21 @@ class DataPreprocessor:
         
         return self.data
     
-    def handle_missing_values(self, strategy: str = 'median', 
-                             threshold: float = 0.5) -> pd.DataFrame:
+    def handle_missing_values(self, strategy: str = 'knn',
+                             threshold: float = 0.5,
+                             n_neighbors: int = 5):
         """
         Handle missing values in features
-        
+
         Parameters:
         -----------
         strategy : str
             Imputation strategy ('median', 'mean', 'knn', or 'drop')
         threshold : float
             Drop columns with missing percentage above this threshold
-            
+        n_neighbors : int
+            Number of neighbors for KNN imputation (default: 5)
+
         Returns:
         --------
         pd.DataFrame
@@ -108,9 +111,9 @@ class DataPreprocessor:
             print(f"\nImputed missing values using {strategy}")
             
         elif strategy == 'knn':
-            imputer = KNNImputer(n_neighbors=5)
+            imputer = KNNImputer(n_neighbors=n_neighbors)
             self.data[feature_cols] = imputer.fit_transform(self.data[feature_cols])
-            print(f"\nImputed missing values using KNN")
+            print(f"\nImputed missing values using KNN (n_neighbors={n_neighbors})")
             
         elif strategy == 'drop':
             initial_rows = len(self.data)
@@ -121,18 +124,17 @@ class DataPreprocessor:
         
         return self.data
     
-    def create_engineered_features(self) -> pd.DataFrame:
+    def create_engineered_features(self):
         """
-        Create additional engineered features from raw World Bank indicators.
+        Create engineered features from World Bank indicators.
 
-        These features are designed to capture complex economic relationships
-        that may influence income inequality:
+        Engineered features:
         - Urbanization rate: Urban/rural population balance
-        - Log GDP per capita: Handles skewness in income distribution
-        - Trade openness: Economic globalization measure
+        - Log GDP per capita: Reduces skewness
+        - Trade openness: Exports + imports as % of GDP
         - Health-to-education ratio: Government spending priorities
-        - Gender labor gap: Gender equality in workforce
-        - Economic diversity: Sector distribution entropy (agriculture, industry, services)
+        - Gender labor gap: Male-female labor participation difference
+        - Economic diversity: Shannon entropy of sector distribution
 
         Returns:
         --------
@@ -141,84 +143,76 @@ class DataPreprocessor:
         """
         print("\nCreating engineered features...")
 
-        # Urbanization rate: Urban population as % of total
+        # Urbanization rate
         if 'SP.URB.TOTL' in self.data.columns and 'SP.POP.TOTL' in self.data.columns:
             self.data['urbanization_rate'] = (self.data['SP.URB.TOTL'] /
                                               self.data['SP.POP.TOTL'] * 100)
 
-        # GDP per capita log transformation (reduces skewness, stabilizes variance)
+        # Log GDP per capita
         if 'NY.GDP.PCAP.CD' in self.data.columns:
             self.data['log_gdp_per_capita'] = np.log1p(self.data['NY.GDP.PCAP.CD'])
 
-        # Trade openness: Sum of exports and imports as % of GDP
-        # Higher values indicate more integrated economies
+        # Trade openness
         if 'NE.EXP.GNFS.ZS' in self.data.columns and 'NE.IMP.GNFS.ZS' in self.data.columns:
             self.data['trade_openness'] = (self.data['NE.EXP.GNFS.ZS'] +
                                           self.data['NE.IMP.GNFS.ZS'])
 
-        # Health-to-education spending ratio: Policy priorities indicator
+        # Health-to-education spending ratio
         if 'SH.XPD.CHEX.GD.ZS' in self.data.columns and 'SE.XPD.TOTL.GD.ZS' in self.data.columns:
-            self.data['health_to_edu_ratio'] = (self.data['SH.XPD.CHEX.GD.ZS'] /
-                                                (self.data['SE.XPD.TOTL.GD.ZS'] + 1e-5))
+            edu_spending = self.data['SE.XPD.TOTL.GD.ZS'].replace(0, np.nan)
+            self.data['health_to_edu_ratio'] = self.data['SH.XPD.CHEX.GD.ZS'] / edu_spending
 
-        # Gender labor gap: Difference in male vs female labor force participation
-        # Positive values = more male participation
+        # Gender labor gap
         if 'SL.TLF.CACT.MA.ZS' in self.data.columns and 'SL.TLF.CACT.FE.ZS' in self.data.columns:
             self.data['gender_labor_gap'] = (self.data['SL.TLF.CACT.MA.ZS'] -
                                             self.data['SL.TLF.CACT.FE.ZS'])
 
-        # Economic structure diversity: Shannon entropy of sector distribution
-        # Higher entropy = more diverse economy (less reliant on single sector)
+        # Economic diversity (Shannon entropy)
         if all(col in self.data.columns for col in ['NV.AGR.TOTL.ZS', 'NV.IND.TOTL.ZS', 'NV.SRV.TOTL.ZS']):
-            # Convert percentages to proportions
             agr = self.data['NV.AGR.TOTL.ZS'] / 100
             ind = self.data['NV.IND.TOTL.ZS'] / 100
             srv = self.data['NV.SRV.TOTL.ZS'] / 100
 
-            # Calculate Shannon entropy: H = -Σ(p_i * log(p_i))
             self.data['economic_diversity'] = -(
-                agr * np.log(agr + 1e-5) +  # Add small constant to avoid log(0)
-                ind * np.log(ind + 1e-5) +
-                srv * np.log(srv + 1e-5)
+                np.where(agr > 0, agr * np.log(agr), 0) +
+                np.where(ind > 0, ind * np.log(ind), 0) +
+                np.where(srv > 0, srv * np.log(srv), 0)
             )
 
         print(f"Total features after engineering: {len(self.data.columns)}")
 
         return self.data
     
-    def remove_outliers(self, method: str = 'iqr', threshold: float = 3.0) -> pd.DataFrame:
+    def remove_outliers(self, method: str = 'iqr', threshold: float = 3.0):
         """
-        Remove outliers from the dataset (vectorized for performance)
+        Remove outliers from the dataset (vectorized).
 
         Parameters:
         -----------
         method : str
             'iqr' for Interquartile Range or 'zscore' for Z-score
         threshold : float
-            Threshold for outlier detection (IQR multiplier or Z-score)
+            IQR multiplier or Z-score threshold
 
         Returns:
         --------
         pd.DataFrame
             Data without outliers
         """
-        print(f"\nRemoving outliers using {method} method (vectorized)...")
+        print(f"\nRemoving outliers using {method} method...")
         initial_count = len(self.data)
 
-        # Get numeric columns only
         numeric_cols = self.data.select_dtypes(include=[np.number]).columns
         id_cols = ['year', 'year_feature']
         feature_cols = [col for col in numeric_cols if col not in id_cols]
 
         if method == 'iqr':
-            # Vectorized computation for all columns at once
             Q1 = self.data[feature_cols].quantile(0.25)
             Q3 = self.data[feature_cols].quantile(0.75)
             IQR = Q3 - Q1
             lower_bounds = Q1 - threshold * IQR
             upper_bounds = Q3 + threshold * IQR
 
-            # Create boolean mask for all columns simultaneously
             mask = (
                 (self.data[feature_cols] >= lower_bounds) &
                 (self.data[feature_cols] <= upper_bounds)
@@ -237,7 +231,7 @@ class DataPreprocessor:
 
         return self.data
     
-    def prepare_for_modeling(self, save_path: str = 'output/processed_data.csv') -> tuple:
+    def prepare_for_modeling(self, save_path: str = 'output/processed_data.csv'):
         """
         Final preparation for modeling
         
@@ -274,51 +268,139 @@ class DataPreprocessor:
         
         return X, y, feature_cols, self.data
     
-    def get_summary_statistics(self) -> pd.DataFrame:
+    def get_summary_statistics(self):
         """Get summary statistics of the processed data"""
         numeric_data = self.data.select_dtypes(include=[np.number])
         summary = numeric_data.describe()
         return summary
 
 
-def main():
-    """Main execution function"""
-    
+def main(imputation_strategy='knn', imputation_threshold=0.6,
+         n_neighbors=5, outlier_method=None, outlier_threshold=3.0):
+    """
+    Main execution function
+
+    Parameters:
+    -----------
+    imputation_strategy : str, default='knn'
+        Strategy for handling missing values ('knn', 'median', 'mean', or 'drop')
+    imputation_threshold : float, default=0.6
+        Drop columns with missing percentage above this threshold
+    n_neighbors : int, default=5
+        Number of neighbors for KNN imputation
+    outlier_method : str or None, default=None
+        Method for outlier removal ('iqr', 'zscore', or None to skip)
+    outlier_threshold : float, default=3.0
+        Threshold for outlier detection (IQR multiplier or Z-score)
+    """
+
     # Initialize preprocessor
     preprocessor = DataPreprocessor('output/world_bank_data.csv')
-    
+
     # Load data
     preprocessor.load_data()
-    
+
     # Filter for rows with GINI data
     preprocessor.filter_target_variable()
-    
+
     # Handle missing values
-    preprocessor.handle_missing_values(strategy='median', threshold=0.6)
-    
+    preprocessor.handle_missing_values(strategy=imputation_strategy,
+                                      threshold=imputation_threshold,
+                                      n_neighbors=n_neighbors)
+
     # Create engineered features
     preprocessor.create_engineered_features()
-    
-    # Remove outliers (optional - can comment out if you want to keep all data)
-    # preprocessor.remove_outliers(method='iqr', threshold=3.0)
-    
+
+    # Remove outliers (if specified)
+    if outlier_method:
+        preprocessor.remove_outliers(method=outlier_method, threshold=outlier_threshold)
+
     # Prepare for modeling
     X, y, feature_names, data = preprocessor.prepare_for_modeling()
-    
+
     # Display summary
     print("\n" + "="*50)
     print("PREPROCESSING COMPLETE")
     print("="*50)
+    print(f"\nConfiguration:")
+    print(f"  • Imputation strategy: {imputation_strategy}")
+    if imputation_strategy == 'knn':
+        print(f"  • KNN neighbors: {n_neighbors}")
+    print(f"  • Imputation threshold: {imputation_threshold}")
+    print(f"  • Outlier removal: {outlier_method if outlier_method else 'Disabled'}")
+    if outlier_method:
+        print(f"  • Outlier threshold: {outlier_threshold}")
+
     print(f"\nTarget variable (GINI) statistics:")
     print(f"Mean: {y.mean():.2f}")
     print(f"Std: {y.std():.2f}")
     print(f"Min: {y.min():.2f}")
     print(f"Max: {y.max():.2f}")
-    
+
     print(f"\nFeature list ({len(feature_names)} features):")
     for i, feat in enumerate(feature_names, 1):
         print(f"{i:2d}. {feat}")
 
 
 if __name__ == "__main__":
-    main()
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description='Data Preprocessing for GINI Prediction',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  python src/02_data_preprocessing.py                          # KNN imputation (default)
+  python src/02_data_preprocessing.py --strategy median        # Median imputation
+  python src/02_data_preprocessing.py --strategy knn --knn-neighbors 10
+  python src/02_data_preprocessing.py --outliers iqr           # With outlier removal
+  python src/02_data_preprocessing.py --strategy mean --outliers zscore --outlier-threshold 2.5
+        """
+    )
+
+    parser.add_argument(
+        '--strategy',
+        type=str,
+        default='knn',
+        choices=['knn', 'median', 'mean', 'drop'],
+        help='Imputation strategy for missing values (default: knn)'
+    )
+
+    parser.add_argument(
+        '--knn-neighbors',
+        type=int,
+        default=5,
+        help='Number of neighbors for KNN imputation (default: 5)'
+    )
+
+    parser.add_argument(
+        '--threshold',
+        type=float,
+        default=0.6,
+        help='Drop columns with missing percentage above this threshold (default: 0.6)'
+    )
+
+    parser.add_argument(
+        '--outliers',
+        type=str,
+        default=None,
+        choices=['iqr', 'zscore', None],
+        help='Outlier removal method (default: None - no removal)'
+    )
+
+    parser.add_argument(
+        '--outlier-threshold',
+        type=float,
+        default=3.0,
+        help='Threshold for outlier detection (default: 3.0)'
+    )
+
+    args = parser.parse_args()
+
+    main(
+        imputation_strategy=args.strategy,
+        imputation_threshold=args.threshold,
+        n_neighbors=args.knn_neighbors,
+        outlier_method=args.outliers,
+        outlier_threshold=args.outlier_threshold
+    )

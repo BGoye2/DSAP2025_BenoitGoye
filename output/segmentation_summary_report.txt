@@ -7,59 +7,59 @@ INCOME-LEVEL SEGMENTATION
 
 Low Income:
   Sample size: 456 observations
-  Mean GINI: 38.25 (±8.59)
+  Mean GINI: 38.22 (±8.60)
   Model Performance:
-    Random Forest: RMSE=4.98, R²=0.695
-    XGBoost: RMSE=4.76, R²=0.722
-    LightGBM: RMSE=4.85, R²=0.711
+    Random Forest: RMSE=4.94, R²=0.679
+    XGBoost: RMSE=4.69, R²=0.711
+    LightGBM: RMSE=5.06, R²=0.663
   Top 5 Features (XGBoost):
-    1. EG.ELC.ACCS.ZS: 0.3768
-    2. SP.RUR.TOTL: 0.0728
-    3. NV.AGR.TOTL.ZS: 0.0658
-    4. SL.TLF.CACT.MA.ZS: 0.0592
-    5. AG.LND.FRST.ZS: 0.0409
+    1. EG.ELC.ACCS.RU.ZS: 0.3716
+    2. SL.TLF.CACT.MA.ZS: 0.0584
+    3. NV.AGR.TOTL.ZS: 0.0492
+    4. EG.ELC.RNEW.ZS: 0.0436
+    5. SL.UEM.1524.ZS: 0.0326
 
 Upper-Middle Income:
-  Sample size: 453 observations
-  Mean GINI: 35.29 (±8.39)
+  Sample size: 455 observations
+  Mean GINI: 35.32 (±8.38)
   Model Performance:
-    Random Forest: RMSE=1.80, R²=0.940
-    XGBoost: RMSE=1.63, R²=0.951
-    LightGBM: RMSE=1.99, R²=0.928
+    Random Forest: RMSE=3.20, R²=0.829
+    XGBoost: RMSE=2.80, R²=0.870
+    LightGBM: RMSE=2.88, R²=0.862
   Top 5 Features (XGBoost):
-    1. EG.ELC.ACCS.RU.ZS: 0.4011
-    2. NE.EXP.GNFS.ZS: 0.1293
-    3. SE.PRM.ENRL: 0.0696
-    4. urbanization_rate: 0.0573
-    5. SL.SRV.EMPL.ZS: 0.0294
+    1. EG.ELC.ACCS.ZS: 0.4541
+    2. NE.EXP.GNFS.ZS: 0.0827
+    3. urbanization_rate: 0.0824
+    4. EG.ELC.ACCS.RU.ZS: 0.0707
+    5. SE.PRM.ENRL: 0.0284
 
 High Income:
   Sample size: 455 observations
   Mean GINI: 35.41 (±6.62)
   Model Performance:
-    Random Forest: RMSE=1.03, R²=0.964
-    XGBoost: RMSE=1.45, R²=0.929
-    LightGBM: RMSE=1.40, R²=0.933
+    Random Forest: RMSE=1.09, R²=0.959
+    XGBoost: RMSE=1.23, R²=0.949
+    LightGBM: RMSE=0.97, R²=0.968
   Top 5 Features (XGBoost):
-    1. SP.RUR.TOTL: 0.2933
-    2. urbanization_rate: 0.1687
-    3. EG.ELC.ACCS.RU.ZS: 0.1245
-    4. NV.AGR.TOTL.ZS: 0.0859
-    5. PA.NUS.FCRF: 0.0687
+    1. ER.H2O.FWST.ZS: 0.2761
+    2. SE.PRM.ENRL: 0.2184
+    3. PA.NUS.FCRF: 0.1025
+    4. EG.ELC.ACCS.RU.ZS: 0.0962
+    5. NE.EXP.GNFS.ZS: 0.0334
 
 Lower-Middle Income:
-  Sample size: 457 observations
-  Mean GINI: 38.02 (±8.22)
+  Sample size: 455 observations
+  Mean GINI: 38.03 (±8.22)
   Model Performance:
-    Random Forest: RMSE=3.10, R²=0.858
-    XGBoost: RMSE=2.90, R²=0.876
-    LightGBM: RMSE=3.03, R²=0.864
+    Random Forest: RMSE=3.36, R²=0.857
+    XGBoost: RMSE=2.84, R²=0.897
+    LightGBM: RMSE=2.89, R²=0.894
   Top 5 Features (XGBoost):
-    1. SP.DYN.TFRT.IN: 0.3804
-    2. AG.LND.FRST.ZS: 0.1274
-    3. SL.TLF.CACT.MA.ZS: 0.0524
-    4. PA.NUS.FCRF: 0.0447
-    5. SL.IND.EMPL.ZS: 0.0445
+    1. SP.DYN.TFRT.IN: 0.4521
+    2. AG.LND.FRST.ZS: 0.1202
+    3. SL.IND.EMPL.ZS: 0.0595
+    4. PA.NUS.FCRF: 0.0355
+    5. ER.H2O.FWST.ZS: 0.0209
 
 
 ======================================================================
@@ -70,125 +70,111 @@ Sub-Saharan Africa:
   Sample size: 174 observations
   Mean GINI: 42.51 (±7.58)
   Model Performance:
-    Random Forest: RMSE=4.70, R²=0.367
-    XGBoost: RMSE=5.18, R²=0.230
-    LightGBM: RMSE=5.10, R²=0.254
+    Random Forest: RMSE=5.14, R²=0.243
+    XGBoost: RMSE=6.11, R²=-0.069
+    LightGBM: RMSE=5.21, R²=0.221
   Top 5 Features (XGBoost):
-    1. SL.UEM.TOTL.MA.ZS: 0.3916
-    2. EG.USE.COMM.FO.ZS: 0.0660
-    3. SL.SRV.EMPL.ZS: 0.0414
-    4. SH.XPD.PVTD.CH.ZS: 0.0404
-    5. NE.EXP.GNFS.ZS: 0.0331
+    1. SL.UEM.TOTL.MA.ZS: 0.3293
+    2. SL.SRV.EMPL.ZS: 0.0623
+    3. SH.XPD.CHEX.PC.CD: 0.0494
+    4. gender_labor_gap: 0.0376
+    5. SH.XPD.PVTD.CH.ZS: 0.0367
 
 Europe & Central Asia:
   Sample size: 940 observations
   Mean GINI: 31.80 (±4.29)
   Model Performance:
-    Random Forest: RMSE=1.80, R²=0.768
-    XGBoost: RMSE=1.78, R²=0.772
-    LightGBM: RMSE=1.84, R²=0.757
+    Random Forest: RMSE=1.85, R²=0.753
+    XGBoost: RMSE=1.72, R²=0.787
+    LightGBM: RMSE=2.00, R²=0.712
   Top 5 Features (XGBoost):
-    1. SL.UEM.TOTL.FE.ZS: 0.1275
-    2. SE.PRM.ENRL: 0.0754
-    3. AG.LND.FRST.ZS: 0.0582
-    4. SE.XPD.TOTL.GD.ZS: 0.0546
-    5. SL.IND.EMPL.ZS: 0.0529
+    1. SL.UEM.TOTL.FE.ZS: 0.1775
+    2. AG.LND.FRST.ZS: 0.0701
+    3. SE.XPD.TOTL.GD.ZS: 0.0500
+    4. SL.IND.EMPL.ZS: 0.0438
+    5. gender_labor_gap: 0.0429
 
 Middle East & North Africa:
   Sample size: 102 observations
   Mean GINI: 35.35 (±4.75)
   Model Performance:
-    Random Forest: RMSE=1.64, R²=0.875
-    XGBoost: RMSE=3.45, R²=0.451
-    LightGBM: RMSE=2.43, R²=0.727
+    Random Forest: RMSE=1.72, R²=0.864
+    XGBoost: RMSE=2.98, R²=0.590
+    LightGBM: RMSE=2.37, R²=0.740
   Top 5 Features (XGBoost):
-    1. SP.DYN.TFRT.IN: 0.4170
-    2. AG.LND.AGRI.ZS: 0.1367
-    3. AG.LND.FRST.ZS: 0.1138
-    4. SG.GEN.PARL.ZS: 0.0508
-    5. NV.AGR.TOTL.ZS: 0.0360
+    1. AG.LND.AGRI.ZS: 0.2508
+    2. SP.DYN.TFRT.IN: 0.1668
+    3. AG.LND.FRST.ZS: 0.1475
+    4. health_to_edu_ratio: 0.1054
+    5. SL.TLF.CACT.ZS: 0.0448
 
 Latin America & Caribbean:
   Sample size: 342 observations
   Mean GINI: 48.30 (±5.15)
   Model Performance:
-    Random Forest: RMSE=1.41, R²=0.920
+    Random Forest: RMSE=1.46, R²=0.915
     XGBoost: RMSE=1.33, R²=0.930
-    LightGBM: RMSE=1.30, R²=0.933
+    LightGBM: RMSE=1.22, R²=0.941
   Top 5 Features (XGBoost):
-    1. year_feature: 0.2151
-    2. ER.H2O.FWST.ZS: 0.1100
-    3. AG.LND.FRST.ZS: 0.0896
-    4. AG.LND.AGRI.ZS: 0.0662
-    5. SL.TLF.CACT.FE.ZS: 0.0522
+    1. year_feature: 0.2462
+    2. ER.H2O.FWST.ZS: 0.1497
+    3. SL.TLF.CACT.FE.ZS: 0.0744
+    4. AG.LND.FRST.ZS: 0.0548
+    5. SP.RUR.TOTL: 0.0416
 
 East Asia & Pacific:
   Sample size: 145 observations
   Mean GINI: 36.41 (±4.32)
   Model Performance:
-    Random Forest: RMSE=1.36, R²=0.818
-    XGBoost: RMSE=1.51, R²=0.775
-    LightGBM: RMSE=1.31, R²=0.829
+    Random Forest: RMSE=1.35, R²=0.820
+    XGBoost: RMSE=1.53, R²=0.768
+    LightGBM: RMSE=1.45, R²=0.791
   Top 5 Features (XGBoost):
-    1. PA.NUS.FCRF: 0.2276
-    2. SH.XPD.GHED.GD.ZS: 0.2037
-    3. SH.XPD.PVTD.CH.ZS: 0.1109
-    4. SG.GEN.PARL.ZS: 0.0961
-    5. SP.RUR.TOTL: 0.0655
+    1. PA.NUS.FCRF: 0.2792
+    2. SH.XPD.GHED.GD.ZS: 0.1436
+    3. SG.GEN.PARL.ZS: 0.1062
+    4. SH.XPD.PVTD.CH.ZS: 0.1060
+    5. SP.RUR.TOTL: 0.0523
 
 South Asia:
   Sample size: 36 observations
   Mean GINI: 33.43 (±4.78)
   Model Performance:
-    Random Forest: RMSE=2.65, R²=0.553
-    XGBoost: RMSE=4.31, R²=-0.188
+    Random Forest: RMSE=2.68, R²=0.542
+    XGBoost: RMSE=4.54, R²=-0.320
     LightGBM: RMSE=5.16, R²=-0.698
   Top 5 Features (XGBoost):
-    1. SL.TLF.CACT.MA.ZS: 0.5807
-    2. urbanization_rate: 0.2512
-    3. ER.H2O.FWST.ZS: 0.0633
-    4. EG.ELC.RNEW.ZS: 0.0212
-    5. SH.XPD.GHED.GD.ZS: 0.0166
+    1. SL.TLF.CACT.MA.ZS: 0.5454
+    2. urbanization_rate: 0.2696
+    3. AG.LND.AGRI.ZS: 0.0595
+    4. SL.AGR.EMPL.ZS: 0.0277
+    5. EG.ELC.RNEW.ZS: 0.0200
 
 North America:
   Sample size: 46 observations
   Mean GINI: 37.26 (±4.02)
   Model Performance:
-    Random Forest: RMSE=0.60, R²=0.974
-    XGBoost: RMSE=0.29, R²=0.994
+    Random Forest: RMSE=0.45, R²=0.985
+    XGBoost: RMSE=0.31, R²=0.993
     LightGBM: RMSE=3.87, R²=-0.111
   Top 5 Features (XGBoost):
-    1. NY.GDP.MKTP.CD: 0.8531
-    2. SP.POP.TOTL: 0.0593
-    3. SH.XPD.CHEX.GD.ZS: 0.0234
-    4. ER.H2O.FWTL.K3: 0.0149
-    5. urbanization_rate: 0.0120
+    1. NY.GDP.MKTP.CD: 0.8692
+    2. SP.POP.TOTL: 0.0510
+    3. SH.XPD.CHEX.GD.ZS: 0.0201
+    4. NY.GDP.PCAP.PP.CD: 0.0128
+    5. urbanization_rate: 0.0094
 
 Other:
   Sample size: 36 observations
   Mean GINI: 36.15 (±7.22)
   Model Performance:
-    Random Forest: RMSE=7.25, R²=-0.099
-    XGBoost: RMSE=3.79, R²=0.699
+    Random Forest: RMSE=6.93, R²=-0.003
+    XGBoost: RMSE=4.93, R²=0.492
     LightGBM: RMSE=6.92, R²=-0.001
   Top 5 Features (XGBoost):
-    1. SP.RUR.TOTL: 0.2590
-    2. IT.NET.USER.ZS: 0.2166
-    3. SP.POP.DPND: 0.1258
-    4. NV.SRV.TOTL.ZS: 0.1126
-    5. SH.XPD.PVTD.CH.ZS: 0.0873
-
-
-======================================================================
-KEY INSIGHTS
-----------------------------------------------------------------------
-
-1. Performance varies across income levels, suggesting different
-   inequality dynamics in countries at different development stages.
-
-2. Feature importance rankings differ by segment, indicating that
-   policies should be tailored to country context.
-
-3. Model accuracy (R²) tends to be higher in larger segments with
-   more homogeneous characteristics.
+    1. ER.H2O.FWST.ZS: 0.4252
+    2. SP.RUR.TOTL: 0.2872
+    3. FR.INR.DPST: 0.1060
+    4. BN.CAB.XOKA.GD.ZS: 0.0858
+    5. urbanization_rate: 0.0330
 

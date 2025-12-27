@@ -1,3 +1,6 @@
+# GINI Coefficient Prediction - Dependencies
+# Python 3.8+ required (3.12+ recommended for best performance)
+
 # Core data science libraries
 pandas>=2.2.0
 numpy>=1.26.0
@@ -5,28 +8,28 @@ scipy>=1.13.0
 
 # Machine learning
 scikit-learn>=1.5.0
-
-# Visualization
-matplotlib>=3.9.0
-seaborn>=0.13.0
-
-# API and web requests
-requests>=2.32.0
-
-# Parallelization and model utilities
-joblib>=1.4.0  # Required for parallel bootstrap iterations and cross-validation
+joblib>=1.4.0  # Parallel processing for bootstrap and CV
 
 # Gradient boosting libraries
 xgboost>=3.1.0
 lightgbm>=4.6.0
 
-# Performance optimizations:
-# - joblib: Parallel bootstrap iterations (6x speedup)
-# - concurrent.futures: Built-in, used for parallel API calls (6x speedup)
-# - Vectorized pandas operations: Outlier removal (25x speedup)
-# - sklearn n_jobs=-1: Parallel cross-validation (5x speedup)
+# Visualization
+matplotlib>=3.9.0
+seaborn>=0.13.0
 
-# Note for macOS users:
-# XGBoost requires OpenMP runtime library (libomp)
-# Install via conda: conda install -c conda-forge llvm-openmp
-# Or via Homebrew: brew install libomp
+# API requests
+requests>=2.32.0
+
+# Note: concurrent.futures (used for parallel API calls) is built-in to Python 3.2+
+# Note: threading (used for spinner animation) is built-in to Python
+
+# Performance features enabled:
+# - Parallel API calls via concurrent.futures (6x speedup)
+# - Parallel bootstrap iterations via joblib (6x speedup)
+# - Vectorized pandas operations (25x speedup)
+# - Parallel cross-validation via sklearn (5x speedup)
+
+# macOS users: XGBoost requires OpenMP
+# Install via: brew install libomp
+# Or via conda: conda install -c conda-forge llvm-openmp
