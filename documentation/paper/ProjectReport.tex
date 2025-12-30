@@ -126,7 +126,7 @@ where $A$ contains high-gradient instances, $B$ contains sampled low-gradient in
 
 \section{Implementation and Parallel Performance}
 \label{sec:implementation}
-\par The complete pipeline is implemented in Python 3.12+ with a modular architecture consisting of 9 main scripts organized in a linear workflow:
+\par The complete pipeline is implemented in Python 3.12+ with a modular architecture consisting of 8 main scripts organized in a linear workflow:
 
 \vspace{-0.5em}
 \begin{itemize}
@@ -135,12 +135,11 @@ where $A$ contains high-gradient instances, $B$ contains sampled low-gradient in
 \item \texttt{01\_data\_collection.py} --- Fetches data from World Bank API
 \item \texttt{02\_data\_preprocessing.py} --- Cleans and prepares data
 \item \texttt{03\_model\_training.py} --- Trains ML models
-\item \texttt{04\_predict.py} --- Makes predictions
-\item \texttt{05\_model\_evaluation.py} --- Evaluates models with visualizations
-\item \texttt{06\_comprehensive\_comparison.py} --- Performs detailed analysis
-\item \texttt{07\_segmentation\_analysis.py} --- Conducts income/regional segmentation
-\item \texttt{08\_statistical\_tests.py} --- Runs significance tests
-\item \texttt{09\_populate\_paper\_tables.py} --- Generates LaTeX tables
+\item \texttt{04\_model\_evaluation.py} --- Evaluates models with visualizations
+\item \texttt{05\_comprehensive\_comparison.py} --- Performs detailed analysis
+\item \texttt{06\_segmentation\_analysis.py} --- Conducts income/regional segmentation
+\item \texttt{07\_statistical\_tests.py} --- Runs significance tests
+\item \texttt{08\_populate\_paper\_tables.py} --- Generates LaTeX tables
 \end{itemize}
 \vspace{-0.5em}
 

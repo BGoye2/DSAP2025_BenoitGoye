@@ -163,7 +163,7 @@ def run_pipeline(
                 print("⚠ Warning: processed_data.csv not found. Skipping evaluation step...")
             else:
                 run_script(
-                    'src/05_model_evaluation.py',
+                    'src/04_model_evaluation.py',
                     "Evaluating models and generating visualizations",
                     "Model evaluation completed successfully"
                 )
@@ -177,7 +177,7 @@ def run_pipeline(
                 print("⚠ Warning: processed_data.csv not found. Skipping comparison step...")
             else:
                 run_script(
-                    'src/06_comprehensive_comparison.py',
+                    'src/05_comprehensive_comparison.py',
                     "Running comprehensive model analysis",
                     "Model comparison completed successfully"
                 )
@@ -192,7 +192,7 @@ def run_pipeline(
             else:
                 try:
                     run_script(
-                        'src/07_segmentation_analysis.py',
+                        'src/06_segmentation_analysis.py',
                         "Analyzing performance across income levels and regions",
                         "Segmentation analysis completed successfully"
                     )
@@ -210,7 +210,7 @@ def run_pipeline(
             else:
                 try:
                     run_script(
-                        'src/08_statistical_tests.py',
+                        'src/07_statistical_tests.py',
                         "Running bootstrap, permutation, and consistency tests",
                         "Statistical significance tests completed successfully"
                     )
@@ -225,7 +225,7 @@ def run_pipeline(
 
             try:
                 run_script(
-                    'src/09_populate_paper_tables.py',
+                    'src/08_populate_paper_tables.py',
                     "Generating LaTeX table content from results",
                     "LaTeX tables generated and inserted into paper.tex"
                 )

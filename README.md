@@ -19,12 +19,11 @@ This project uses five tree-based regression models to predict income inequality
 │   ├── 01_data_collection.py      # Fetch data from World Bank API
 │   ├── 02_data_preprocessing.py   # Clean and prepare data
 │   ├── 03_model_training.py       # Train ML models
-│   ├── 04_predict.py              # Make predictions with trained models
-│   ├── 05_model_evaluation.py     # Evaluate models (metrics & visualizations)
-│   ├── 06_comprehensive_comparison.py  # Detailed model comparison
-│   ├── 07_segmentation_analysis.py     # Income/regional segmentation
-│   ├── 08_statistical_tests.py         # Statistical significance tests
-│   ├── 09_populate_paper_tables.py     # Generate LaTeX tables
+│   ├── 04_model_evaluation.py     # Evaluate models (metrics & visualizations)
+│   ├── 05_comprehensive_comparison.py  # Detailed model comparison
+│   ├── 06_segmentation_analysis.py     # Income/regional segmentation
+│   ├── 07_statistical_tests.py         # Statistical significance tests
+│   ├── 08_populate_paper_tables.py     # Generate LaTeX tables
 │   ├── utils.py                    # Utility functions (Spinner, print helpers)
 │   └── config/                     # Configuration files
 │       ├── constants.py            # Project constants and hyperparameters
@@ -58,9 +57,6 @@ This project uses five tree-based regression models to predict income inequality
 # Create and activate environment
 conda env create -f environment.yml
 conda activate dsap-project
-
-# Verify installation
-python -c "import sklearn, xgboost, lightgbm; print('✓ All dependencies installed')"
 ```
 
 ### Option 2: Using pip
@@ -116,19 +112,18 @@ cd src
 python 01_data_collection.py      # Fetch data from World Bank API
 python 02_data_preprocessing.py   # Clean and prepare data
 python 03_model_training.py       # Train all 5 models
-python 04_predict.py              # Make predictions (optional)
-python 05_model_evaluation.py     # Evaluate models with visualizations
-python 06_comprehensive_comparison.py  # Detailed model comparison
-python 07_segmentation_analysis.py     # Income/regional analysis
-python 08_statistical_tests.py         # Statistical significance tests
-python 09_populate_paper_tables.py     # Generate LaTeX tables
+python 04_model_evaluation.py     # Evaluate models with visualizations
+python 05_comprehensive_comparison.py  # Detailed model comparison
+python 06_segmentation_analysis.py     # Income/regional analysis
+python 07_statistical_tests.py         # Statistical significance tests
+python 08_populate_paper_tables.py     # Generate LaTeX tables
 ```
 
 **Key Scripts:**
 - **01_data_collection.py**: Fetches 53 indicators from 2000-2023
 - **03_model_training.py**: Trains all models, saves to `output/trained_models.pkl`
-- **07_segmentation_analysis.py**: Analyzes 7 regions and income quartiles
-- **08_statistical_tests.py**: Bootstrap + permutation tests with caching (significantly faster on reruns)
+- **06_segmentation_analysis.py**: Analyzes 7 regions and income quartiles
+- **07_statistical_tests.py**: Bootstrap + permutation tests with caching (significantly faster on reruns)
 
 ## Features
 
