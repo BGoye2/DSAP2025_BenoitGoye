@@ -36,6 +36,7 @@ Output: segmentation_income_results.csv, output/figures/segmentation_income_perf
 """
 
 import json
+import os
 import warnings
 from typing import Dict, List, Tuple
 
