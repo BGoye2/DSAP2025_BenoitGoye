@@ -2,7 +2,7 @@
 COMPREHENSIVE MODEL COMPARISON REPORT
 ================================================================================
 
-Generated: 2025-12-30 18:37:45.736740
+Generated: 2025-12-30 18:45:28.578348
 Dataset: output/processed_data.csv
 Number of models: 5
 Test set size: 365
@@ -12,50 +12,50 @@ BEST MODELS BY METRIC
 ================================================================================
 
 RMSE (lower is better):
-  Best: Gradient Boosting = 2.554
+  Best: XGBoost = 2.547
 
 MAE (lower is better):
-  Best: Gradient Boosting = 1.719
+  Best: XGBoost = 1.705
 
 R² (higher is better):
-  Best: Gradient Boosting = 0.908
+  Best: XGBoost = 0.908
 
 MAPE (lower is better):
-  Best: Gradient Boosting = 4.685
+  Best: XGBoost = 4.644
 
 ================================================================================
 OVERALL MODEL RANKING (by Test R²)
 ================================================================================
 
-1. Gradient Boosting
-   Test R²: 0.9076
-   Test RMSE: 2.5544
-   Test MAE: 1.7193
-   Overfit Gap: -1.7615
+1. XGBoost
+   Test R²: 0.9081
+   Test RMSE: 2.5468
+   Test MAE: 1.7053
+   Overfit Gap: -1.7035
 
-2. XGBoost
-   Test R²: 0.9034
-   Test RMSE: 2.6115
-   Test MAE: 1.7365
-   Overfit Gap: -1.7682
+2. Gradient Boosting
+   Test R²: 0.9047
+   Test RMSE: 2.5930
+   Test MAE: 1.7233
+   Overfit Gap: -1.7972
 
 3. LightGBM
-   Test R²: 0.8980
-   Test RMSE: 2.6832
-   Test MAE: 1.7645
-   Overfit Gap: -1.4613
+   Test R²: 0.8954
+   Test RMSE: 2.7175
+   Test MAE: 1.8025
+   Overfit Gap: -1.5001
 
 4. Random Forest
-   Test R²: 0.8871
-   Test RMSE: 2.8234
-   Test MAE: 1.8432
-   Overfit Gap: -1.4258
+   Test R²: 0.8832
+   Test RMSE: 2.8718
+   Test MAE: 1.8534
+   Overfit Gap: -1.4589
 
 5. Decision Tree
-   Test R²: 0.7995
-   Test RMSE: 3.7622
-   Test MAE: 2.4643
-   Overfit Gap: -1.8962
+   Test R²: 0.7815
+   Test RMSE: 3.9272
+   Test MAE: 2.5429
+   Overfit Gap: -2.0613
 
 ================================================================================
 DETAILED MODEL STATISTICS
@@ -69,128 +69,128 @@ Decision Tree:
     R²: 0.9461
 
   Test Performance:
-    RMSE: 3.7622
-    MAE: 2.4643
-    MAPE: 6.64%
-    R²: 0.7995
+    RMSE: 3.9272
+    MAE: 2.5429
+    MAPE: 6.80%
+    R²: 0.7815
     Max Error: 19.2800
     Median Abs Error: 1.4200
 
   Cross-Validation:
-    RMSE: 4.4997 ± nan
-    R²: 0.6826 ± 0.0536
+    RMSE: 4.5172 ± nan
+    R²: 0.6804 ± 0.0510
 
   Residual Analysis:
-    Mean: -0.0610
-    Std: 3.7617
-    Skewness: 0.1994
-    Kurtosis: 5.2206
+    Mean: 0.0642
+    Std: 3.9267
+    Skewness: 0.2899
+    Kurtosis: 4.7647
 
 Random Forest:
 --------------------------------------------------------------------------------
   Training Performance:
-    RMSE: 1.3977
-    MAE: 0.8949
-    R²: 0.9697
+    RMSE: 1.4129
+    MAE: 0.8993
+    R²: 0.9691
 
   Test Performance:
-    RMSE: 2.8234
-    MAE: 1.8432
-    MAPE: 4.94%
-    R²: 0.8871
-    Max Error: 14.1427
-    Median Abs Error: 1.0885
+    RMSE: 2.8718
+    MAE: 1.8534
+    MAPE: 4.96%
+    R²: 0.8832
+    Max Error: 14.3242
+    Median Abs Error: 1.1173
 
   Cross-Validation:
-    RMSE: 3.0852 ± nan
-    R²: 0.8514 ± 0.0207
+    RMSE: 3.0842 ± nan
+    R²: 0.8517 ± 0.0184
 
   Residual Analysis:
-    Mean: 0.1970
-    Std: 2.8166
-    Skewness: 0.6121
-    Kurtosis: 4.2199
+    Mean: 0.2067
+    Std: 2.8643
+    Skewness: 0.7145
+    Kurtosis: 4.7039
 
 Gradient Boosting:
 --------------------------------------------------------------------------------
   Training Performance:
-    RMSE: 0.7929
-    MAE: 0.6100
-    R²: 0.9903
+    RMSE: 0.7958
+    MAE: 0.6133
+    R²: 0.9902
 
   Test Performance:
-    RMSE: 2.5544
-    MAE: 1.7193
-    MAPE: 4.69%
-    R²: 0.9076
-    Max Error: 13.5169
-    Median Abs Error: 1.1152
+    RMSE: 2.5930
+    MAE: 1.7233
+    MAPE: 4.68%
+    R²: 0.9047
+    Max Error: 14.0519
+    Median Abs Error: 1.1276
 
   Cross-Validation:
-    RMSE: 2.9288 ± nan
-    R²: 0.8655 ± 0.0261
+    RMSE: 2.9092 ± nan
+    R²: 0.8673 ± 0.0276
 
   Residual Analysis:
-    Mean: 0.1169
-    Std: 2.5517
-    Skewness: 0.3972
-    Kurtosis: 4.7457
+    Mean: 0.1325
+    Std: 2.5896
+    Skewness: 0.5210
+    Kurtosis: 5.3578
 
 XGBoost:
 --------------------------------------------------------------------------------
   Training Performance:
     RMSE: 0.8433
-    MAE: 0.6312
+    MAE: 0.6350
     R²: 0.9890
 
   Test Performance:
-    RMSE: 2.6115
-    MAE: 1.7365
-    MAPE: 4.72%
-    R²: 0.9034
-    Max Error: 12.5163
-    Median Abs Error: 1.0529
+    RMSE: 2.5468
+    MAE: 1.7053
+    MAPE: 4.64%
+    R²: 0.9081
+    Max Error: 12.9762
+    Median Abs Error: 1.1508
 
   Cross-Validation:
-    RMSE: 2.8977 ± nan
-    R²: 0.8686 ± 0.0235
+    RMSE: 2.9092 ± nan
+    R²: 0.8673 ± 0.0304
 
   Residual Analysis:
-    Mean: 0.0846
-    Std: 2.6102
-    Skewness: 0.1515
-    Kurtosis: 4.5330
+    Mean: 0.0932
+    Std: 2.5451
+    Skewness: 0.1072
+    Kurtosis: 4.5279
 
 LightGBM:
 --------------------------------------------------------------------------------
   Training Performance:
-    RMSE: 1.2219
-    MAE: 0.8985
-    R²: 0.9769
+    RMSE: 1.2174
+    MAE: 0.8913
+    R²: 0.9770
 
   Test Performance:
-    RMSE: 2.6832
-    MAE: 1.7645
-    MAPE: 4.80%
-    R²: 0.8980
-    Max Error: 14.8024
-    Median Abs Error: 1.1616
+    RMSE: 2.7175
+    MAE: 1.8025
+    MAPE: 4.87%
+    R²: 0.8954
+    Max Error: 14.9757
+    Median Abs Error: 1.1982
 
   Cross-Validation:
-    RMSE: 3.0674 ± nan
-    R²: 0.8523 ± 0.0303
+    RMSE: 3.0164 ± nan
+    R²: 0.8570 ± 0.0291
 
   Residual Analysis:
-    Mean: 0.1998
-    Std: 2.6758
-    Skewness: 0.4748
-    Kurtosis: 5.6252
+    Mean: 0.2008
+    Std: 2.7100
+    Skewness: 0.6873
+    Kurtosis: 5.5620
 
 ================================================================================
 RECOMMENDATIONS
 ================================================================================
 
-✓ Best Overall Model: Gradient Boosting
+✓ Best Overall Model: XGBoost
   Recommended for: General predictions
 
 ✓ Best Interpretable Model: Decision Tree
