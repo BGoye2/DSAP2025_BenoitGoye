@@ -10,9 +10,18 @@ This module defines:
 - Plot dimensions and styling
 - Validation thresholds
 - Model name mappings
+- Feature name mappings
 """
 
 import os
+from .feature_names import FEATURE_NAME_MAPPING, get_display_name, get_all_display_names, validate_feature_coverage
+
+# =============================================================================
+# TARGET VARIABLE
+# =============================================================================
+
+TARGET_VARIABLE = 'SI.POV.GINI'  # GINI coefficient - primary target for prediction
+TARGET_DISPLAY_NAME = 'GINI Coefficient'  # Human-readable name for display
 
 # =============================================================================
 # RANDOM SEEDS
@@ -29,6 +38,10 @@ DEFAULT_RANDOM_SEED = 42  # Base seed for all random operations (ensures reprodu
 OUTPUT_DIR = 'output'
 CACHE_DIR = os.path.join(OUTPUT_DIR, '.cache')
 CONFIG_DIR = 'src/config'
+
+# Output subdirectories
+FIGURES_DIR = os.path.join(OUTPUT_DIR, 'figures')
+TABLES_DIR = os.path.join(OUTPUT_DIR, 'tables')
 
 # Model and data paths
 MODELS_PATH = os.path.join(OUTPUT_DIR, 'trained_models.pkl')
@@ -244,3 +257,26 @@ BOOTSTRAP_CONFIDENCE_LEVEL = 0.95  # 95% confidence intervals
 # =============================================================================
 
 CACHE_ENABLED = True  # Enable caching by default
+
+
+# =============================================================================
+# DIRECTORY INITIALIZATION
+# =============================================================================
+
+def ensure_directories_exist():
+    """
+    Ensure all required output directories exist.
+
+    Creates the following directories if they don't exist:
+    - output/
+    - output/figures/
+    - output/tables/
+    - output/.cache/
+
+    This function should be called once at the beginning of the pipeline
+    (e.g., in main.py) to set up the directory structure.
+    """
+    directories = [OUTPUT_DIR, FIGURES_DIR, TABLES_DIR, CACHE_DIR]
+
+    for directory in directories:
+        os.makedirs(directory, exist_ok=True)

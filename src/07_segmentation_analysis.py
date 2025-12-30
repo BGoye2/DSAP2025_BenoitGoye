@@ -29,10 +29,10 @@ Key Insights:
 - Which features matter most in different regions/income levels?
 
 Input: output/processed_data.csv, output/feature_names.csv
-Output: segmentation_income_results.csv, segmentation_income_performance.png,
-        segmentation_income_features.png, segmentation_regional_results.csv,
-        segmentation_regional_performance.png, segmentation_regional_features.png,
-        segmentation_summary_report.txt
+Output: segmentation_income_results.csv, output/figures/segmentation_income_performance.png,
+        output/figures/segmentation_income_features.png, segmentation_regional_results.csv,
+        output/figures/segmentation_regional_performance.png,
+        output/figures/segmentation_regional_features.png, segmentation_summary_report.txt
 """
 
 import pandas as pd
@@ -48,6 +48,8 @@ import seaborn as sns
 from typing import Dict, List, Tuple
 import warnings
 warnings.filterwarnings('ignore')
+
+from config.constants import TARGET_VARIABLE
 
 
 # World Bank Regional Classification
@@ -156,7 +158,7 @@ class SegmentationAnalyzer:
             feature_names_df = pd.read_csv('output/feature_names.csv')
             self.feature_names = feature_names_df['feature'].tolist()
         except FileNotFoundError:
-            self.feature_names = [col for col in self.data.columns if col != 'SI.POV.GINI']
+            self.feature_names = [col for col in self.data.columns if col != TARGET_VARIABLE]
 
         print(f"Loaded {len(self.data)} observations with {len(self.feature_names)} features")
 
@@ -241,7 +243,7 @@ class SegmentationAnalyzer:
         print(f"{'='*60}")
 
         X = self.data[self.feature_names].values
-        y = self.data['SI.POV.GINI'].values
+        y = self.data[TARGET_VARIABLE].values
 
         results = {}
 
@@ -497,13 +499,13 @@ class SegmentationAnalyzer:
         self.create_performance_comparison_plot(
             income_results,
             'Income Level',
-            'output/segmentation_income_performance.png'
+            'output/figures/segmentation_income_performance.png'
         )
 
         self.create_feature_importance_heatmap(
             income_results,
             'Income Level',
-            'output/segmentation_income_features.png',
+            'output/figures/segmentation_income_features.png',
             model_name='XGBoost'
         )
 
@@ -523,13 +525,13 @@ class SegmentationAnalyzer:
         self.create_performance_comparison_plot(
             regional_results,
             'Region',
-            'output/segmentation_regional_performance.png'
+            'output/figures/segmentation_regional_performance.png'
         )
 
         self.create_feature_importance_heatmap(
             regional_results,
             'Region',
-            'output/segmentation_regional_features.png',
+            'output/figures/segmentation_regional_features.png',
             model_name='XGBoost'
         )
 
@@ -546,11 +548,11 @@ class SegmentationAnalyzer:
         print("SEGMENTATION ANALYSIS COMPLETE")
         print("="*60)
         print("\nGenerated files:")
-        print("  - output/segmentation_income_performance.png")
-        print("  - output/segmentation_income_features.png")
+        print("  - output/figures/segmentation_income_performance.png")
+        print("  - output/figures/segmentation_income_features.png")
         print("  - output/segmentation_income_results.csv")
-        print("  - output/segmentation_regional_performance.png")
-        print("  - output/segmentation_regional_features.png")
+        print("  - output/figures/segmentation_regional_performance.png")
+        print("  - output/figures/segmentation_regional_features.png")
         print("  - output/segmentation_regional_results.csv")
         print("  - output/segmentation_summary_report.txt")
 

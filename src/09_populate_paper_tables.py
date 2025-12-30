@@ -1,8 +1,8 @@
 """
 LaTeX Table Population for Research Paper
 
-This script automatically generates LaTeX tables from analysis results and inserts them
-into the research paper, eliminating manual copy-paste errors and ensuring reproducibility.
+This script automatically generates LaTeX tables from analysis results,
+eliminating manual copy-paste errors and ensuring reproducibility.
 
 Generated Tables:
 
@@ -17,7 +17,12 @@ Generated Tables:
    - Cross-validation RMSE
    - Enables comparison of model accuracy
 
-3. Table 4 - Model Performance by Income Level:
+3. Table 3 - Top Features by Importance:
+   - Feature importance rankings from XGBoost model
+   - Shows top 10 most important predictors
+   - Extracted directly from trained model
+
+4. Table 4 - Model Performance by Income Level:
    - Segmented performance across income quartiles
    - Shows RMSE and R² for each income level
    - Reveals whether models work better for certain economic contexts
@@ -25,27 +30,29 @@ Generated Tables:
 
 4. Summary Text:
    - Dynamically generated summary statistics text
-   - Inserted into descriptive statistics section
    - Updates automatically when data changes
 
 Process:
 1. Load results from CSV files (model_comparison, segmentation_income, etc.)
 2. Generate LaTeX table code with proper formatting
-3. Save to report/tables/*.tex files
-4. Update research_paper.tex to \\input{} these tables
-5. Ensures paper always reflects latest results
+3. Save to output/tables/*.tex files
+4. Tables are imported by paper.tex using \\input{} commands
 
 Input: output/processed_data.csv, output/model_comparison.csv,
-       output/segmentation_income_results.csv
-Output: report/tables/table1_descriptive.tex, report/tables/table2_performance.tex,
-        report/tables/table4_income.tex, report/tables/summary_text.tex,
-        updated report/research_paper.tex
+       output/segmentation_income_results.csv, output/trained_models.pkl
+Output: output/tables/table1_descriptive.tex, output/tables/table2_performance.tex,
+        output/tables/table3_features.tex, output/tables/table4_income.tex,
+        output/tables/summary_text.tex
 """
 
 import pandas as pd
 import numpy as np
 import re
+import joblib
 import warnings
+from config.constants import get_display_name, TARGET_VARIABLE
+from config.feature_categories import filter_features_by_category
+
 warnings.filterwarnings('ignore')
 
 
@@ -58,6 +65,7 @@ class PaperTablePopulator:
         self.model_comparison = None
         self.income_results = None
         self.feature_names = None
+        self.trained_models = None
 
     def load_data(self):
         """Load all necessary data files"""
@@ -91,33 +99,45 @@ class PaperTablePopulator:
             print("✗ feature_names.csv not found")
             return False
 
+        try:
+            self.trained_models = joblib.load('output/trained_models.pkl')
+            print(f"✓ Loaded trained_models.pkl: {len(self.trained_models['models'])} models")
+        except FileNotFoundError:
+            print("⚠ trained_models.pkl not found - Table 3 will be skipped")
+            self.trained_models = None
+
         return True
 
     def generate_descriptive_table(self):
         """Generate Table 1: Descriptive Statistics"""
         print("\nGenerating Table 1: Descriptive Statistics...")
 
-        # Get key variables
-        gini = self.processed_data['SI.POV.GINI']
+        # Get key variables using feature categories
+        gini = self.processed_data[TARGET_VARIABLE]
 
         # Find GDP per capita column
-        gdp_cols = [col for col in self.processed_data.columns if 'NY.GDP.PCAP' in col]
+        gdp_cols = filter_features_by_category(self.processed_data.columns.tolist(), 'gdp')
+        gdp_cols = [col for col in gdp_cols if 'NY.GDP.PCAP' in col and col in self.processed_data.columns]
         gdp = self.processed_data[gdp_cols[0]] if gdp_cols else None
 
         # Find education expenditure column
-        edu_cols = [col for col in self.processed_data.columns if 'SE.XPD' in col]
+        edu_cols = filter_features_by_category(self.processed_data.columns.tolist(), 'education')
+        edu_cols = [col for col in edu_cols if 'SE.XPD' in col and col in self.processed_data.columns]
         edu = self.processed_data[edu_cols[0]] if edu_cols else None
 
         # Find health expenditure column
-        health_cols = [col for col in self.processed_data.columns if 'SH.XPD' in col and 'PC' in col]
+        health_cols = filter_features_by_category(self.processed_data.columns.tolist(), 'health')
+        health_cols = [col for col in health_cols if 'SH.XPD' in col and 'PC' in col and col in self.processed_data.columns]
         health = self.processed_data[health_cols[0]] if health_cols else None
 
         # Find unemployment column
-        unemp_cols = [col for col in self.processed_data.columns if 'SL.UEM.TOTL' in col]
+        unemp_cols = filter_features_by_category(self.processed_data.columns.tolist(), 'labor')
+        unemp_cols = [col for col in unemp_cols if 'SL.UEM.TOTL' in col and col in self.processed_data.columns]
         unemp = self.processed_data[unemp_cols[0]] if unemp_cols else None
 
         # Find urban population column
-        urban_cols = [col for col in self.processed_data.columns if 'SP.URB.TOTL' in col or 'urbanization' in col.lower()]
+        urban_cols = filter_features_by_category(self.processed_data.columns.tolist(), 'demographics')
+        urban_cols = [col for col in urban_cols if ('SP.URB.TOTL' in col or 'urbanization' in col.lower()) and col in self.processed_data.columns]
         urban = self.processed_data[urban_cols[0]] if urban_cols else None
 
         n_total = len(self.processed_data)
@@ -165,13 +185,14 @@ class PaperTablePopulator:
         """Generate Table 2: Model Performance Comparison"""
         print("\nGenerating Table 2: Model Performance Comparison...")
 
-        latex = "\\begin{tabular}{lcccc}\n"
+        latex = "\\begin{tabularx}{\\columnwidth}{@{}X@{\\hspace{4pt}}c@{\\hspace{4pt}}c@{\\hspace{4pt}}c@{\\hspace{4pt}}c@{}}\n"
         latex += "\\toprule\n"
-        latex += "Model & Train RMSE & Test RMSE & Test R² & CV RMSE \\\\\n"
+        latex += "Model & Train & Test & Test & CV \\\\\n"
+        latex += " & RMSE & RMSE & R² & RMSE \\\\\n"
         latex += "\\midrule\n"
 
         for _, row in self.model_comparison.iterrows():
-            model_name = row['Model']
+            model_name = self._clean_model_name(row['Model'])
             train_rmse = row['Train RMSE']
             test_rmse = row['Test RMSE']
             test_r2 = row['Test R²']
@@ -180,10 +201,91 @@ class PaperTablePopulator:
             latex += f"{model_name} & {train_rmse:.2f} & {test_rmse:.2f} & {test_r2:.3f} & {cv_rmse:.2f} \\\\\n"
 
         latex += "\\bottomrule\n"
-        latex += "\\end{tabular}"
+        latex += "\\end{tabularx}"
 
         print("✓ Table 2 generated")
         return latex
+
+    def generate_feature_importance_table(self, model_name: str = 'XGBoost', top_n: int = 10):
+        """Generate Table 3: Top Features by Importance"""
+        print(f"\nGenerating Table 3: Top {top_n} Features by Importance ({model_name})...")
+
+        if self.trained_models is None:
+            print("✗ No trained models available")
+            return None
+
+        # Get the model
+        models = self.trained_models['models']
+        if model_name not in models:
+            print(f"✗ Model '{model_name}' not found in trained models")
+            return None
+
+        model = models[model_name]
+
+        # Check if model has feature_importances_
+        if not hasattr(model, 'feature_importances_'):
+            print(f"✗ Model '{model_name}' does not have feature_importances_")
+            return None
+
+        # Get feature importances
+        importances = model.feature_importances_
+        feature_names = self.trained_models['feature_names']
+
+        # Create dataframe and sort by importance
+        importance_df = pd.DataFrame({
+            'feature': feature_names,
+            'importance': importances
+        }).sort_values('importance', ascending=False).head(top_n)
+
+        # Generate LaTeX table
+        latex = "\\begin{tabularx}{\\columnwidth}{@{}r@{\\hspace{6pt}}X@{\\hspace{6pt}}c@{}}\n"
+        latex += "\\toprule\n"
+        latex += "\\textbf{Rank} & \\textbf{Feature} & \\textbf{Imp.} \\\\\n"
+        latex += "\\midrule\n"
+
+        for rank, (_, row) in enumerate(importance_df.iterrows(), 1):
+            feature = row['feature']
+            importance = row['importance']
+
+            # Clean up feature name for display
+            display_name = self._clean_feature_name(feature)
+
+            latex += f"{rank} & {display_name} & {importance:.3f} \\\\\n"
+
+        latex += "\\bottomrule\n"
+        latex += "\\end{tabularx}"
+
+        print("✓ Table 3 generated")
+        return latex
+
+    def _clean_model_name(self, model_name: str) -> str:
+        """Clean model name for display in LaTeX table"""
+        # Map to proper capitalization
+        name_mapping = {
+            'decision tree': 'Decision Tree',
+            'random forest': 'Random Forest',
+            'gradient boosting': 'Gradient Boosting',
+            'xgboost': 'XGBoost',
+            'lightgbm': 'LightGBM',
+        }
+
+        # Try case-insensitive match
+        model_lower = model_name.lower()
+        if model_lower in name_mapping:
+            return name_mapping[model_lower]
+
+        # Fallback: return as-is
+        return model_name
+
+    def _clean_feature_name(self, feature: str) -> str:
+        """Clean feature name for display in LaTeX table using centralized mapping"""
+        # Use centralized feature name mapping
+        display_name = get_display_name(feature)
+
+        # Escape special LaTeX characters
+        display_name = display_name.replace('%', '\\%')
+
+        return display_name
 
     def generate_income_performance_table(self):
         """Generate Table 4: Model Performance by Income Level"""
@@ -235,7 +337,7 @@ class PaperTablePopulator:
 
     def generate_summary_text(self):
         """Generate summary text for the note in descriptive statistics section"""
-        gini = self.processed_data['SI.POV.GINI']
+        gini = self.processed_data[TARGET_VARIABLE]
 
         gdp_cols = [col for col in self.processed_data.columns if 'NY.GDP.PCAP' in col]
         gdp = self.processed_data[gdp_cols[0]] if gdp_cols else None
@@ -257,74 +359,37 @@ class PaperTablePopulator:
 
         # Generate Table 1
         table1 = self.generate_descriptive_table()
-        with open('report/tables/table1_descriptive.tex', 'w') as f:
+        with open('output/tables/table1_descriptive.tex', 'w') as f:
             f.write(table1)
-        print("✓ Saved to: report/tables/table1_descriptive.tex")
+        print("✓ Saved to: output/tables/table1_descriptive.tex")
 
         # Generate Table 2
         table2 = self.generate_performance_table()
-        with open('report/tables/table2_performance.tex', 'w') as f:
+        with open('output/tables/table2_performance.tex', 'w') as f:
             f.write(table2)
-        print("✓ Saved to: report/tables/table2_performance.tex")
+        print("✓ Saved to: output/tables/table2_performance.tex")
+
+        # Generate Table 3 (Feature Importance) if models available
+        if self.trained_models is not None:
+            table3 = self.generate_feature_importance_table(model_name='xgboost', top_n=10)
+            if table3:
+                with open('output/tables/table3_features.tex', 'w') as f:
+                    f.write(table3)
+                print("✓ Saved to: output/tables/table3_features.tex")
 
         # Generate summary text
         summary = self.generate_summary_text()
-        with open('report/tables/summary_text.tex', 'w') as f:
+        with open('output/tables/summary_text.tex', 'w') as f:
             f.write(summary)
-        print("✓ Saved to: report/tables/summary_text.tex")
+        print("✓ Saved to: output/tables/summary_text.tex")
 
         # Generate Table 4 if data available
         if self.income_results is not None:
             table4 = self.generate_income_performance_table()
             if table4:
-                with open('report/tables/table4_income.tex', 'w') as f:
+                with open('output/tables/table4_income.tex', 'w') as f:
                     f.write(table4)
-                print("✓ Saved to: report/tables/table4_income.tex")
-
-    def update_latex_paper(self):
-        """Update research_paper.tex to include the generated tables"""
-        print("\n" + "="*60)
-        print("UPDATING RESEARCH PAPER")
-        print("="*60)
-
-        paper_path = 'report/research_paper.tex'
-
-        # Read the current paper
-        with open(paper_path, 'r') as f:
-            content = f.read()
-
-        # Update summary text (line ~236)
-        pattern1 = r'(Table \\ref\{tab:descriptive\} presents summary statistics.*?)\. The mean GINI coefficient is approximately XX with standard deviation YY, ranging from ZZ to WW\. GDP per capita shows substantial variation, reflecting the inclusion of both developed and developing economies\.'
-        replacement1 = r'\1. \\input{tables/summary_text.tex}'
-        content = re.sub(pattern1, replacement1, content, flags=re.DOTALL)
-
-        # Update Table 1 (Descriptive Statistics) - Replace the entire tabular environment
-        pattern_table1 = r'(\\begin\{table\}\[H\]\s*\\centering\s*\\caption\{Descriptive Statistics\}\s*\\label\{tab:descriptive\}\s*)\\begin\{tabular\}\{lcccccc\}.*?\\end\{tabular\}'
-        replacement_table1 = r'\1\\input{tables/table1_descriptive.tex}'
-        content = re.sub(pattern_table1, replacement_table1, content, flags=re.DOTALL)
-
-        # Update Table 2 (Model Performance) - Replace the entire tabular environment
-        pattern_table2 = r'(\\begin\{table\}\[H\]\s*\\centering\s*\\caption\{Model Performance Comparison\}\s*\\label\{tab:performance\}\s*)\\begin\{tabular\}\{lcccc\}.*?\\end\{tabular\}'
-        replacement_table2 = r'\1\\input{tables/table2_performance.tex}'
-        content = re.sub(pattern_table2, replacement_table2, content, flags=re.DOTALL)
-
-        # Update Table 4 (Income Performance) - Replace the entire tabular environment
-        if self.income_results is not None:
-            pattern_table4 = r'(\\begin\{table\}\[H\]\s*\\centering\s*\\caption\{Model Performance by Income Level Segment\}\s*\\label\{tab:income_performance\}\s*)\\begin\{tabular\}\{llccc\}.*?\\end\{tabular\}'
-            replacement_table4 = r'\1\\input{tables/table4_income.tex}'
-            content = re.sub(pattern_table4, replacement_table4, content, flags=re.DOTALL)
-
-        # Write the updated paper
-        with open(paper_path, 'w') as f:
-            f.write(content)
-
-        print("✓ Updated research_paper.tex with \\input{} commands")
-        print("\nThe paper now automatically includes:")
-        print("  - tables/summary_text.tex (descriptive statistics summary)")
-        print("  - tables/table1_descriptive.tex (Table 1)")
-        print("  - tables/table2_performance.tex (Table 2)")
-        if self.income_results is not None:
-            print("  - tables/table4_income.tex (Table 4)")
+                print("✓ Saved to: output/tables/table4_income.tex")
 
     def run(self):
         """Execute the full table population process"""
@@ -335,21 +400,22 @@ class PaperTablePopulator:
 
         # Create tables directory if it doesn't exist
         import os
-        os.makedirs('report/tables', exist_ok=True)
+        os.makedirs('output/tables', exist_ok=True)
 
         # Generate and save table files
         self.save_table_files()
 
-        # Update the LaTeX paper
-        self.update_latex_paper()
-
         print("\n" + "="*60)
         print("TABLE POPULATION COMPLETE")
         print("="*60)
+        print("\nTables saved to output/tables/")
+        print("The LaTeX paper imports these tables automatically.")
         print("\nYou can now compile the report with:")
         print("  cd report")
-        print("  pdflatex research_paper.tex")
-        print("  pdflatex research_paper.tex")
+        print("  pdflatex paper.tex")
+        print("  bibtex paper")
+        print("  pdflatex paper.tex")
+        print("  pdflatex paper.tex")
 
         return True
 

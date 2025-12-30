@@ -70,7 +70,9 @@ from config.constants import (
     PLOT_DPI,
     MAX_FEATURE_NAME_LENGTH,
     SECTION_SEPARATOR,
-    SUBSECTION_SEPARATOR
+    SUBSECTION_SEPARATOR,
+    TARGET_VARIABLE,
+    get_display_name
 )
 
 warnings.filterwarnings('ignore')
@@ -258,11 +260,11 @@ class FeatureImportanceTester:
             feature_names_df = pd.read_csv(FEATURE_NAMES_PATH)
             self.feature_names = feature_names_df['feature'].tolist()
         except FileNotFoundError:
-            self.feature_names = [col for col in self.data.columns if col != 'SI.POV.GINI']
+            self.feature_names = [col for col in self.data.columns if col != TARGET_VARIABLE]
 
         # Prepare data
         X = self.data[self.feature_names].values
-        y = self.data['SI.POV.GINI'].values
+        y = self.data[TARGET_VARIABLE].values
 
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
             X, y, test_size=0.2, random_state=DEFAULT_RANDOM_SEED
@@ -596,6 +598,11 @@ class FeatureImportanceTester:
             'importance_dict': importance_dict
         }
 
+    def _clean_feature_name(self, feature: str) -> str:
+        """Clean feature name for display in plots using centralized mapping"""
+        # Use centralized feature name mapping
+        return get_display_name(feature)
+
     def create_bootstrap_plot(self, bootstrap_results: Dict, output_file: str,
                              top_k: int = 15) -> None:
         """
@@ -612,10 +619,13 @@ class FeatureImportanceTester:
         """
         results = bootstrap_results['results'][:top_k]
 
-        features = [
-            r['feature'][:MAX_FEATURE_NAME_LENGTH] + '...' if len(r['feature']) > MAX_FEATURE_NAME_LENGTH else r['feature']
-            for r in results
-        ]
+        # Clean feature names and truncate if needed
+        features = []
+        for r in results:
+            cleaned = self._clean_feature_name(r['feature'])
+            if len(cleaned) > MAX_FEATURE_NAME_LENGTH:
+                cleaned = cleaned[:MAX_FEATURE_NAME_LENGTH] + '...'
+            features.append(cleaned)
         means = [r['mean_importance'] for r in results]
         ci_lowers = [r['ci_lower'] for r in results]
         ci_uppers = [r['ci_upper'] for r in results]
@@ -801,14 +811,14 @@ class FeatureImportanceTester:
 
         # Bootstrap analysis
         bootstrap_results = self.bootstrap_feature_importance(model_name='XGBoost', n_iterations=BOOTSTRAP_ITERATIONS)
-        self.create_bootstrap_plot(bootstrap_results, 'output/statistical_tests_bootstrap.png')
+        self.create_bootstrap_plot(bootstrap_results, 'output/figures/statistical_tests_bootstrap.png')
 
         # Permutation test
         permutation_results = self.permutation_importance_test(model_name='XGBoost', n_permutations=50)
 
         # Cross-model consistency
         consistency_results = self.cross_model_consistency_test()
-        self.create_correlation_heatmap(consistency_results, 'output/statistical_tests_consistency.png')
+        self.create_correlation_heatmap(consistency_results, 'output/figures/statistical_tests_consistency.png')
 
         # Save results
         self.save_results_to_csv(bootstrap_results, permutation_results, consistency_results)
@@ -819,10 +829,10 @@ class FeatureImportanceTester:
         print(SECTION_SEPARATOR)
         print("\nGenerated files:")
         print("  - output/statistical_tests_bootstrap.csv")
-        print("  - output/statistical_tests_bootstrap.png")
+        print("  - output/figures/statistical_tests_bootstrap.png")
         print("  - output/statistical_tests_permutation.csv")
         print("  - output/statistical_tests_consistency.csv")
-        print("  - output/statistical_tests_consistency.png")
+        print("  - output/figures/statistical_tests_consistency.png")
         print("  - output/statistical_tests_summary.txt")
 
 

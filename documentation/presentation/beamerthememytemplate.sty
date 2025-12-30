@@ -1,0 +1,119 @@
+%Template based on template by the Mathematical Institute at the University of Oxford
+
+% Use infolines as base
+\usefonttheme{default}
+
+% tweak colours for Oxford Blue
+\definecolor{unil-blue}{RGB}{43,100,246}
+\definecolor{unil-white}{RGB}{255,255,255}
+\usecolortheme[named=unil-blue]{structure}
+
+%turn off the navigation symbols
+\setbeamertemplate{navigation symbols}{}
+
+% define useful layout lengths
+\newlength{\textmargin}
+\setlength{\textmargin}{10mm} % Left and right margin for main content
+\setbeamersize{text margin left=\textmargin,text margin right=\textmargin}
+\newlength{\titlehmargin}
+\setlength{\titlehmargin}{1mm} % Left and right margin for title and footline
+\newlength{\titlevmargin}
+\setlength{\titlevmargin}{1mm} % Top and bottom margin for title and footline
+\newlength{\fullpagewidth}
+\setlength{\fullpagewidth}{\dimexpr\textwidth+\textmargin+\textmargin\relax}
+
+% Calculate widths from heights for the logos
+\newlength{\logowidth}
+\setlength{\logowidth}{\dimexpr  10mm * 414 / 311 \relax}
+
+
+\newlength{\beamer@height}
+\usebeamerfont{frametitle} %use the frame title font
+\setlength{\beamer@height}{2.5\baselineskip}
+
+
+%% Title slide formatting %%
+\setbeamertemplate{title page}{
+    \begin{picture}(0,0)
+        \put(-\textmargin-1mm, \dimexpr -\paperheight*6/10 \relax){
+          \includegraphics[width=\paperwidth]{title-slide-background.png}
+        }
+        \put(-\textmargin +7mm, -55pt){%
+            \begin{minipage}[b][2.5cm][t]{0.95\textwidth}
+                \raggedright
+                \color{white}
+                \usebeamerfont{title}
+                    {\hfill\\}
+                    {\textbf\inserttitle\\ [0.5cm]}
+                \usebeamerfont{subtitle}
+                    {\insertauthor\\[0.05cm]}
+                    {\insertdate}
+            \end{minipage}
+        }
+    \end{picture}
+}
+
+%% General slide header %%
+\setbeamertemplate{frametitle}
+{
+  \rlap{%
+  \begin{minipage} [c][1.2\beamer@height][c]{0.95\textwidth}
+    {\usebeamercolor[black]{frametitle}\usebeamerfont{frametitle}\large\textbf\insertframetitle\par}
+    {\usebeamercolor[black]{framesubtitle}\usebeamerfont{framesubtitle}\insertframesubtitle\par}
+\end{minipage}
+\begin{minipage}{\dimexpr\logowidth+1mm\relax}%
+\hfill
+\vspace*{-2.5mm}
+\includegraphics[width=\logowidth]{UNIL-LOGOTYPE-BLUE-RGB.png}%
+\end{minipage}%
+ }%
+ }%
+
+%Section title
+\AtBeginSection[]{
+  \begin{frame}
+    \rlap{%
+    \begin{minipage}[c][0.4\beamer@height][c]{0.95\textwidth}
+    \centering
+    \vfill
+    \usebeamerfont{title}\textbf\insertsectionhead\par%
+  \vfill
+  \end{minipage}
+\begin{minipage}{\dimexpr\logowidth+1mm\relax}%
+\hfill
+\vspace*{+72mm}
+\includegraphics[width=\logowidth]{UNIL-LOGOTYPE-BLUE-RGB.png}%
+\end{minipage}%
+    }
+  \end{frame}
+}
+
+%% General slide footer %%
+\setbeamercolor{posit}{fg=unil-white,bg=unil-blue}
+\setbeamertemplate{footline}{%
+  \leavevmode%
+  \begin{beamercolorbox}[sep=\titlevmargin,wd=\dimexpr\fullpagewidth\relax,ht=4.5mm]{posit}
+    {\usebeamercolor[unil-white]{title in head/foot}\usebeamerfont{title in head/foot}\insertshorttitle}%
+    \hfill%
+    {\usebeamercolor[unil-white]{page number in head/foot}\usebeamerfont{page number in head/foot}\usebeamertemplate{page number in head/foot}}%
+  \end{beamercolorbox}
+}
+
+%Concluding slide formating
+\setbeamertemplate{endpage}{
+  \begin{picture}(0,0)
+    \put(-\textmargin-1mm, \dimexpr -\paperheight*6/10 \relax){
+      \includegraphics[width=\paperwidth]{title-slide-background.png}
+    }
+    \put(-\textmargin +7mm, -55pt){%
+        \begin{minipage}[b][2cm][t]{1\textwidth}
+          \begin{center}
+            \color{white}
+            \Huge\textbf{THANK YOU}
+            {\hfill\\}
+            \Large\textbf{Any Questions?}
+            \end{center}
+        \end{minipage}
+    }
+\end{picture}
+}

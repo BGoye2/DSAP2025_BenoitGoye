@@ -34,8 +34,8 @@ Analysis Components:
 
 Input: output/trained_models.pkl
 Output: comprehensive_metrics.csv, statistical_comparison.csv, segment_performance.csv,
-        comprehensive_comparison.png, error_analysis.png, segment_performance.png,
-        model_comparison_report.txt
+        output/figures/comprehensive_comparison.png, output/figures/error_analysis.png,
+        output/figures/segment_performance.png, model_comparison_report.txt
 """
 
 import pandas as pd
@@ -453,8 +453,8 @@ class ModelComparator:
         ax7.set_xticklabels(model_names, rotation=45, ha='right')
         ax7.grid(True, alpha=0.3)
         
-        plt.savefig('output/comprehensive_comparison.png', dpi=300, bbox_inches='tight')
-        print("\n✓ Saved to: comprehensive_comparison.png")
+        plt.savefig('output/figures/comprehensive_comparison.png', dpi=300, bbox_inches='tight')
+        print("\n✓ Saved to: output/figures/comprehensive_comparison.png")
         plt.close()
     
     def plot_error_analysis(self):
@@ -509,8 +509,8 @@ class ModelComparator:
             axes[n_rows + row_idx, col_idx].set_visible(False)
         
         plt.tight_layout()
-        plt.savefig('output/error_analysis.png', dpi=300, bbox_inches='tight')
-        print("✓ Saved to: error_analysis.png")
+        plt.savefig('output/figures/error_analysis.png', dpi=300, bbox_inches='tight')
+        print("✓ Saved to: output/figures/error_analysis.png")
         plt.close()
     
     def plot_segment_performance(self):
@@ -529,8 +529,8 @@ class ModelComparator:
             axes[idx].grid(True, alpha=0.3)
         
         plt.tight_layout()
-        plt.savefig('output/segment_performance.png', dpi=300, bbox_inches='tight')
-        print("✓ Saved to: segment_performance.png")
+        plt.savefig('output/figures/segment_performance.png', dpi=300, bbox_inches='tight')
+        print("✓ Saved to: output/figures/segment_performance.png")
         plt.close()
     
     def generate_summary_report(self):
@@ -682,9 +682,9 @@ class ModelComparator:
         print("  ✓ comprehensive_metrics.csv")
         print("  ✓ statistical_comparison.csv")
         print("  ✓ segment_performance.csv")
-        print("  ✓ comprehensive_comparison.png")
-        print("  ✓ error_analysis.png")
-        print("  ✓ segment_performance.png")
+        print("  ✓ output/figures/comprehensive_comparison.png")
+        print("  ✓ output/figures/error_analysis.png")
+        print("  ✓ output/figures/segment_performance.png")
         print("  ✓ model_comparison_report.txt")
 
 

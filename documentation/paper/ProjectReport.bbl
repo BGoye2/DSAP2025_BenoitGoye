@@ -1,0 +1,162 @@
+\begin{thebibliography}{24}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Acemoglu(2002)]{acemoglu2002technical}
+Daron Acemoglu.
+\newblock Technical change, inequality, and the labor market.
+\newblock \emph{Journal of Economic Literature}, 40\penalty0 (1):\penalty0
+  7--72, 2002.
+
+\bibitem[Acemoglu and Robinson(2005)]{acemoglu2005institutions}
+Daron Acemoglu and James~A Robinson.
+\newblock \emph{Economic Origins of Dictatorship and Democracy}.
+\newblock Cambridge University Press, 2005.
+
+\bibitem[Beutel et~al.(2019)Beutel, List, and von
+  Schweinitz]{beutel2019machine}
+Johannes Beutel, Sophia List, and Gregor von Schweinitz.
+\newblock Machine learning for financial risk management.
+\newblock \emph{Annual Review of Financial Economics}, 11:\penalty0 1--23,
+  2019.
+
+\bibitem[Breiman(2001)]{breiman2001random}
+Leo Breiman.
+\newblock Random forests.
+\newblock \emph{Machine Learning}, 45\penalty0 (1):\penalty0 5--32, 2001.
+
+\bibitem[Breiman et~al.(1984)Breiman, Friedman, Stone, and
+  Olshen]{breiman1984classification}
+Leo Breiman, Jerome Friedman, Charles~J Stone, and Richard~A Olshen.
+\newblock \emph{Classification and Regression Trees}.
+\newblock CRC Press, 1984.
+
+\bibitem[Chakravorty et~al.(2014)Chakravorty, Pelli, and
+  Marchand]{chakravorty2014does}
+Ujjayant Chakravorty, Martino Pelli, and Beyza~Ural Marchand.
+\newblock Does the quality of electricity matter? evidence from rural india.
+\newblock \emph{Journal of Economic Behavior \& Organization}, 107:\penalty0
+  228--247, 2014.
+
+\bibitem[Chen and Guestrin(2016)]{chen2016xgboost}
+Tianqi Chen and Carlos Guestrin.
+\newblock Xgboost: A scalable tree boosting system.
+\newblock In \emph{Proceedings of the 22nd ACM SIGKDD International Conference
+  on Knowledge Discovery and Data Mining}, pages 785--794, 2016.
+
+\bibitem[Freeman(2010)]{freeman2009labor}
+Richard~B Freeman.
+\newblock Labor regulations, unions, and social protection in developing
+  countries: Market distortions or efficient institutions?
+\newblock In \emph{Handbook of Development Economics}, volume~5, pages
+  4657--4702. Elsevier, 2010.
+\newblock Published in 2010, though work began in 2009.
+
+\bibitem[Friedman(2001)]{friedman2001greedy}
+Jerome~H Friedman.
+\newblock Greedy function approximation: A gradient boosting machine.
+\newblock \emph{Annals of Statistics}, 29\penalty0 (5):\penalty0 1189--1232,
+  2001.
+
+\bibitem[Galor and Zeira(1993)]{galor2000income}
+Oded Galor and Joseph Zeira.
+\newblock Income distribution and macroeconomics.
+\newblock \emph{Review of Economic Studies}, 60\penalty0 (1):\penalty0 35--52,
+  1993.
+\newblock Despite the citation key, this paper was published in 1993.
+
+\bibitem[Helpman(2018)]{helpman2018globalization}
+Elhanan Helpman.
+\newblock \emph{Globalization and Inequality}.
+\newblock Harvard University Press, 2018.
+
+\bibitem[Jean et~al.(2016)Jean, Burke, Xie, Davis, Lobell, and
+  Ermon]{jean2016combining}
+Neal Jean, Marshall Burke, Michael Xie, W~Matthew Davis, David~B Lobell, and
+  Stefano Ermon.
+\newblock Combining satellite imagery and machine learning to predict poverty.
+\newblock \emph{Science}, 353\penalty0 (6301):\penalty0 790--794, 2016.
+
+\bibitem[Ke et~al.(2017)Ke, Meng, Finley, Wang, Chen, Ma, Ye, and
+  Liu]{ke2017lightgbm}
+Guolin Ke, Qi~Meng, Thomas Finley, Taifeng Wang, Wei Chen, Weidong Ma, Qiwei
+  Ye, and Tie-Yan Liu.
+\newblock Lightgbm: A highly efficient gradient boosting decision tree.
+\newblock In \emph{Advances in Neural Information Processing Systems},
+  volume~30, pages 3146--3154, 2017.
+
+\bibitem[Kuznets(1955)]{kuznets1955economic}
+Simon Kuznets.
+\newblock Economic growth and income inequality.
+\newblock \emph{American Economic Review}, 45\penalty0 (1):\penalty0 1--28,
+  1955.
+
+\bibitem[Lee(2018)]{lee2018human}
+Jong-Wha Lee.
+\newblock Human capital and income inequality.
+\newblock ADBI Working Paper 810, Asian Development Bank Institute, Tokyo,
+  2018.
+
+\bibitem[Lundberg and Lee(2017)]{lundberg2017unified}
+Scott~M Lundberg and Su-In Lee.
+\newblock A unified approach to interpreting model predictions.
+\newblock In \emph{Advances in Neural Information Processing Systems},
+  volume~30, pages 4765--4774, 2017.
+
+\bibitem[Mullainathan and Spiess(2017)]{mullainathan2017machine}
+Sendhil Mullainathan and Jann Spiess.
+\newblock Machine learning: An applied econometric approach.
+\newblock \emph{Journal of Economic Perspectives}, 31\penalty0 (2):\penalty0
+  87--106, 2017.
+
+\bibitem[Piketty(2014)]{piketty2014capital}
+Thomas Piketty.
+\newblock \emph{Capital in the Twenty-First Century}.
+\newblock Harvard University Press, 2014.
+
+\bibitem[Richardson et~al.(2021)Richardson, Mulder, and
+  Vehbi]{richardson2021nowcasting}
+Adam Richardson, Thomas Mulder, and Tugrul Vehbi.
+\newblock Nowcasting gdp using machine-learning algorithms: A real-time
+  assessment.
+\newblock \emph{International Journal of Forecasting}, 37\penalty0
+  (2):\penalty0 941--948, 2021.
+
+\bibitem[Spearman(1904)]{spearman1904proof}
+Charles Spearman.
+\newblock The proof and measurement of association between two things.
+\newblock \emph{The American Journal of Psychology}, 15\penalty0 (1):\penalty0
+  72--101, 1904.
+
+\bibitem[Stiglitz(2012)]{stiglitz2012price}
+Joseph~E Stiglitz.
+\newblock \emph{The Price of Inequality: How Today's Divided Society Endangers
+  Our Future}.
+\newblock W. W. Norton \& Company, 2012.
+
+\bibitem[Wei et~al.(2022)Wei, Lu, and Song]{wei2022feature}
+Ping Wei, Zhongsheng Lu, and Jianying Song.
+\newblock Feature importance in gradient boosting trees with cross-validation
+  feature selection.
+\newblock \emph{Entropy}, 24\penalty0 (5):\penalty0 687, 2022.
+
+\bibitem[Zeng et~al.(2021)Zeng, Wang, Luo, Kang, Tang, Lightstone, Fang,
+  Cornell, Nussinov, and Cheng]{zeng2021feature}
+Xiangying Zeng, Feisheng Wang, Yuan Luo, Soon-Gyu Kang, Jingzhi Tang, Felice~C
+  Lightstone, Edmond~Y Fang, Wendy Cornell, Ruth Nussinov, and Feixiong Cheng.
+\newblock Feature importance correlation from machine learning indicates
+  functional relationships between proteins and similar compound binding
+  characteristics.
+\newblock \emph{Scientific Reports}, 11\penalty0 (1):\penalty0 14245, 2021.
+
+\bibitem[Zhang et~al.(2024)Zhang, Li, Liu, Xu, Wang, and Li]{zhang2024urban}
+Chao Zhang, Jianglong Li, Tingting Liu, Mingyang Xu, Hui Wang, and Xiaoqi Li.
+\newblock The wall between urban and rural: How does the urban-rural
+  electricity gap inhibit the human development index.
+\newblock \emph{Structural Change and Economic Dynamics}, 70:\penalty0
+  292--307, 2024.
+
+\end{thebibliography}

@@ -2,7 +2,7 @@
 COMPREHENSIVE MODEL COMPARISON REPORT
 ================================================================================
 
-Generated: 2025-12-27 21:51:25.565167
+Generated: 2025-12-30 17:53:34.948595
 Dataset: output/processed_data.csv
 Number of models: 5
 Test set size: 365
@@ -12,50 +12,50 @@ BEST MODELS BY METRIC
 ================================================================================
 
 RMSE (lower is better):
-  Best: Gradient Boosting = 2.523
+  Best: Gradient Boosting = 2.542
 
 MAE (lower is better):
-  Best: Gradient Boosting = 1.688
+  Best: Gradient Boosting = 1.695
 
 R² (higher is better):
-  Best: Gradient Boosting = 0.910
+  Best: Gradient Boosting = 0.908
 
 MAPE (lower is better):
-  Best: Gradient Boosting = 4.602
+  Best: Gradient Boosting = 4.630
 
 ================================================================================
 OVERALL MODEL RANKING (by Test R²)
 ================================================================================
 
 1. Gradient Boosting
-   Test R²: 0.9098
-   Test RMSE: 2.5229
-   Test MAE: 1.6879
-   Overfit Gap: -1.7274
+   Test R²: 0.9084
+   Test RMSE: 2.5423
+   Test MAE: 1.6952
+   Overfit Gap: -1.7505
 
 2. XGBoost
-   Test R²: 0.9002
-   Test RMSE: 2.6542
-   Test MAE: 1.7449
-   Overfit Gap: -1.8123
+   Test R²: 0.9080
+   Test RMSE: 2.5482
+   Test MAE: 1.7221
+   Overfit Gap: -1.6919
 
 3. LightGBM
-   Test R²: 0.8980
-   Test RMSE: 2.6834
-   Test MAE: 1.7936
-   Overfit Gap: -1.4668
+   Test R²: 0.8929
+   Test RMSE: 2.7495
+   Test MAE: 1.8196
+   Overfit Gap: -1.5274
 
 4. Random Forest
-   Test R²: 0.8887
-   Test RMSE: 2.8025
-   Test MAE: 1.8192
-   Overfit Gap: -1.3985
+   Test R²: 0.8873
+   Test RMSE: 2.8201
+   Test MAE: 1.8344
+   Overfit Gap: -1.4226
 
 5. Decision Tree
-   Test R²: 0.7990
-   Test RMSE: 3.7664
-   Test MAE: 2.4741
-   Overfit Gap: -1.8597
+   Test R²: 0.8009
+   Test RMSE: 3.7487
+   Test MAE: 2.4646
+   Overfit Gap: -1.8827
 
 ================================================================================
 DETAILED MODEL STATISTICS
@@ -64,127 +64,127 @@ DETAILED MODEL STATISTICS
 Decision Tree:
 --------------------------------------------------------------------------------
   Training Performance:
-    RMSE: 1.9066
-    MAE: 1.2484
-    R²: 0.9437
+    RMSE: 1.8660
+    MAE: 1.2507
+    R²: 0.9461
 
   Test Performance:
-    RMSE: 3.7664
-    MAE: 2.4741
-    MAPE: 6.71%
-    R²: 0.7990
+    RMSE: 3.7487
+    MAE: 2.4646
+    MAPE: 6.63%
+    R²: 0.8009
     Max Error: 19.2800
-    Median Abs Error: 1.3941
+    Median Abs Error: 1.4400
 
   Cross-Validation:
-    RMSE: 4.5490 ± nan
-    R²: 0.6758 ± 0.0447
+    RMSE: 4.4788 ± nan
+    R²: 0.6860 ± 0.0490
 
   Residual Analysis:
-    Mean: 0.0652
-    Std: 3.7658
-    Skewness: 0.2896
-    Kurtosis: 4.8110
+    Mean: -0.0516
+    Std: 3.7483
+    Skewness: 0.2424
+    Kurtosis: 5.2117
 
 Random Forest:
 --------------------------------------------------------------------------------
   Training Performance:
-    RMSE: 1.4040
-    MAE: 0.8982
-    R²: 0.9695
+    RMSE: 1.3976
+    MAE: 0.8955
+    R²: 0.9697
 
   Test Performance:
-    RMSE: 2.8025
-    MAE: 1.8192
-    MAPE: 4.87%
-    R²: 0.8887
-    Max Error: 14.0569
-    Median Abs Error: 1.0688
+    RMSE: 2.8201
+    MAE: 1.8344
+    MAPE: 4.91%
+    R²: 0.8873
+    Max Error: 14.0097
+    Median Abs Error: 1.1184
 
   Cross-Validation:
-    RMSE: 3.0533 ± nan
-    R²: 0.8545 ± 0.0203
+    RMSE: 3.0776 ± nan
+    R²: 0.8524 ± 0.0216
 
   Residual Analysis:
-    Mean: 0.1580
-    Std: 2.7981
-    Skewness: 0.7349
-    Kurtosis: 4.4003
+    Mean: 0.1791
+    Std: 2.8144
+    Skewness: 0.7471
+    Kurtosis: 4.5982
 
 Gradient Boosting:
 --------------------------------------------------------------------------------
   Training Performance:
-    RMSE: 0.7955
-    MAE: 0.6137
-    R²: 0.9902
+    RMSE: 0.7918
+    MAE: 0.6119
+    R²: 0.9903
 
   Test Performance:
-    RMSE: 2.5229
-    MAE: 1.6879
-    MAPE: 4.60%
-    R²: 0.9098
-    Max Error: 12.8763
-    Median Abs Error: 1.0592
+    RMSE: 2.5423
+    MAE: 1.6952
+    MAPE: 4.63%
+    R²: 0.9084
+    Max Error: 12.4919
+    Median Abs Error: 1.0796
 
   Cross-Validation:
-    RMSE: 2.9168 ± nan
-    R²: 0.8667 ± 0.0263
+    RMSE: 2.9275 ± nan
+    R²: 0.8657 ± 0.0268
 
   Residual Analysis:
-    Mean: 0.1477
-    Std: 2.5186
-    Skewness: 0.3642
-    Kurtosis: 4.6579
+    Mean: 0.1390
+    Std: 2.5385
+    Skewness: 0.3281
+    Kurtosis: 4.7227
 
 XGBoost:
 --------------------------------------------------------------------------------
   Training Performance:
-    RMSE: 0.8419
-    MAE: 0.6287
-    R²: 0.9890
+    RMSE: 0.8564
+    MAE: 0.6435
+    R²: 0.9886
 
   Test Performance:
-    RMSE: 2.6542
-    MAE: 1.7449
-    MAPE: 4.73%
-    R²: 0.9002
-    Max Error: 13.7753
-    Median Abs Error: 1.1477
+    RMSE: 2.5482
+    MAE: 1.7221
+    MAPE: 4.69%
+    R²: 0.9080
+    Max Error: 13.2286
+    Median Abs Error: 1.1485
 
   Cross-Validation:
-    RMSE: 2.8540 ± nan
-    R²: 0.8723 ± 0.0267
+    RMSE: 2.8529 ± nan
+    R²: 0.8724 ± 0.0253
 
   Residual Analysis:
-    Mean: 0.1168
-    Std: 2.6517
-    Skewness: 0.0580
-    Kurtosis: 5.0122
+    Mean: 0.1070
+    Std: 2.5460
+    Skewness: 0.2457
+    Kurtosis: 4.4569
 
 LightGBM:
 --------------------------------------------------------------------------------
   Training Performance:
-    RMSE: 1.2167
-    MAE: 0.8954
-    R²: 0.9771
+    RMSE: 1.2221
+    MAE: 0.8949
+    R²: 0.9769
 
   Test Performance:
-    RMSE: 2.6834
-    MAE: 1.7936
-    MAPE: 4.86%
-    R²: 0.8980
-    Max Error: 13.8792
-    Median Abs Error: 1.1648
+    RMSE: 2.7495
+    MAE: 1.8196
+    MAPE: 4.93%
+    R²: 0.8929
+    Max Error: 14.2538
+    Median Abs Error: 1.1161
 
   Cross-Validation:
-    RMSE: 3.0488 ± nan
-    R²: 0.8542 ± 0.0277
+    RMSE: 3.0716 ± nan
+    R²: 0.8519 ± 0.0296
 
   Residual Analysis:
-    Mean: 0.1801
-    Std: 2.6774
-    Skewness: 0.3832
-    Kurtosis: 4.8805
+    Mean: 0.1822
+    Std: 2.7435
+    Skewness: 0.3405
+    Kurtosis: 4.6027
 
 ================================================================================
 RECOMMENDATIONS

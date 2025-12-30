@@ -24,6 +24,7 @@ from src.utils import (
     display_completion_summary,
     display_error_summary
 )
+from src.config.constants import ensure_directories_exist
 
 
 def run_pipeline(
@@ -68,6 +69,9 @@ def run_pipeline(
     end_year : int, default=2023
         End year for data collection
     """
+    # Ensure output directories exist before starting pipeline
+    ensure_directories_exist()
+
     start_time = datetime.now()
 
     # Calculate total steps for progress tracking

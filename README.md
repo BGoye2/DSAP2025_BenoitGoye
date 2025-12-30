@@ -28,16 +28,22 @@ This project uses five tree-based regression models to predict income inequality
 │   ├── utils.py                    # Utility functions (Spinner, print helpers)
 │   └── config/                     # Configuration files
 │       ├── constants.py            # Project constants and hyperparameters
-│       ├── country_regions.json   # World Bank regional classifications
-│       └── indicators.py           # World Bank indicator definitions
+│       ├── indicators.py           # World Bank indicator definitions
+│       ├── feature_names.py        # Display name mappings
+│       ├── feature_engineering.py  # Engineered feature definitions
+│       ├── feature_categories.py   # Feature categorization
+│       └── country_regions.json    # World Bank regional classifications
 ├── output/                         # Generated outputs
 │   ├── *.csv                      # Data and metrics
-│   ├── *.png                      # Visualizations
 │   ├── trained_models.pkl         # Saved models with metadata
+│   ├── figures/                   # Generated visualizations (PNG files)
+│   ├── tables/                    # Generated LaTeX table files
 │   └── .cache/                    # Bootstrap cache for faster reruns
-├── report/                         # LaTeX research report
-│   ├── research_paper.tex         # Main research report
-│   └── tables/                    # Generated LaTeX table files
+├── documentation/                  # Project documentation
+│   ├── paper/                     # LaTeX research report
+│   │   ├── ProjectReport.tex      # Main research report
+│   │   └── references.bib         # Bibliography
+│   └── presentation/              # Project presentations
 ├── main.py                         # Master pipeline script
 ├── requirements.txt                # Python dependencies (pip)
 ├── environment.yml                 # Conda environment specification
@@ -88,9 +94,9 @@ This executes all steps:
 **Pipeline Options:**
 
 ```bash
-python main.py                    # Quick run (default, ~5-7 minutes)
-python main.py --mode fast        # Recent data only 2015-2023 (~3-5 minutes)
-python main.py --mode optimized   # With hyperparameter tuning (~30-60 minutes)
+python main.py                    # Quick run (default)
+python main.py --mode fast        # Recent data only 2015-2023
+python main.py --mode optimized   # With hyperparameter tuning (slower)
 python main.py --help             # See all options
 ```
 
@@ -119,14 +125,14 @@ python 09_populate_paper_tables.py     # Generate LaTeX tables
 ```
 
 **Key Scripts:**
-- **01_data_collection.py**: Fetches ~50 indicators from 2000-2023 (~1-2 min)
-- **03_model_training.py**: Trains all models, saves to `output/trained_models.pkl` (~1-2 min)
-- **07_segmentation_analysis.py**: Analyzes 7 regions and income quartiles (~40 sec)
-- **08_statistical_tests.py**: Bootstrap + permutation tests with caching (~30-40 sec first run, ~5 sec cached)
+- **01_data_collection.py**: Fetches 53 indicators from 2000-2023
+- **03_model_training.py**: Trains all models, saves to `output/trained_models.pkl`
+- **07_segmentation_analysis.py**: Analyzes 7 regions and income quartiles
+- **08_statistical_tests.py**: Bootstrap + permutation tests with caching (significantly faster on reruns)
 
 ## Features
 
-The models use 50+ socioeconomic indicators organized into categories:
+The models use socioeconomic indicators from the World Bank organized into categories:
 
 - **Economic**: GDP, sector composition, trade, investment
 - **Demographics**: Population, urbanization, dependency ratios
@@ -157,26 +163,38 @@ All outputs are saved in the `output/` folder:
 - `processed_data.csv` - Cleaned data
 - `trained_models.pkl` - Saved models with metadata
 
-**Visualizations:**
+**Visualizations** (in `output/figures/`):
 - `feature_importance.png` - Feature importance charts
 - `predictions_plot.png` - Actual vs predicted
 - `residuals_plot.png` - Residual analysis
+- `error_analysis.png` - Error distribution analysis
 - `comprehensive_comparison.png` - Multi-panel comparison
-- `segmentation_*_performance.png` - Performance by income/region
-- `segmentation_*_features.png` - Feature importance heatmaps
-- `statistical_tests_*.png` - Bootstrap and consistency plots
+- `segment_performance.png` - Overall segment performance
+- `segmentation_income_performance.png` - Performance by income level
+- `segmentation_income_features.png` - Income-level feature importance
+- `segmentation_regional_performance.png` - Performance by region
+- `segmentation_regional_features.png` - Regional feature importance
+- `statistical_tests_bootstrap.png` - Bootstrap confidence intervals
+- `statistical_tests_consistency.png` - Model consistency analysis
 
 **Reports and Metrics:**
 - `model_comparison.csv` - Performance metrics
 - `comprehensive_metrics.csv` - Detailed metrics
-- `segmentation_*_results.csv` - Segmentation analysis
-- `statistical_tests_*.csv` - Statistical test results
+- `segment_performance.csv` - Segment performance summary
+- `segmentation_income_results.csv` - Income-level analysis
+- `segmentation_regional_results.csv` - Regional analysis
+- `statistical_tests_bootstrap.csv` - Bootstrap test results
+- `statistical_tests_permutation.csv` - Permutation test results
+- `statistical_tests_consistency.csv` - Consistency test results
+- `statistical_comparison.csv` - Statistical comparison summary
 - `*.txt` - Text reports
 
-**LaTeX Tables** (in `report/tables/`):
+**LaTeX Tables** (in `output/tables/`):
 - `table1_descriptive.tex` - Descriptive statistics
 - `table2_performance.tex` - Model performance
+- `table3_features.tex` - Feature importance
 - `table4_income.tex` - Income segmentation
+- `summary_text.tex` - Summary text snippets
 
 ## Key Features
 
@@ -196,14 +214,14 @@ All outputs are saved in the `output/` folder:
 - 60-100x speedup on repeated runs
 
 **Research Report:**
-- Comprehensive LaTeX report in `report/paper.tex`
+- Comprehensive LaTeX report in `documentation/paper/ProjectReport.tex`
 - Includes literature review, methodology, and key findings
-- Compile with: `cd report && pdflatex paper.tex && bibtex paper && pdflatex paper.tex && pdflatex paper.tex`
+- Compile with: `cd documentation/paper && pdflatex ProjectReport.tex && bibtex ProjectReport && pdflatex ProjectReport.tex && pdflatex ProjectReport.tex`
 
 ## Data Source
 
 All data from [World Bank Open Data API](https://data.worldbank.org/)
-- ~50 socioeconomic indicators from 2000-2023
+- 53 socioeconomic indicators from 2000-2023 (including GINI target variable)
 - API Docs: https://datahelpdesk.worldbank.org/knowledgebase/articles/889392
 
 ## Limitations
@@ -213,13 +231,80 @@ All data from [World Bank Open Data API](https://data.worldbank.org/)
 - **Causality**: Models show correlations, not causal relationships
 - **Lag Effects**: Current model doesn't account for time lags
 
+## Configuration System
+
+The project uses a modular configuration system with all settings centralized in `src/config/`.
+
+**Key configuration modules:**
+
+### `constants.py` - Core Constants
+Central location for all project constants including the target variable, paths, and model parameters.
+
+```python
+from config.constants import TARGET_VARIABLE, DEFAULT_RANDOM_SEED
+
+# Use target variable
+y = data[TARGET_VARIABLE].values  # 'SI.POV.GINI'
+```
+
+### `feature_engineering.py` - Engineered Features
+Declarative configuration for all engineered features with automatic dependency checking.
+
+```python
+from config.feature_engineering import create_all_engineered_features
+
+# Apply all engineered features (urbanization_rate, log_gdp_per_capita, etc.)
+data = create_all_engineered_features(data)
+```
+
+**Supported operations**: ratio_scaled, log1p, sum, ratio, difference, diversity
+
+### `feature_categories.py` - Feature Classification
+Categorizes features by domain (gdp, education, health, labor, demographics, etc.) for robust feature selection.
+
+```python
+from config.feature_categories import filter_features_by_category
+
+# Get all GDP-related features
+gdp_features = filter_features_by_category(features, 'gdp')
+```
+
+**11 categories**: gdp, education, health, labor, demographics, trade, government, infrastructure, economic_structure, income_inequality, other
+
+### `feature_names.py` - Display Names
+Maps World Bank indicator codes to human-readable names for tables and plots.
+
+```python
+from config.constants import get_display_name
+
+# In visualizations
+plt.xlabel(get_display_name('NY.GDP.PCAP.CD'))  # "GDP per capita (current $)"
+```
+
+### `indicators.py` - World Bank Indicators
+Defines all 53 World Bank indicator codes to fetch from the API.
+
+```python
+from config.indicators import WORLD_BANK_INDICATORS
+
+# All indicators are defined in one place
+for indicator in WORLD_BANK_INDICATORS:
+    fetch_data(indicator)
+```
+
+**Adding new features to the project:**
+1. Add the World Bank indicator code to `indicators.py`
+2. Add a human-readable display name to `feature_names.py`
+3. Assign the feature to the appropriate category in `feature_categories.py`
+4. (Optional) Define any engineered features based on it in `feature_engineering.py`
+
 ## Project Notes
 
 This is a research/educational project implementing ML best practices:
-- Centralized configuration and hyperparameters
+- Modular configuration system (all settings in `src/config/`)
 - Comprehensive type hints and documentation
 - DRY principle applied throughout
 - Parallel processing for performance
 - Model versioning and caching
 
-Predictions should not be used for policy decisions without thorough validation and expert review.
+**Note:** Predictions should not be used for policy decisions without thorough validation and expert review.

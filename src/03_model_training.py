@@ -28,6 +28,8 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from sklearn.preprocessing import StandardScaler
 import xgboost as xgb
+
+from config.constants import TARGET_VARIABLE
 import lightgbm as lgb
 from typing import Dict, Tuple
 import joblib
@@ -118,7 +120,7 @@ class ModelTrainer:
 
         # Separate features and target
         X = data[self.feature_names].values
-        y = data['SI.POV.GINI'].values
+        y = data[TARGET_VARIABLE].values
 
         # Split data
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(

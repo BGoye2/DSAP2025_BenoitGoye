@@ -13,7 +13,7 @@ Features:
 - Residual analysis plots
 
 Input: Trained models from output/trained_models.pkl
-Output: output/model_comparison.csv, output/*.png (visualizations)
+Output: output/model_comparison.csv, output/figures/*.png (visualizations)
 """
 
 import pandas as pd
@@ -26,6 +26,9 @@ import joblib
 import os
 import warnings
 warnings.filterwarnings('ignore')
+
+# Import feature name mapping
+from config.feature_names import get_display_name
 
 
 class ModelEvaluator:
@@ -183,7 +186,7 @@ class ModelEvaluator:
 
     def plot_feature_importance(self, top_n: int = 20):
         """
-        Plot feature importance for tree-based models
+        Plot feature importance for tree-based models in a two-column layout
 
         Parameters:
         -----------
@@ -191,27 +194,47 @@ class ModelEvaluator:
             Number of top features to display
         """
         n_models = len(self.models)
-        fig, axes = plt.subplots(1, n_models, figsize=(7*n_models, 6))
 
-        # Handle single model case
+        # Create two-column layout
+        n_cols = 2
+        n_rows = (n_models + n_cols - 1) // n_cols
+        fig, axes = plt.subplots(n_rows, n_cols, figsize=(16, 6 * n_rows))
+
+        # Flatten axes array for easier indexing
         if n_models == 1:
             axes = [axes]
+        else:
+            axes = axes.flatten() if n_rows > 1 else axes
 
         for idx, (model_name, model) in enumerate(self.models.items()):
             if hasattr(model, 'feature_importances_'):
                 importances = model.feature_importances_
                 indices = np.argsort(importances)[::-1][:top_n]
 
-                axes[idx].barh(range(top_n), importances[indices])
+                # Map feature codes to human-readable names
+                feature_display_names = [
+                    get_display_name(self.feature_names[i]) for i in indices
+                ]
+
+                axes[idx].barh(range(top_n), importances[indices], color='steelblue')
                 axes[idx].set_yticks(range(top_n))
-                axes[idx].set_yticklabels([self.feature_names[i] for i in indices])
-                axes[idx].set_xlabel('Importance')
-                axes[idx].set_title(f'{model_name.replace("_", " ").title()}\nTop {top_n} Features')
+                axes[idx].set_yticklabels(feature_display_names, fontsize=10)
+                axes[idx].set_xlabel('Importance', fontsize=12)
+                axes[idx].set_title(
+                    f'{model_name.replace("_", " ").title()}\nTop {top_n} Features',
+                    fontsize=13,
+                    fontweight='bold'
+                )
                 axes[idx].invert_yaxis()
+                axes[idx].grid(axis='x', alpha=0.3)
+
+        # Hide unused subplots
+        for idx in range(n_models, len(axes)):
+            axes[idx].set_visible(False)
 
         plt.tight_layout()
-        plt.savefig('output/feature_importance.png', dpi=300, bbox_inches='tight')
-        print("\n✓ Feature importance plot saved to: output/feature_importance.png")
+        plt.savefig('output/figures/feature_importance.png', dpi=300, bbox_inches='tight')
+        print("\n✓ Feature importance plot saved to: output/figures/feature_importance.png")
         plt.close()
 
     def plot_predictions(self):
@@ -253,8 +276,8 @@ class ModelEvaluator:
             axes[idx].set_visible(False)
 
         plt.tight_layout()
-        plt.savefig('output/predictions_plot.png', dpi=300, bbox_inches='tight')
-        print("✓ Predictions plot saved to: output/predictions_plot.png")
+        plt.savefig('output/figures/predictions_plot.png', dpi=300, bbox_inches='tight')
+        print("✓ Predictions plot saved to: output/figures/predictions_plot.png")
         plt.close()
 
     def plot_residuals(self):
@@ -292,8 +315,8 @@ class ModelEvaluator:
             axes[idx].set_visible(False)
 
         plt.tight_layout()
-        plt.savefig('output/residuals_plot.png', dpi=300, bbox_inches='tight')
-        print("✓ Residuals plot saved to: output/residuals_plot.png")
+        plt.savefig('output/figures/residuals_plot.png', dpi=300, bbox_inches='tight')
+        print("✓ Residuals plot saved to: output/figures/residuals_plot.png")
         plt.close()
 
 
@@ -320,9 +343,9 @@ def main():
     print("="*60)
     print("\nGenerated files:")
     print("  - output/model_comparison.csv")
-    print("  - output/feature_importance.png")
-    print("  - output/predictions_plot.png")
-    print("  - output/residuals_plot.png")
+    print("  - output/figures/feature_importance.png")
+    print("  - output/figures/predictions_plot.png")
+    print("  - output/figures/residuals_plot.png")
 
 
 if __name__ == "__main__":

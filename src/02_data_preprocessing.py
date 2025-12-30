@@ -10,6 +10,9 @@ from sklearn.impute import SimpleImputer, KNNImputer
 import warnings
 warnings.filterwarnings('ignore')
 
+from config.constants import TARGET_VARIABLE
+from config.feature_engineering import create_all_engineered_features
+
 
 class DataPreprocessor:
     """
@@ -55,7 +58,7 @@ class DataPreprocessor:
         initial_count = len(self.data)
         
         # Keep only rows where GINI is not null
-        self.data = self.data[self.data['SI.POV.GINI'].notna()].copy()
+        self.data = self.data[self.data[TARGET_VARIABLE].notna()].copy()
         
         final_count = len(self.data)
         print(f"Rows with GINI data: {final_count} (removed {initial_count - final_count})")
@@ -86,7 +89,7 @@ class DataPreprocessor:
         
         # Identify feature columns (exclude identifiers and target)
         id_cols = ['country_code', 'country_name', 'year']
-        target_col = 'SI.POV.GINI'
+        target_col = TARGET_VARIABLE
         feature_cols = [col for col in self.data.columns 
                        if col not in id_cols and col != target_col]
         
@@ -143,41 +146,8 @@ class DataPreprocessor:
         """
         print("\nCreating engineered features...")
 
-        # Urbanization rate
-        if 'SP.URB.TOTL' in self.data.columns and 'SP.POP.TOTL' in self.data.columns:
-            self.data['urbanization_rate'] = (self.data['SP.URB.TOTL'] /
-                                              self.data['SP.POP.TOTL'] * 100)
-
-        # Log GDP per capita
-        if 'NY.GDP.PCAP.CD' in self.data.columns:
-            self.data['log_gdp_per_capita'] = np.log1p(self.data['NY.GDP.PCAP.CD'])
-
-        # Trade openness
-        if 'NE.EXP.GNFS.ZS' in self.data.columns and 'NE.IMP.GNFS.ZS' in self.data.columns:
-            self.data['trade_openness'] = (self.data['NE.EXP.GNFS.ZS'] +
-                                          self.data['NE.IMP.GNFS.ZS'])
-
-        # Health-to-education spending ratio
-        if 'SH.XPD.CHEX.GD.ZS' in self.data.columns and 'SE.XPD.TOTL.GD.ZS' in self.data.columns:
-            edu_spending = self.data['SE.XPD.TOTL.GD.ZS'].replace(0, np.nan)
-            self.data['health_to_edu_ratio'] = self.data['SH.XPD.CHEX.GD.ZS'] / edu_spending
-
-        # Gender labor gap
-        if 'SL.TLF.CACT.MA.ZS' in self.data.columns and 'SL.TLF.CACT.FE.ZS' in self.data.columns:
-            self.data['gender_labor_gap'] = (self.data['SL.TLF.CACT.MA.ZS'] -
-                                            self.data['SL.TLF.CACT.FE.ZS'])
-
-        # Economic diversity (Shannon entropy)
-        if all(col in self.data.columns for col in ['NV.AGR.TOTL.ZS', 'NV.IND.TOTL.ZS', 'NV.SRV.TOTL.ZS']):
-            agr = self.data['NV.AGR.TOTL.ZS'] / 100
-            ind = self.data['NV.IND.TOTL.ZS'] / 100
-            srv = self.data['NV.SRV.TOTL.ZS'] / 100
-
-            self.data['economic_diversity'] = -(
-                np.where(agr > 0, agr * np.log(agr), 0) +
-                np.where(ind > 0, ind * np.log(ind), 0) +
-                np.where(srv > 0, srv * np.log(srv), 0)
-            )
+        # Use centralized feature engineering configuration
+        self.data = create_all_engineered_features(self.data)
 
         print(f"Total features after engineering: {len(self.data.columns)}")
 
@@ -244,7 +214,7 @@ class DataPreprocessor:
         
         # Separate features and target
         id_cols = ['country_code', 'country_name', 'year']
-        target_col = 'SI.POV.GINI'
+        target_col = TARGET_VARIABLE
         
         feature_cols = [col for col in self.data.columns 
                        if col not in id_cols and col != target_col]
