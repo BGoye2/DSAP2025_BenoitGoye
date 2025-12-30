@@ -14,7 +14,7 @@ This module defines:
 """
 
 import os
-from .feature_names import FEATURE_NAME_MAPPING, get_display_name, get_all_display_names, validate_feature_coverage
+from .feature_names import FEATURE_NAME_MAPPING, get_display_name
 
 # =============================================================================
 # TARGET VARIABLE

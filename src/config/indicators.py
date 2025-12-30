@@ -94,15 +94,3 @@ WORLD_BANK_INDICATORS = [
     'SG.GEN.PARL.ZS',      # Proportion of seats held by women in national parliaments (%)
     'SE.ENR.PRIM.FM.ZS',   # Ratio of girls to boys in primary and secondary education (%)
 ]
-
-
-def get_indicators():
-    """
-    Returns the list of World Bank indicator codes.
-
-    Returns:
-    --------
-    list
-        List of World Bank indicator codes
-    """
-    return WORLD_BANK_INDICATORS

@@ -26,7 +26,6 @@ import numpy as np
 from sklearn.model_selection import train_test_split, cross_val_score, GridSearchCV
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
-from sklearn.preprocessing import StandardScaler
 import xgboost as xgb
 
 from config.constants import TARGET_VARIABLE
@@ -70,7 +69,6 @@ class ModelTrainer:
         self.y_train = None
         self.y_test = None
         self.feature_names = None
-        self.scaler = StandardScaler()
         self.models = {}
         self.data_hash = None
 
@@ -97,8 +95,7 @@ class ModelTrainer:
         return hash_obj.hexdigest()
 
     def load_and_split_data(self, test_size: float = 0.2,
-                           random_state: int = DEFAULT_RANDOM_SEED,
-                           scale_features: bool = False) -> None:
+                           random_state: int = DEFAULT_RANDOM_SEED) -> None:
         """
         Load data and split into train/test sets
 
@@ -108,8 +105,6 @@ class ModelTrainer:
             Proportion of data for testing
         random_state : int
             Random seed for reproducibility
-        scale_features : bool
-            Whether to standardize features
         """
         print("Loading processed data...")
         data = pd.read_csv(self.data_path)
@@ -126,12 +121,6 @@ class ModelTrainer:
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
             X, y, test_size=test_size, random_state=random_state
         )
-
-        # Scale features if requested
-        if scale_features:
-            print("Scaling features...")
-            self.X_train = self.scaler.fit_transform(self.X_train)
-            self.X_test = self.scaler.transform(self.X_test)
 
         # Compute hash of training data for validation
         self.data_hash = self._compute_data_hash(self.X_train, self.y_train)
@@ -414,7 +403,7 @@ def main():
     trainer = ModelTrainer(PROCESSED_DATA_PATH)
 
     # Load and split data
-    trainer.load_and_split_data(test_size=0.2, scale_features=False)
+    trainer.load_and_split_data(test_size=0.2)
 
     # Train all models with optional hyperparameter tuning
     trainer.train_all_models(tune_hyperparameters=args.tune)

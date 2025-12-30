@@ -5,7 +5,6 @@ Cleans and prepares World Bank data for machine learning models
 
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import StandardScaler
 from sklearn.impute import SimpleImputer, KNNImputer
 import warnings
 warnings.filterwarnings('ignore')
@@ -40,7 +39,6 @@ class DataPreprocessor:
         """
         self.data_path = data_path
         self.data = None
-        self.scaler = StandardScaler()  # For feature normalization if needed
         
     def load_data(self):
         """Load data from CSV"""
@@ -235,14 +233,8 @@ class DataPreprocessor:
         feature_names_df = pd.DataFrame({'feature': feature_cols})
         feature_names_df.to_csv('output/feature_names.csv', index=False)
         print(f"Feature names saved to: feature_names.csv")
-        
+
         return X, y, feature_cols, self.data
-    
-    def get_summary_statistics(self):
-        """Get summary statistics of the processed data"""
-        numeric_data = self.data.select_dtypes(include=[np.number])
-        summary = numeric_data.describe()
-        return summary
 
 
 def main(imputation_strategy='knn', imputation_threshold=0.6,
