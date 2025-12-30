@@ -38,17 +38,26 @@ Output: comprehensive_metrics.csv, statistical_comparison.csv, segment_performan
         output/figures/segment_performance.png, model_comparison_report.txt
 """
 
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-from scipy import stats
-from sklearn.metrics import (mean_squared_error, mean_absolute_error, r2_score,
-                            mean_absolute_percentage_error, explained_variance_score)
-from sklearn.model_selection import cross_validate
-import joblib
 import os
 import warnings
+
+import joblib
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+from scipy import stats
+from sklearn.metrics import (
+    explained_variance_score,
+    mean_absolute_error,
+    mean_absolute_percentage_error,
+    mean_squared_error,
+    r2_score,
+)
+from sklearn.model_selection import cross_validate
+
+from config.constants import FIGURES_DIR, MODELS_PATH, OUTPUT_DIR, PROCESSED_DATA_PATH
+
 warnings.filterwarnings('ignore')
 
 
@@ -56,7 +65,7 @@ class ModelComparator:
     """Comprehensive comparison of trained models"""
 
     def __init__(self, models=None, X_train=None, X_test=None, y_train=None, y_test=None,
-                 feature_names=None, models_path='output/trained_models.pkl'):
+                 feature_names=None, models_path=None):
         """
         Initialize comparator
 
@@ -78,6 +87,8 @@ class ModelComparator:
         models_path : str
             Path to trained models file
         """
+        if models_path is None:
+            models_path = MODELS_PATH
         self.predictions = {}
         self.metrics = {}
 
@@ -223,12 +234,13 @@ class ModelComparator:
         
         df = pd.DataFrame(rows)
         df = df.round(3)
-        
+
         print("\n", df.to_string(index=False))
-        
+
         # Save to CSV
-        df.to_csv('output/comprehensive_metrics.csv', index=False)
-        print("\n✓ Saved to: comprehensive_metrics.csv")
+        output_path = os.path.join(OUTPUT_DIR, 'comprehensive_metrics.csv')
+        df.to_csv(output_path, index=False)
+        print(f"\n✓ Saved to: {output_path}")
         
         return df
     
@@ -285,10 +297,11 @@ class ModelComparator:
         
         wilcoxon_df = pd.DataFrame(wilcoxon_results)
         print(wilcoxon_df.to_string(index=False))
-        
+
         # Save statistical results
-        comparison_df.to_csv('output/statistical_comparison.csv', index=False)
-        print("\n✓ Saved to: statistical_comparison.csv")
+        output_path = os.path.join(OUTPUT_DIR, 'statistical_comparison.csv')
+        comparison_df.to_csv(output_path, index=False)
+        print(f"\n✓ Saved to: {output_path}")
         
         return comparison_df, wilcoxon_df
     
@@ -336,10 +349,11 @@ class ModelComparator:
                 })
                 
                 print(f"  {model_name:20s}: RMSE={rmse:.3f}, MAE={mae:.3f}, R²={r2:.3f}")
-        
+
         segment_df = pd.DataFrame(segment_results)
-        segment_df.to_csv('output/segment_performance.csv', index=False)
-        print("\n✓ Saved to: segment_performance.csv")
+        output_path = os.path.join(OUTPUT_DIR, 'segment_performance.csv')
+        segment_df.to_csv(output_path, index=False)
+        print(f"\n✓ Saved to: {output_path}")
         
         return segment_df
     
@@ -448,9 +462,10 @@ class ModelComparator:
         ax7.set_xticks(x)
         ax7.set_xticklabels(model_names, rotation=45, ha='right')
         ax7.grid(True, alpha=0.3)
-        
-        plt.savefig('output/figures/comprehensive_comparison.png', dpi=300, bbox_inches='tight')
-        print("\n✓ Saved to: output/figures/comprehensive_comparison.png")
+
+        output_path = os.path.join(FIGURES_DIR, 'comprehensive_comparison.png')
+        plt.savefig(output_path, dpi=300, bbox_inches='tight')
+        print(f"\n✓ Saved to: {output_path}")
         plt.close()
     
     def plot_error_analysis(self):
@@ -503,15 +518,17 @@ class ModelComparator:
             col_idx = i % n_cols
             axes[row_idx, col_idx].set_visible(False)
             axes[n_rows + row_idx, col_idx].set_visible(False)
-        
+
         plt.tight_layout()
-        plt.savefig('output/figures/error_analysis.png', dpi=300, bbox_inches='tight')
-        print("✓ Saved to: output/figures/error_analysis.png")
+        output_path = os.path.join(FIGURES_DIR, 'error_analysis.png')
+        plt.savefig(output_path, dpi=300, bbox_inches='tight')
+        print(f"✓ Saved to: {output_path}")
         plt.close()
     
     def plot_segment_performance(self):
         """Plot performance across GINI segments"""
-        segment_df = pd.read_csv('output/segment_performance.csv')
+        segment_path = os.path.join(OUTPUT_DIR, 'segment_performance.csv')
+        segment_df = pd.read_csv(segment_path)
         
         fig, axes = plt.subplots(1, 3, figsize=(18, 5))
         
@@ -523,10 +540,11 @@ class ModelComparator:
             axes[idx].set_ylabel(metric)
             axes[idx].legend(title='Model')
             axes[idx].grid(True, alpha=0.3)
-        
+
         plt.tight_layout()
-        plt.savefig('output/figures/segment_performance.png', dpi=300, bbox_inches='tight')
-        print("✓ Saved to: output/figures/segment_performance.png")
+        output_path = os.path.join(FIGURES_DIR, 'segment_performance.png')
+        plt.savefig(output_path, dpi=300, bbox_inches='tight')
+        print(f"✓ Saved to: {output_path}")
         plt.close()
     
     def generate_summary_report(self):
@@ -536,7 +554,7 @@ class ModelComparator:
         report.append("COMPREHENSIVE MODEL COMPARISON REPORT")
         report.append("="*80)
         report.append(f"\nGenerated: {pd.Timestamp.now()}")
-        report.append(f"Dataset: output/processed_data.csv")
+        report.append(f"Dataset: {PROCESSED_DATA_PATH}")
         report.append(f"Number of models: {len(self.models)}")
         report.append(f"Test set size: {len(self.y_test)}")
         
@@ -631,13 +649,14 @@ class ModelComparator:
             report.append(f"  Recommended for: When interpretability is crucial")
         
         report_text = "\n".join(report)
-        
+
         # Save report
-        with open('output/model_comparison_report.txt', 'w') as f:
+        output_path = os.path.join(OUTPUT_DIR, 'model_comparison_report.txt')
+        with open(output_path, 'w') as f:
             f.write(report_text)
-        
+
         print("\n" + report_text)
-        print("\n✓ Saved to: model_comparison_report.txt")
+        print(f"\n✓ Saved to: {output_path}")
         
         return report_text
     
@@ -675,13 +694,13 @@ class ModelComparator:
         print("COMPARISON COMPLETE!")
         print("="*80)
         print("\nGenerated files:")
-        print("  ✓ comprehensive_metrics.csv")
-        print("  ✓ statistical_comparison.csv")
-        print("  ✓ segment_performance.csv")
-        print("  ✓ output/figures/comprehensive_comparison.png")
-        print("  ✓ output/figures/error_analysis.png")
-        print("  ✓ output/figures/segment_performance.png")
-        print("  ✓ model_comparison_report.txt")
+        print(f"  ✓ {os.path.join(OUTPUT_DIR, 'comprehensive_metrics.csv')}")
+        print(f"  ✓ {os.path.join(OUTPUT_DIR, 'statistical_comparison.csv')}")
+        print(f"  ✓ {os.path.join(OUTPUT_DIR, 'segment_performance.csv')}")
+        print(f"  ✓ {os.path.join(FIGURES_DIR, 'comprehensive_comparison.png')}")
+        print(f"  ✓ {os.path.join(FIGURES_DIR, 'error_analysis.png')}")
+        print(f"  ✓ {os.path.join(FIGURES_DIR, 'segment_performance.png')}")
+        print(f"  ✓ {os.path.join(OUTPUT_DIR, 'model_comparison_report.txt')}")
 
 
 def main():

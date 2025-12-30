@@ -45,12 +45,14 @@ Output: output/tables/table1_descriptive.tex, output/tables/table2_performance.t
         output/tables/summary_text.tex
 """
 
-import pandas as pd
-import numpy as np
-import re
-import joblib
+import os
 import warnings
-from config.constants import get_display_name, TARGET_VARIABLE
+
+import joblib
+import numpy as np
+import pandas as pd
+
+from config.constants import FEATURE_NAMES_PATH, MODELS_PATH, OUTPUT_DIR, PROCESSED_DATA_PATH, TABLES_DIR, get_display_name, TARGET_VARIABLE
 from config.feature_categories import filter_features_by_category
 
 warnings.filterwarnings('ignore')
@@ -72,35 +74,37 @@ class PaperTablePopulator:
         print("Loading data files...")
 
         try:
-            self.processed_data = pd.read_csv('output/processed_data.csv')
+            self.processed_data = pd.read_csv(PROCESSED_DATA_PATH)
             print(f"✓ Loaded processed_data.csv: {len(self.processed_data)} rows")
         except FileNotFoundError:
             print("✗ processed_data.csv not found - run preprocessing first")
             return False
 
         try:
-            self.model_comparison = pd.read_csv('output/model_comparison.csv')
+            model_comparison_path = os.path.join(OUTPUT_DIR, 'model_comparison.csv')
+            self.model_comparison = pd.read_csv(model_comparison_path)
             print(f"✓ Loaded model_comparison.csv: {len(self.model_comparison)} rows")
         except FileNotFoundError:
             print("✗ model_comparison.csv not found - run model training first")
             return False
 
         try:
-            self.income_results = pd.read_csv('output/segmentation_income_results.csv')
+            income_results_path = os.path.join(OUTPUT_DIR, 'segmentation_income_results.csv')
+            self.income_results = pd.read_csv(income_results_path)
             print(f"✓ Loaded segmentation_income_results.csv: {len(self.income_results)} rows")
         except FileNotFoundError:
             print("⚠ segmentation_income_results.csv not found - Table 4 will be skipped")
             self.income_results = None
 
         try:
-            self.feature_names = pd.read_csv('output/feature_names.csv')
+            self.feature_names = pd.read_csv(FEATURE_NAMES_PATH)
             print(f"✓ Loaded feature_names.csv: {len(self.feature_names)} features")
         except FileNotFoundError:
             print("✗ feature_names.csv not found")
             return False
 
         try:
-            self.trained_models = joblib.load('output/trained_models.pkl')
+            self.trained_models = joblib.load(MODELS_PATH)
             print(f"✓ Loaded trained_models.pkl: {len(self.trained_models['models'])} models")
         except FileNotFoundError:
             print("⚠ trained_models.pkl not found - Table 3 will be skipped")
@@ -359,37 +363,42 @@ class PaperTablePopulator:
 
         # Generate Table 1
         table1 = self.generate_descriptive_table()
-        with open('output/tables/table1_descriptive.tex', 'w') as f:
+        table1_path = os.path.join(TABLES_DIR, 'table1_descriptive.tex')
+        with open(table1_path, 'w') as f:
             f.write(table1)
-        print("✓ Saved to: output/tables/table1_descriptive.tex")
+        print(f"✓ Saved to: {table1_path}")
 
         # Generate Table 2
         table2 = self.generate_performance_table()
-        with open('output/tables/table2_performance.tex', 'w') as f:
+        table2_path = os.path.join(TABLES_DIR, 'table2_performance.tex')
+        with open(table2_path, 'w') as f:
             f.write(table2)
-        print("✓ Saved to: output/tables/table2_performance.tex")
+        print(f"✓ Saved to: {table2_path}")
 
         # Generate Table 3 (Feature Importance) if models available
         if self.trained_models is not None:
             table3 = self.generate_feature_importance_table(model_name='xgboost', top_n=10)
             if table3:
-                with open('output/tables/table3_features.tex', 'w') as f:
+                table3_path = os.path.join(TABLES_DIR, 'table3_features.tex')
+                with open(table3_path, 'w') as f:
                     f.write(table3)
-                print("✓ Saved to: output/tables/table3_features.tex")
+                print(f"✓ Saved to: {table3_path}")
 
         # Generate summary text
         summary = self.generate_summary_text()
-        with open('output/tables/summary_text.tex', 'w') as f:
+        summary_path = os.path.join(TABLES_DIR, 'summary_text.tex')
+        with open(summary_path, 'w') as f:
             f.write(summary)
-        print("✓ Saved to: output/tables/summary_text.tex")
+        print(f"✓ Saved to: {summary_path}")
 
         # Generate Table 4 if data available
         if self.income_results is not None:
             table4 = self.generate_income_performance_table()
             if table4:
-                with open('output/tables/table4_income.tex', 'w') as f:
+                table4_path = os.path.join(TABLES_DIR, 'table4_income.tex')
+                with open(table4_path, 'w') as f:
                     f.write(table4)
-                print("✓ Saved to: output/tables/table4_income.tex")
+                print(f"✓ Saved to: {table4_path}")
 
     def run(self):
         """Execute the full table population process"""
@@ -399,8 +408,7 @@ class PaperTablePopulator:
             return False
 
         # Create tables directory if it doesn't exist
-        import os
-        os.makedirs('output/tables', exist_ok=True)
+        os.makedirs(TABLES_DIR, exist_ok=True)
 
         # Generate and save table files
         self.save_table_files()
@@ -408,7 +416,7 @@ class PaperTablePopulator:
         print("\n" + "="*60)
         print("TABLE POPULATION COMPLETE")
         print("="*60)
-        print("\nTables saved to output/tables/")
+        print(f"\nTables saved to {TABLES_DIR}/")
         print("The LaTeX paper imports these tables automatically.")
         print("\nYou can now compile the report with:")
         print("  cd report")

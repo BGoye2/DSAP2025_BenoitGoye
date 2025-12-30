@@ -193,6 +193,13 @@ All outputs are saved in the `output/` folder:
 
 ## Key Features
 
+**Environment Validation:**
+- Automatic dependency checking at startup
+- Validates all 10 required packages with version requirements
+- Python version check (requires ≥3.8, recommends ≥3.12)
+- Clear error messages with installation instructions
+- Prevents cryptic import errors during execution
+
 **Reproducibility:**
 - All random operations use `random_state=42` for consistent results
 - Models saved with version metadata and data hash validation

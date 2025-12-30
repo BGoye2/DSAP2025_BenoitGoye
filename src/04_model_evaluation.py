@@ -16,25 +16,27 @@ Input: Trained models from output/trained_models.pkl
 Output: output/model_comparison.csv, output/figures/*.png (visualizations)
 """
 
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.model_selection import cross_val_score
-from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
-import joblib
 import os
 import warnings
-warnings.filterwarnings('ignore')
 
-# Import feature name mapping
+import joblib
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from sklearn.model_selection import cross_val_score
+
+from config.constants import FIGURES_DIR, MODELS_PATH, OUTPUT_DIR
 from config.feature_names import get_display_name
+
+warnings.filterwarnings('ignore')
 
 
 class ModelEvaluator:
     """Evaluate and visualize trained GINI models"""
 
-    def __init__(self, models_path: str = 'output/trained_models.pkl'):
+    def __init__(self, models_path: str = None):
         """
         Initialize evaluator
 
@@ -43,6 +45,8 @@ class ModelEvaluator:
         models_path : str
             Path to trained models file
         """
+        if models_path is None:
+            models_path = MODELS_PATH
         self.models = None
         self.X_train = None
         self.X_test = None
@@ -179,8 +183,9 @@ class ModelEvaluator:
         print("\n", comparison_df.to_string(index=False))
 
         # Save comparison
-        comparison_df.to_csv('output/model_comparison.csv', index=False)
-        print("\n✓ Comparison saved to: output/model_comparison.csv")
+        output_path = os.path.join(OUTPUT_DIR, 'model_comparison.csv')
+        comparison_df.to_csv(output_path, index=False)
+        print(f"\n✓ Comparison saved to: {output_path}")
 
         return comparison_df
 
@@ -233,8 +238,9 @@ class ModelEvaluator:
             axes[idx].set_visible(False)
 
         plt.tight_layout()
-        plt.savefig('output/figures/feature_importance.png', dpi=300, bbox_inches='tight')
-        print("\n✓ Feature importance plot saved to: output/figures/feature_importance.png")
+        output_path = os.path.join(FIGURES_DIR, 'feature_importance.png')
+        plt.savefig(output_path, dpi=300, bbox_inches='tight')
+        print(f"\n✓ Feature importance plot saved to: {output_path}")
         plt.close()
 
     def plot_predictions(self):
@@ -276,8 +282,9 @@ class ModelEvaluator:
             axes[idx].set_visible(False)
 
         plt.tight_layout()
-        plt.savefig('output/figures/predictions_plot.png', dpi=300, bbox_inches='tight')
-        print("✓ Predictions plot saved to: output/figures/predictions_plot.png")
+        output_path = os.path.join(FIGURES_DIR, 'predictions_plot.png')
+        plt.savefig(output_path, dpi=300, bbox_inches='tight')
+        print(f"✓ Predictions plot saved to: {output_path}")
         plt.close()
 
     def plot_residuals(self):
@@ -315,8 +322,9 @@ class ModelEvaluator:
             axes[idx].set_visible(False)
 
         plt.tight_layout()
-        plt.savefig('output/figures/residuals_plot.png', dpi=300, bbox_inches='tight')
-        print("✓ Residuals plot saved to: output/figures/residuals_plot.png")
+        output_path = os.path.join(FIGURES_DIR, 'residuals_plot.png')
+        plt.savefig(output_path, dpi=300, bbox_inches='tight')
+        print(f"✓ Residuals plot saved to: {output_path}")
         plt.close()
 
 
@@ -342,10 +350,10 @@ def main():
     print("MODEL EVALUATION COMPLETE!")
     print("="*60)
     print("\nGenerated files:")
-    print("  - output/model_comparison.csv")
-    print("  - output/figures/feature_importance.png")
-    print("  - output/figures/predictions_plot.png")
-    print("  - output/figures/residuals_plot.png")
+    print(f"  - {os.path.join(OUTPUT_DIR, 'model_comparison.csv')}")
+    print(f"  - {os.path.join(FIGURES_DIR, 'feature_importance.png')}")
+    print(f"  - {os.path.join(FIGURES_DIR, 'predictions_plot.png')}")
+    print(f"  - {os.path.join(FIGURES_DIR, 'residuals_plot.png')}")
 
 
 if __name__ == "__main__":

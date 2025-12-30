@@ -35,21 +35,23 @@ Output: segmentation_income_results.csv, output/figures/segmentation_income_perf
         output/figures/segmentation_regional_features.png, segmentation_summary_report.txt
 """
 
-import pandas as pd
-import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
-from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
-import xgboost as xgb
-import lightgbm as lgb
-import matplotlib.pyplot as plt
-import seaborn as sns
-from typing import Dict, List, Tuple
 import json
 import warnings
-warnings.filterwarnings('ignore')
+from typing import Dict, List, Tuple
 
-from config.constants import TARGET_VARIABLE, COUNTRY_REGIONS_PATH
+import lightgbm as lgb
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import xgboost as xgb
+from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from sklearn.model_selection import train_test_split
+
+from config.constants import COUNTRY_REGIONS_PATH, FEATURE_NAMES_PATH, FIGURES_DIR, OUTPUT_DIR, PROCESSED_DATA_PATH, TARGET_VARIABLE
+
+warnings.filterwarnings('ignore')
 
 
 # Load World Bank Regional Classification from JSON
@@ -76,7 +78,7 @@ COUNTRY_REGIONS = load_country_regions()
 class SegmentationAnalyzer:
     """Analyze model performance and feature importance across country segments"""
 
-    def __init__(self, data_path: str = 'output/processed_data.csv'):
+    def __init__(self, data_path: str = None):
         """
         Initialize analyzer
 
@@ -85,6 +87,8 @@ class SegmentationAnalyzer:
         data_path : str
             Path to processed data
         """
+        if data_path is None:
+            data_path = PROCESSED_DATA_PATH
         self.data_path = data_path
         self.data = None
         self.feature_names = None
@@ -98,7 +102,7 @@ class SegmentationAnalyzer:
 
         # Load feature names
         try:
-            feature_names_df = pd.read_csv('output/feature_names.csv')
+            feature_names_df = pd.read_csv(FEATURE_NAMES_PATH)
             self.feature_names = feature_names_df['feature'].tolist()
         except FileNotFoundError:
             self.feature_names = [col for col in self.data.columns if col != TARGET_VARIABLE]
@@ -318,6 +322,7 @@ class SegmentationAnalyzer:
         axes[1].axhline(y=0, color='gray', linestyle='--', alpha=0.5)
 
         plt.tight_layout()
+        os.makedirs(os.path.dirname(output_file), exist_ok=True)
         plt.savefig(output_file, dpi=300, bbox_inches='tight')
         print(f"Saved plot to {output_file}")
         plt.close()
@@ -385,6 +390,7 @@ class SegmentationAnalyzer:
         plt.yticks(rotation=0, fontsize=9)
 
         plt.tight_layout()
+        os.makedirs(os.path.dirname(output_file), exist_ok=True)
         plt.savefig(output_file, dpi=300, bbox_inches='tight')
         print(f"Saved heatmap to {output_file}")
         plt.close()
@@ -420,6 +426,7 @@ class SegmentationAnalyzer:
                 rows.append(row)
 
         df = pd.DataFrame(rows)
+        os.makedirs(os.path.dirname(output_file), exist_ok=True)
         df.to_csv(output_file, index=False)
         print(f"\nSaved results to {output_file}")
 
@@ -442,20 +449,20 @@ class SegmentationAnalyzer:
         self.create_performance_comparison_plot(
             income_results,
             'Income Level',
-            'output/figures/segmentation_income_performance.png'
+            os.path.join(FIGURES_DIR, 'segmentation_income_performance.png')
         )
 
         self.create_feature_importance_heatmap(
             income_results,
             'Income Level',
-            'output/figures/segmentation_income_features.png',
+            os.path.join(FIGURES_DIR, 'segmentation_income_features.png'),
             model_name='XGBoost'
         )
 
         self.save_results_to_csv(
             income_results,
             'Income Level',
-            'output/segmentation_income_results.csv'
+            os.path.join(OUTPUT_DIR, 'segmentation_income_results.csv')
         )
 
         # Regional analysis
@@ -468,20 +475,20 @@ class SegmentationAnalyzer:
         self.create_performance_comparison_plot(
             regional_results,
             'Region',
-            'output/figures/segmentation_regional_performance.png'
+            os.path.join(FIGURES_DIR, 'segmentation_regional_performance.png')
         )
 
         self.create_feature_importance_heatmap(
             regional_results,
             'Region',
-            'output/figures/segmentation_regional_features.png',
+            os.path.join(FIGURES_DIR, 'segmentation_regional_features.png'),
             model_name='XGBoost'
         )
 
         self.save_results_to_csv(
             regional_results,
             'Region',
-            'output/segmentation_regional_results.csv'
+            os.path.join(OUTPUT_DIR, 'segmentation_regional_results.csv')
         )
 
         # Summary report
@@ -491,13 +498,13 @@ class SegmentationAnalyzer:
         print("SEGMENTATION ANALYSIS COMPLETE")
         print("="*60)
         print("\nGenerated files:")
-        print("  - output/figures/segmentation_income_performance.png")
-        print("  - output/figures/segmentation_income_features.png")
-        print("  - output/segmentation_income_results.csv")
-        print("  - output/figures/segmentation_regional_performance.png")
-        print("  - output/figures/segmentation_regional_features.png")
-        print("  - output/segmentation_regional_results.csv")
-        print("  - output/segmentation_summary_report.txt")
+        print(f"  - {os.path.join(FIGURES_DIR, 'segmentation_income_performance.png')}")
+        print(f"  - {os.path.join(FIGURES_DIR, 'segmentation_income_features.png')}")
+        print(f"  - {os.path.join(OUTPUT_DIR, 'segmentation_income_results.csv')}")
+        print(f"  - {os.path.join(FIGURES_DIR, 'segmentation_regional_performance.png')}")
+        print(f"  - {os.path.join(FIGURES_DIR, 'segmentation_regional_features.png')}")
+        print(f"  - {os.path.join(OUTPUT_DIR, 'segmentation_regional_results.csv')}")
+        print(f"  - {os.path.join(OUTPUT_DIR, 'segmentation_summary_report.txt')}")
 
     def create_summary_report(self, income_results: Dict, regional_results: Dict):
         """
@@ -510,7 +517,8 @@ class SegmentationAnalyzer:
         regional_results : dict
             Regional segmentation results
         """
-        with open('output/segmentation_summary_report.txt', 'w') as f:
+        output_path = os.path.join(OUTPUT_DIR, 'segmentation_summary_report.txt')
+        with open(output_path, 'w') as f:
             f.write("="*70 + "\n")
             f.write("SEGMENTATION ANALYSIS SUMMARY REPORT\n")
             f.write("="*70 + "\n\n")
@@ -558,7 +566,7 @@ class SegmentationAnalyzer:
 
                 f.write("\n")
 
-        print("Saved summary report to output/segmentation_summary_report.txt")
+        print(f"Saved summary report to {output_path}")
 
 
 def main():

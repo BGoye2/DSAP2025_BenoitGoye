@@ -21,6 +21,9 @@ seaborn>=0.13.0
 # API requests
 requests>=2.32.0
 
+# Version comparison for environment validation
+packaging>=23.0
+
 # Note: concurrent.futures (used for parallel API calls) is built-in to Python 3.2+
 # Note: threading (used for spinner animation) is built-in to Python
 

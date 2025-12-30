@@ -2,12 +2,189 @@
 Utility functions and classes for the GINI prediction pipeline
 """
 
-import sys
 import os
-import time
-import threading
 import subprocess
+import sys
+import threading
+import time
 from datetime import datetime
+
+
+def validate_environment(verbose=True, exit_on_failure=False):
+    """
+    Validate that all required dependencies are installed with correct versions.
+
+    This function checks:
+    - Python version (>= 3.8, recommends 3.12+)
+    - All required packages from requirements.txt
+    - Package versions meet minimum requirements
+
+    Parameters:
+    -----------
+    verbose : bool, default=True
+        If True, print detailed validation results
+    exit_on_failure : bool, default=False
+        If True, call sys.exit(1) on validation failure
+
+    Returns:
+    --------
+    bool
+        True if all requirements are met, False otherwise
+
+    Examples:
+    ---------
+    >>> from src.utils import validate_environment
+    >>> validate_environment()  # Check all dependencies
+    True
+    """
+    from importlib.metadata import PackageNotFoundError, version
+
+    try:
+        from packaging.version import parse as parse_version
+    except ImportError:
+        if verbose:
+            print("ERROR: 'packaging' library not found.")
+            print("Install with: pip install packaging>=23.0")
+        if exit_on_failure:
+            sys.exit(1)
+        return False
+
+    # Define required packages with minimum versions (from requirements.txt)
+    REQUIRED_PACKAGES = {
+        'pandas': '2.2.0',
+        'numpy': '1.26.0',
+        'scipy': '1.13.0',
+        'scikit-learn': '1.5.0',
+        'joblib': '1.4.0',
+        'xgboost': '3.1.0',
+        'lightgbm': '4.6.0',
+        'matplotlib': '3.9.0',
+        'seaborn': '0.13.0',
+        'requests': '2.32.0',
+    }
+
+    # Check Python version
+    python_version = sys.version_info
+    python_ok = python_version >= (3, 8)
+    python_recommended = python_version >= (3, 12)
+
+    if verbose:
+        print("=" * 70)
+        print("ENVIRONMENT VALIDATION")
+        print("=" * 70)
+        print(f"\n{'Python Version:':<30} {python_version.major}.{python_version.minor}.{python_version.micro}")
+
+        if not python_ok:
+            print(f"{'Status:':<30} ❌ FAILED (requires Python >= 3.8)")
+        elif not python_recommended:
+            print(f"{'Status:':<30} ⚠️  OK (Python >= 3.12 recommended)")
+        else:
+            print(f"{'Status:':<30} ✓ OK")
+        print()
+
+    # Check package versions
+    missing_packages = []
+    outdated_packages = []
+    valid_packages = []
+
+    if verbose:
+        print(f"{'Package':<20} {'Required':<15} {'Installed':<15} {'Status'}")
+        print("-" * 70)
+
+    for package, min_version in REQUIRED_PACKAGES.items():
+        try:
+            installed_version = version(package)
+            installed_parsed = parse_version(installed_version)
+            required_parsed = parse_version(min_version)
+
+            if installed_parsed >= required_parsed:
+                valid_packages.append(package)
+                status = "✓ OK"
+            else:
+                outdated_packages.append((package, min_version, installed_version))
+                status = "⚠️  Outdated"
+
+            if verbose:
+                print(f"{package:<20} >={min_version:<14} {installed_version:<15} {status}")
+
+        except PackageNotFoundError:
+            missing_packages.append((package, min_version))
+            if verbose:
+                print(f"{package:<20} >={min_version:<14} {'NOT FOUND':<15} ❌ MISSING")
+
+    # Summary
+    all_valid = python_ok and not missing_packages and not outdated_packages
+
+    if verbose:
+        print("-" * 70)
+        print(f"\nValidation Summary:")
+        print(f"  ✓ Valid packages: {len(valid_packages)}/{len(REQUIRED_PACKAGES)}")
+
+        if missing_packages:
+            print(f"  ❌ Missing packages: {len(missing_packages)}")
+        if outdated_packages:
+            print(f"  ⚠️  Outdated packages: {len(outdated_packages)}")
+
+        # Installation instructions if issues found
+        if missing_packages or outdated_packages:
+            print("\n" + "=" * 70)
+            print("INSTALLATION REQUIRED")
+            print("=" * 70)
+
+            if missing_packages:
+                print("\nMissing packages:")
+                for pkg, ver in missing_packages:
+                    print(f"  • {pkg}>={ver}")
+
+            if outdated_packages:
+                print("\nOutdated packages (upgrade recommended):")
+                for pkg, required, installed in outdated_packages:
+                    print(f"  • {pkg}: {installed} → >={required}")
+
+            print("\nTo fix, run one of:")
+            print("  pip install -r requirements.txt --upgrade")
+            print("  conda env update -f environment.yml --prune")
+            print("=" * 70)
+
+        else:
+            print(f"\n{'Status:':<30} ✓ All dependencies validated")
+            print("=" * 70)
+
+    if not all_valid and exit_on_failure:
+        sys.exit(1)
+
+    return all_valid
+
+
+def ensure_directories_exist():
+    """
+    Ensure all required output directories exist.
+
+    Creates the following directories if they don't exist:
+    - output/
+    - output/figures/
+    - output/tables/
+    - output/.cache/
+
+    This function should be called once at the beginning of the pipeline
+    (e.g., in main.py) to set up the directory structure.
+    """
+    # Import here to avoid circular dependency
+    import sys
+    from pathlib import Path
+
+    # Determine if we're being called from main.py or from src/
+    if 'src.utils' in sys.modules:
+        # Called from main.py (imports as src.utils)
+        from src.config.constants import CACHE_DIR, FIGURES_DIR, OUTPUT_DIR, TABLES_DIR
+    else:
+        # Called from within src/ directory
+        from config.constants import CACHE_DIR, FIGURES_DIR, OUTPUT_DIR, TABLES_DIR
+
+    directories = [OUTPUT_DIR, FIGURES_DIR, TABLES_DIR, CACHE_DIR]
+
+    for directory in directories:
+        os.makedirs(directory, exist_ok=True)
 
 
 def print_header(text):

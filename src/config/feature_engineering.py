@@ -13,7 +13,8 @@ Each engineered feature is defined with:
 - parameters: Additional parameters for the operation
 """
 
-from typing import Dict, List, Any, Optional
+from typing import Any, Dict, List, Optional
+
 import numpy as np
 import pandas as pd
 

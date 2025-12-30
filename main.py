@@ -13,18 +13,22 @@ Usage:
 For more information, run: python main.py --help
 """
 
+import argparse
 import os
 import sys
 from datetime import datetime
+
+from src.config.constants import PROCESSED_DATA_PATH, WORLD_BANK_DATA_PATH
 from src.utils import (
+    display_completion_summary,
+    display_error_summary,
+    ensure_directories_exist,
     print_header,
     print_step,
     run_script,
+    validate_environment,
     validate_file_exists,
-    display_completion_summary,
-    display_error_summary
 )
-from src.config.constants import ensure_directories_exist
 
 
 def run_pipeline(
@@ -69,6 +73,9 @@ def run_pipeline(
     end_year : int, default=2023
         End year for data collection
     """
+    # Validate environment dependencies before starting pipeline
+    validate_environment(verbose=True, exit_on_failure=True)
+
     # Ensure output directories exist before starting pipeline
     ensure_directories_exist()
 
@@ -109,7 +116,7 @@ def run_pipeline(
             )
 
             validate_file_exists(
-                'output/world_bank_data.csv',
+                WORLD_BANK_DATA_PATH,
                 "Data collection failed - world_bank_data.csv not found"
             )
 
@@ -119,7 +126,7 @@ def run_pipeline(
             print_step(current_step, total_steps, "Data Preprocessing")
 
             validate_file_exists(
-                'output/world_bank_data.csv',
+                WORLD_BANK_DATA_PATH,
                 "world_bank_data.csv not found. Run data collection first."
             )
 
@@ -130,7 +137,7 @@ def run_pipeline(
             )
 
             validate_file_exists(
-                'output/processed_data.csv',
+                PROCESSED_DATA_PATH,
                 "Preprocessing failed - processed_data.csv not found"
             )
 
@@ -140,7 +147,7 @@ def run_pipeline(
             print_step(current_step, total_steps, "Model Training")
 
             validate_file_exists(
-                'output/processed_data.csv',
+                PROCESSED_DATA_PATH,
                 "processed_data.csv not found. Run preprocessing first."
             )
 
@@ -159,7 +166,7 @@ def run_pipeline(
             current_step += 1
             print_step(current_step, total_steps, "Model Evaluation")
 
-            if not os.path.exists('output/processed_data.csv'):
+            if not os.path.exists(PROCESSED_DATA_PATH):
                 print("⚠ Warning: processed_data.csv not found. Skipping evaluation step...")
             else:
                 run_script(
@@ -173,7 +180,7 @@ def run_pipeline(
             current_step += 1
             print_step(current_step, total_steps, "Comprehensive Model Comparison")
 
-            if not os.path.exists('output/processed_data.csv'):
+            if not os.path.exists(PROCESSED_DATA_PATH):
                 print("⚠ Warning: processed_data.csv not found. Skipping comparison step...")
             else:
                 run_script(
@@ -187,7 +194,7 @@ def run_pipeline(
             current_step += 1
             print_step(current_step, total_steps, "Segmentation Analysis")
 
-            if not os.path.exists('output/processed_data.csv'):
+            if not os.path.exists(PROCESSED_DATA_PATH):
                 print("⚠ Warning: processed_data.csv not found. Skipping segmentation analysis...")
             else:
                 try:
@@ -205,7 +212,7 @@ def run_pipeline(
             current_step += 1
             print_step(current_step, total_steps, "Statistical Significance Tests")
 
-            if not os.path.exists('output/processed_data.csv'):
+            if not os.path.exists(PROCESSED_DATA_PATH):
                 print("⚠ Warning: processed_data.csv not found. Skipping statistical tests...")
             else:
                 try:
@@ -309,8 +316,6 @@ def optimized_run():
 # ============================================================================
 
 if __name__ == "__main__":
-    import argparse
-
     parser = argparse.ArgumentParser(
         description='GINI Coefficient Prediction Pipeline',
         formatter_class=argparse.RawDescriptionHelpFormatter,

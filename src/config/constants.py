@@ -14,7 +14,8 @@ This module defines:
 """
 
 import os
-from .feature_names import FEATURE_NAME_MAPPING, get_display_name
+
+from .feature_names import get_display_name, FEATURE_NAME_MAPPING
 
 # =============================================================================
 # TARGET VARIABLE
@@ -257,26 +258,3 @@ BOOTSTRAP_CONFIDENCE_LEVEL = 0.95  # 95% confidence intervals
 # =============================================================================
 
 CACHE_ENABLED = True  # Enable caching by default
-
-
-# =============================================================================
-# DIRECTORY INITIALIZATION
-# =============================================================================
-
-def ensure_directories_exist():
-    """
-    Ensure all required output directories exist.
-
-    Creates the following directories if they don't exist:
-    - output/
-    - output/figures/
-    - output/tables/
-    - output/.cache/
-
-    This function should be called once at the beginning of the pipeline
-    (e.g., in main.py) to set up the directory structure.
-    """
-    directories = [OUTPUT_DIR, FIGURES_DIR, TABLES_DIR, CACHE_DIR]
-
-    for directory in directories:
-        os.makedirs(directory, exist_ok=True)

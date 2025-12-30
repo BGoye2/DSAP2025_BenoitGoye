@@ -3,13 +3,15 @@ World Bank Data Collection Script
 Fetches economic and social indicators for GINI coefficient prediction
 """
 
-import pandas as pd
-import numpy as np
-import requests
 import time
-from typing import List, Dict
-from concurrent.futures import ThreadPoolExecutor, as_completed
 import warnings
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from typing import Dict, List
+
+import pandas as pd
+import requests
+
+from config.constants import WORLD_BANK_DATA_PATH
 from config.indicators import WORLD_BANK_INDICATORS
 
 warnings.filterwarnings('ignore')
@@ -94,7 +96,7 @@ class WorldBankDataCollector:
             return pd.DataFrame()
     
     def collect_all_data(self, start_year: int = 2000, end_year: int = 2023,
-                        save_path: str = 'output/world_bank_data.csv',
+                        save_path: str = None,
                         max_workers: int = 5):
         """
         Collect all indicators and merge into a single dataset (parallelized).
@@ -108,8 +110,8 @@ class WorldBankDataCollector:
             Starting year for data collection
         end_year : int
             Ending year for data collection
-        save_path : str
-            Path to save the collected data
+        save_path : str, optional
+            Path to save the collected data (defaults to WORLD_BANK_DATA_PATH from constants)
         max_workers : int
             Number of parallel workers for API calls (default: 5)
 
@@ -118,6 +120,9 @@ class WorldBankDataCollector:
         pd.DataFrame
             Merged dataset with all indicators
         """
+        if save_path is None:
+            save_path = WORLD_BANK_DATA_PATH
+
         print(f"Collecting World Bank data from {start_year} to {end_year}")
         print(f"Total indicators to fetch: {len(self.indicators)}")
         print(f"Using {max_workers} parallel workers\n")
@@ -193,12 +198,11 @@ class WorldBankDataCollector:
 def main():
     """Main execution function"""
     collector = WorldBankDataCollector()
-    
+
     # Collect data from 2000 to 2023
     data = collector.collect_all_data(
         start_year=2000,
-        end_year=2023,
-        save_path='output/world_bank_data.csv'
+        end_year=2023
     )
     
     if not data.empty:

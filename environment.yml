@@ -48,3 +48,6 @@ dependencies:
 
       # API requests
       - requests>=2.32.0
+
+      # Version comparison for environment validation
+      - packaging>=23.0

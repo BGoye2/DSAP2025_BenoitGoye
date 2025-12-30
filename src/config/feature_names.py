@@ -7,8 +7,6 @@ to human-readable display names for tables, plots, and reports.
 This ensures consistency across all outputs (tables, figures, reports).
 """
 
-from typing import Dict, List
-
 # =============================================================================
 # FEATURE NAME MAPPING
 # =============================================================================

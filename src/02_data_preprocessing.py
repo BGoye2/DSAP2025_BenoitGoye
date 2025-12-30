@@ -3,14 +3,21 @@ Data Preprocessing Script
 Cleans and prepares World Bank data for machine learning models
 """
 
-import pandas as pd
-import numpy as np
-from sklearn.impute import SimpleImputer, KNNImputer
 import warnings
-warnings.filterwarnings('ignore')
 
-from config.constants import TARGET_VARIABLE
+import numpy as np
+import pandas as pd
+from sklearn.impute import KNNImputer, SimpleImputer
+
+from config.constants import (
+    FEATURE_NAMES_PATH,
+    PROCESSED_DATA_PATH,
+    TARGET_VARIABLE,
+    WORLD_BANK_DATA_PATH,
+)
 from config.feature_engineering import create_all_engineered_features
+
+warnings.filterwarnings('ignore')
 
 
 class DataPreprocessor:
@@ -28,16 +35,17 @@ class DataPreprocessor:
     - Scale and standardize features for modeling
     """
 
-    def __init__(self, data_path: str = 'output/world_bank_data.csv'):
+    def __init__(self, data_path: str = None):
         """
         Initialize preprocessor with data path.
 
         Parameters:
         -----------
-        data_path : str
+        data_path : str, optional
             Path to the raw data CSV file from World Bank API
+            (defaults to WORLD_BANK_DATA_PATH from constants)
         """
-        self.data_path = data_path
+        self.data_path = data_path if data_path else WORLD_BANK_DATA_PATH
         self.data = None
         
     def load_data(self):
@@ -199,15 +207,23 @@ class DataPreprocessor:
 
         return self.data
     
-    def prepare_for_modeling(self, save_path: str = 'output/processed_data.csv'):
+    def prepare_for_modeling(self, save_path: str = None):
         """
         Final preparation for modeling
-        
+
+        Parameters:
+        -----------
+        save_path : str, optional
+            Path to save processed data (defaults to PROCESSED_DATA_PATH from constants)
+
         Returns:
         --------
         tuple
             (X, y, feature_names, data)
         """
+        if save_path is None:
+            save_path = PROCESSED_DATA_PATH
+
         print("\nPreparing data for modeling...")
         
         # Separate features and target
@@ -231,8 +247,8 @@ class DataPreprocessor:
         
         # Save feature names
         feature_names_df = pd.DataFrame({'feature': feature_cols})
-        feature_names_df.to_csv('output/feature_names.csv', index=False)
-        print(f"Feature names saved to: feature_names.csv")
+        feature_names_df.to_csv(FEATURE_NAMES_PATH, index=False)
+        print(f"Feature names saved to: {FEATURE_NAMES_PATH}")
 
         return X, y, feature_cols, self.data
 
@@ -257,7 +273,7 @@ def main(imputation_strategy='knn', imputation_threshold=0.6,
     """
 
     # Initialize preprocessor
-    preprocessor = DataPreprocessor('output/world_bank_data.csv')
+    preprocessor = DataPreprocessor()
 
     # Load data
     preprocessor.load_data()

@@ -17,7 +17,7 @@ Categories include:
 - Engineered features
 """
 
-from typing import Dict, List, Set
+from typing import Dict, List
 
 
 # Feature category mappings
