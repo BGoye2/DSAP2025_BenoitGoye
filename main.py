@@ -13,9 +13,11 @@ Usage:
 For more information, run: python main.py --help
 """
 
+import sys
+print("Starting pipeline...", flush=True)
+
 import argparse
 import os
-import sys
 from datetime import datetime
 
 from src.config.constants import PROCESSED_DATA_PATH, WORLD_BANK_DATA_PATH
