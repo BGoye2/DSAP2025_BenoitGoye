@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.4.9)  30 DEC 2025 17:54
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.4.9)  6 JAN 2026 12:26
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -538,64 +538,64 @@ Underfull \hbox (badness 3849) in paragraph at lines 135--136
  []
 
 
-Underfull \hbox (badness 1924) in paragraph at lines 141--142
-[]\T1/cmtt/m/n/10 07_segmentation_analysis.py \T1/cmr/m/n/10 --- Con-ducts in-
+Underfull \hbox (badness 1924) in paragraph at lines 140--141
+[]\T1/cmtt/m/n/10 06_segmentation_analysis.py \T1/cmr/m/n/10 --- Con-ducts in-
  []
 
 
-Underfull \hbox (badness 2875) in paragraph at lines 142--143
-[]\T1/cmtt/m/n/10 08_statistical_tests.py \T1/cmr/m/n/10 --- Runs sig-nif-i-cance
+Underfull \hbox (badness 2875) in paragraph at lines 141--142
+[]\T1/cmtt/m/n/10 07_statistical_tests.py \T1/cmr/m/n/10 --- Runs sig-nif-i-cance
  []
 
 
-Underfull \hbox (badness 2653) in paragraph at lines 147--148
+Underfull \hbox (badness 2653) in paragraph at lines 146--147
 \T1/cmr/m/n/10 with four con-fig-urable ex-e-cu-tion modes to ac-com-
  []
 
 
-Underfull \hbox (badness 1838) in paragraph at lines 147--148
+Underfull \hbox (badness 1838) in paragraph at lines 146--147
 \T1/cmr/m/n/10 mo-date dif-fer-ent use cases and com-pu-ta-tional con-
  []
 
 
-Underfull \hbox (badness 1275) in paragraph at lines 147--148
+Underfull \hbox (badness 1275) in paragraph at lines 146--147
 \T1/cmtt/m/n/10 main.py\T1/cmr/m/n/10 ) ex-e-cutes the full pipeline from 2000--2023
  []
 
 
-Underfull \hbox (badness 1810) in paragraph at lines 147--148
+Underfull \hbox (badness 1810) in paragraph at lines 146--147
 \T1/cmr/m/n/10 size and ex-e-cu-tion time for rapid test-ing and de-
  []
 
 
-Underfull \hbox (badness 1371) in paragraph at lines 147--148
+Underfull \hbox (badness 1371) in paragraph at lines 146--147
 \T1/cmr/m/n/10 bug-ging. The \T1/cmr/bx/n/10 op-ti-mized mode \T1/cmr/m/n/10 (\T1/cmtt/m/n/10 python main.py
  []
 
 
-Underfull \hbox (badness 3229) in paragraph at lines 148--149
+Underfull \hbox (badness 3229) in paragraph at lines 147--148
 []\T1/cmr/m/n/10 We im-ple-mented sev-eral par-al-lel pro-cess-ing strate-
  []
 
 
-Underfull \hbox (badness 3579) in paragraph at lines 148--149
+Underfull \hbox (badness 3579) in paragraph at lines 147--148
 \T1/cmr/m/n/10 gies achiev-ing sig-nif-i-cant speedups. Data col-lec-
  []
 
 
-Underfull \hbox (badness 1033) in paragraph at lines 148--149
+Underfull \hbox (badness 1033) in paragraph at lines 147--148
 \T1/cmr/m/n/10 tion pro-cesses mul-ti-ple in-di-ca-tors con-cur-rently us-ing
  []
 
 
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 153--154
+Underfull \hbox (badness 10000) in paragraph at lines 152--153
 \T1/cmtt/m/n/10 np.ndarray, y_pred: np.ndarray) -> Dict[str,
  []
 
 
-Underfull \hbox (badness 1484) in paragraph at lines 153--154
+Underfull \hbox (badness 1484) in paragraph at lines 152--153
 \T1/cmr/m/n/10 from model-data mis-matches; the pipeline val-i-dates
  []
 
@@ -606,45 +606,52 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
 [5{/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc}] (../../output/tables/table2_performance.tex) (../../output/tables/table3_features.tex)
 
-<../../output/figures/feature_importance.png, id=194, 1149.3339pt x 1293.633pt>
+<../../output/figures/feature_importance.png, id=194, 1149.093pt x 1293.633pt>
 File: ../../output/figures/feature_importance.png Graphic file (type png)
 <use ../../output/figures/feature_importance.png>
-Package pdftex.def Info: ../../output/figures/feature_importance.png  used on input line 184.
-(pdftex.def)             Requested size: 235.54698pt x 265.11752pt.
+Package pdftex.def Info: ../../output/figures/feature_importance.png  used on input line 183.
+(pdftex.def)             Requested size: 235.54698pt x 265.17674pt.
 
 
 [6 <../../output/figures/feature_importance.png>]
-<../../output/figures/statistical_tests_bootstrap.png, id=209, 715.2321pt x 570.4512pt>
+<../../output/figures/statistical_tests_bootstrap.png, id=208, 715.2321pt x 570.4512pt>
 File: ../../output/figures/statistical_tests_bootstrap.png Graphic file (type png)
 <use ../../output/figures/statistical_tests_bootstrap.png>
-Package pdftex.def Info: ../../output/figures/statistical_tests_bootstrap.png  used on input line 193.
+Package pdftex.def Info: ../../output/figures/statistical_tests_bootstrap.png  used on input line 192.
 (pdftex.def)             Requested size: 235.54698pt x 187.86649pt.
-<../../output/figures/statistical_tests_consistency.png, id=211, 558.1653pt x 516.7305pt>
+<../../output/figures/statistical_tests_consistency.png, id=210, 558.1653pt x 516.7305pt>
 File: ../../output/figures/statistical_tests_consistency.png Graphic file (type png)
 <use ../../output/figures/statistical_tests_consistency.png>
-Package pdftex.def Info: ../../output/figures/statistical_tests_consistency.png  used on input line 202.
+Package pdftex.def Info: ../../output/figures/statistical_tests_consistency.png  used on input line 201.
 (pdftex.def)             Requested size: 235.54698pt x 218.05821pt.
 
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
-<../../output/figures/predictions_plot.png, id=213, 1293.3921pt x 714.7503pt>
+
+
+<../../output/figures/predictions_plot.png, id=212, 1293.3921pt x 714.7503pt>
 File: ../../output/figures/predictions_plot.png Graphic file (type png)
 <use ../../output/figures/predictions_plot.png>
-Package pdftex.def Info: ../../output/figures/predictions_plot.png  used on input line 211.
+Package pdftex.def Info: ../../output/figures/predictions_plot.png  used on input line 210.
 (pdftex.def)             Requested size: 235.54698pt x 130.16547pt.
-<../../output/figures/residuals_plot.png, id=215, 1293.3921pt x 714.7503pt>
+
+
+[7 <../../output/figures/statistical_tests_bootstrap.png> <../../output/figures/statistical_tests_consistency.png> <../../output/figures/predictions_plot.png>]
+<../../output/figures/residuals_plot.png, id=226, 1293.3921pt x 714.7503pt>
 File: ../../output/figures/residuals_plot.png Graphic file (type png)
 <use ../../output/figures/residuals_plot.png>
-Package pdftex.def Info: ../../output/figures/residuals_plot.png  used on input line 220.
+Package pdftex.def Info: ../../output/figures/residuals_plot.png  used on input line 219.
 (pdftex.def)             Requested size: 235.54698pt x 130.16547pt.
 
 
-[7 <../../output/figures/statistical_tests_bootstrap.png> <../../output/figures/statistical_tests_consistency.png> <../../output/figures/predictions_plot.png> <../../output/figures/residuals_plot.png>]
-<../../output/figures/segmentation_income_performance.png, id=230, 1004.553pt x 353.6412pt>
+<../../output/figures/segmentation_income_performance.png, id=229, 1004.553pt x 353.6412pt>
 File: ../../output/figures/segmentation_income_performance.png Graphic file (type png)
 <use ../../output/figures/segmentation_income_performance.png>
-Package pdftex.def Info: ../../output/figures/segmentation_income_performance.png  used on input line 231.
+Package pdftex.def Info: ../../output/figures/segmentation_income_performance.png  used on input line 230.
 (pdftex.def)             Requested size: 235.54698pt x 82.91682pt.
 
+
+[8 <../../output/figures/residuals_plot.png> <../../output/figures/segmentation_income_performance.png>]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
@@ -654,24 +661,12 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 
-[8 <../../output/figures/segmentation_income_performance.png>]
-Underfull \hbox (badness 3679) in paragraph at lines 245--246
-[]\T1/cmr/m/n/10 Advanced en-sem-ble meth-ods, par-tic-u-larly Gra-di-ent
- []
-
-
+[9]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-
-[9] (./ProjectReport.bbl
-
-
+(./ProjectReport.bbl
 
 [10])
 
@@ -680,7 +675,7 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 [11
 
 ]
-Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on input line 282.
+Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on input line 281.
 
 
 [12
@@ -696,7 +691,7 @@ Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on inp
 <../../output/figures/comprehensive_comparison.png, id=319, 1171.7376pt x 775.4571pt>
 File: ../../output/figures/comprehensive_comparison.png Graphic file (type png)
 <use ../../output/figures/comprehensive_comparison.png>
-Package pdftex.def Info: ../../output/figures/comprehensive_comparison.png  used on input line 416.
+Package pdftex.def Info: ../../output/figures/comprehensive_comparison.png  used on input line 415.
 (pdftex.def)             Requested size: 480.59395pt x 318.0578pt.
 
 
@@ -711,15 +706,15 @@ Package rerunfilecheck Info: File `ProjectReport.out' has not changed.
 (rerunfilecheck)             Checksum: 1445E5827815780B0697E7064AE9F61E;2326.
  ) 
 Here is how much of TeX's memory you used:
- 13812 strings out of 473190
- 209444 string characters out of 5715801
+ 13814 strings out of 473190
+ 209466 string characters out of 5715801
  809359 words of memory out of 5000000
- 36749 multiletter control sequences out of 15000+600000
+ 36751 multiletter control sequences out of 15000+600000
  578641 words of font info for 86 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,10n,79p,2321b,576s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,10n,79p,2490b,564s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfbx0800.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfbx0900.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfbx1000.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfbx1728.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfrm0700.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfrm0800.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfrm0900.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfti1000.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sftt0900.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sftt1000.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfxc1200.pfb>
-Output written on ProjectReport.pdf (16 pages, 5241439 bytes).
+Output written on ProjectReport.pdf (16 pages, 5249926 bytes).
 PDF statistics:
  474 PDF objects out of 1000 (max. 8388607)
  380 compressed objects within 4 object streams

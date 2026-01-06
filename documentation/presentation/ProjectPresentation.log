@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.4.9)  30 DEC 2025 17:50
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.4.9)  6 JAN 2026 13:45
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -534,7 +534,7 @@ Package: amsthm 2020/05/29 v2.20.6
 ) (/usr/local/texlive/2025/texmf-dist/tex/latex/beamer/beamerbasethemes.sty)) (/usr/local/texlive/2025/texmf-dist/tex/latex/beamer/beamerthemedefault.sty (/usr/local/texlive/2025/texmf-dist/tex/latex/beamer/beamerfontthemedefault.sty) (/usr/local/texlive/2025/texmf-dist/tex/latex/beamer/beamercolorthemedefault.sty) (/usr/local/texlive/2025/texmf-dist/tex/latex/beamer/beamerinnerthemedefault.sty
 \beamer@dima=\dimen293
 \beamer@dimb=\dimen294
-) (/usr/local/texlive/2025/texmf-dist/tex/latex/beamer/beamerouterthemedefault.sty))) (./beamerthememytemplate.sty (/usr/local/texlive/2025/texmf-dist/tex/latex/beamer/beamercolorthemestructure.sty)
+) (/usr/local/texlive/2025/texmf-dist/tex/latex/beamer/beamerouterthemedefault.sty))) (./beamerthememytemplate.sty (/usr/local/texlive/2025/texmf-dist/tex/latex/beamer/beamerfontthemestructurebold.sty) (/usr/local/texlive/2025/texmf-dist/tex/latex/beamer/beamercolorthemestructure.sty)
 \textmargin=\skip66
 \titlehmargin=\skip67
 \titlevmargin=\skip68
@@ -742,7 +742,8 @@ Package: textcomp 2024/04/24 v2.1b Standard LaTeX package
 File: l3backend-pdftex.def 2024-05-08 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count394
 \l__pdf_internal_box=\box91
-) (./ProjectPresentation.aux)
+)
+No file ProjectPresentation.aux.
 \openout1 = `ProjectPresentation.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 35.
@@ -763,7 +764,6 @@ LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 35.
 LaTeX Font Info:    ... okay on input line 35.
 LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 35.
 LaTeX Font Info:    ... okay on input line 35.
-
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
 *geometry* verbose mode - [ preamble ] result:
@@ -818,7 +818,6 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 48
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 ))
 Package hyperref Info: Link coloring OFF on input line 35.
- (./ProjectPresentation.out) (./ProjectPresentation.out)
 \@outlinefile=\write6
 \openout6 = `ProjectPresentation.out'.
 
@@ -892,14 +891,15 @@ Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: subfig package v1.3 is loaded.
 Package caption Info: float package is loaded.
 Package caption Info: End \AtBeginDocument code.
- (./ProjectPresentation.nav)
+
+No file ProjectPresentation.nav.
 <title-slide-background.png, id=15, 1052.68282pt x 594.72188pt>
 File: title-slide-background.png Graphic file (type png)
 <use title-slide-background.png>
 Package pdftex.def Info: title-slide-background.png  used on input line 40.
 (pdftex.def)             Requested size: 455.24408pt x 257.19553pt.
 LaTeX Font Info:    Trying to load font information for U+msa on input line 40.
- (/usr/local/texlive/2025/texmf-dist/tex/latex/amsfonts/umsa.fd
+(/usr/local/texlive/2025/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
 LaTeX Font Info:    Trying to load font information for U+msb on input line 40.
@@ -917,7 +917,7 @@ File: ot1mathkerncmss.fd 2020/01/31 Fontinst v1.933 font definitions for OT1/mat
 <UNIL-LOGOTYPE-BLUE-RGB.png, id=28, 863.225pt x 401.5pt>
 File: UNIL-LOGOTYPE-BLUE-RGB.png Graphic file (type png)
 <use UNIL-LOGOTYPE-BLUE-RGB.png>
-Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 72.
+Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 81.
 (pdftex.def)             Requested size: 37.87599pt x 17.61336pt.
 
 
@@ -926,7 +926,7 @@ Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 72.
  <./UNIL-LOGOTYPE-BLUE-RGB.png>]
 File: UNIL-LOGOTYPE-BLUE-RGB.png Graphic file (type png)
 <use UNIL-LOGOTYPE-BLUE-RGB.png>
-Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 92.
+Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 101.
 (pdftex.def)             Requested size: 37.87599pt x 17.61336pt.
 
 
@@ -935,7 +935,7 @@ Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 92.
 ]
 File: UNIL-LOGOTYPE-BLUE-RGB.png Graphic file (type png)
 <use UNIL-LOGOTYPE-BLUE-RGB.png>
-Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 134.
+Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 144.
 (pdftex.def)             Requested size: 37.87599pt x 17.61336pt.
 
 
@@ -944,7 +944,7 @@ Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 134.
 ]
 File: UNIL-LOGOTYPE-BLUE-RGB.png Graphic file (type png)
 <use UNIL-LOGOTYPE-BLUE-RGB.png>
-Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 164.
+Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 174.
 (pdftex.def)             Requested size: 37.87599pt x 17.61336pt.
 
 
@@ -953,125 +953,129 @@ Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 164.
 ]
 File: UNIL-LOGOTYPE-BLUE-RGB.png Graphic file (type png)
 <use UNIL-LOGOTYPE-BLUE-RGB.png>
-Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 190.
+Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 195.
 (pdftex.def)             Requested size: 37.87599pt x 17.61336pt.
 
 
 [6
 
 ]
-<../../output/figures/segment_performance.png, id=77, 1283.997pt x 353.6412pt>
+<../../output/figures/segment_performance.png, id=74, 1283.997pt x 353.6412pt>
 File: ../../output/figures/segment_performance.png Graphic file (type png)
 <use ../../output/figures/segment_performance.png>
-Package pdftex.def Info: ../../output/figures/segment_performance.png  used on input line 229.
+Package pdftex.def Info: ../../output/figures/segment_performance.png  used on input line 234.
 (pdftex.def)             Requested size: 179.25114pt x 49.36913pt.
 File: UNIL-LOGOTYPE-BLUE-RGB.png Graphic file (type png)
 <use UNIL-LOGOTYPE-BLUE-RGB.png>
-Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 229.
+Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 234.
 (pdftex.def)             Requested size: 37.87599pt x 17.61336pt.
 
 
 [7
 
  <../../output/figures/segment_performance.png>]
-<../../output/figures/comprehensive_comparison.png, id=88, 1171.7376pt x 775.4571pt>
+<../../output/figures/comprehensive_comparison.png, id=85, 1171.7376pt x 775.4571pt>
 File: ../../output/figures/comprehensive_comparison.png Graphic file (type png)
 <use ../../output/figures/comprehensive_comparison.png>
-Package pdftex.def Info: ../../output/figures/comprehensive_comparison.png  used on input line 262.
+Package pdftex.def Info: ../../output/figures/comprehensive_comparison.png  used on input line 266.
 (pdftex.def)             Requested size: 199.157pt x 131.80229pt.
 File: UNIL-LOGOTYPE-BLUE-RGB.png Graphic file (type png)
 <use UNIL-LOGOTYPE-BLUE-RGB.png>
-Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 262.
+Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 266.
 (pdftex.def)             Requested size: 37.87599pt x 17.61336pt.
 
 
 [8
 
  <../../output/figures/comprehensive_comparison.png>]
-<../../output/figures/feature_importance.png, id=97, 1149.093pt x 1293.633pt>
+Overfull \hbox (1.69334pt too wide) in paragraph at lines 303--303
+ [] 
+ []
+
+<../../output/figures/feature_importance.png, id=95, 1149.093pt x 1293.633pt>
 File: ../../output/figures/feature_importance.png Graphic file (type png)
 <use ../../output/figures/feature_importance.png>
-Package pdftex.def Info: ../../output/figures/feature_importance.png  used on input line 298.
-(pdftex.def)             Requested size: 127.52278pt x 143.56337pt.
+Package pdftex.def Info: ../../output/figures/feature_importance.png  used on input line 303.
+(pdftex.def)             Requested size: 116.8798pt x 131.58167pt.
 File: UNIL-LOGOTYPE-BLUE-RGB.png Graphic file (type png)
 <use UNIL-LOGOTYPE-BLUE-RGB.png>
-Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 298.
+Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 303.
 (pdftex.def)             Requested size: 37.87599pt x 17.61336pt.
 
 
 [9
 
  <../../output/figures/feature_importance.png>]
-<../../output/figures/statistical_tests_bootstrap.png, id=107, 715.2321pt x 570.4512pt>
+<../../output/figures/statistical_tests_bootstrap.png, id=104, 715.2321pt x 570.4512pt>
 File: ../../output/figures/statistical_tests_bootstrap.png Graphic file (type png)
 <use ../../output/figures/statistical_tests_bootstrap.png>
-Package pdftex.def Info: ../../output/figures/statistical_tests_bootstrap.png  used on input line 328.
-(pdftex.def)             Requested size: 149.99582pt x 119.6329pt.
-<../../output/figures/statistical_tests_consistency.png, id=108, 558.1653pt x 516.7305pt>
+Package pdftex.def Info: ../../output/figures/statistical_tests_bootstrap.png  used on input line 338.
+(pdftex.def)             Requested size: 119.99446pt x 95.70457pt.
+<../../output/figures/statistical_tests_consistency.png, id=105, 558.1653pt x 516.7305pt>
 File: ../../output/figures/statistical_tests_consistency.png Graphic file (type png)
 <use ../../output/figures/statistical_tests_consistency.png>
-Package pdftex.def Info: ../../output/figures/statistical_tests_consistency.png  used on input line 328.
-(pdftex.def)             Requested size: 129.227pt x 119.63397pt.
+Package pdftex.def Info: ../../output/figures/statistical_tests_consistency.png  used on input line 338.
+(pdftex.def)             Requested size: 103.37819pt x 95.70403pt.
 File: UNIL-LOGOTYPE-BLUE-RGB.png Graphic file (type png)
 <use UNIL-LOGOTYPE-BLUE-RGB.png>
-Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 328.
+Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 338.
 (pdftex.def)             Requested size: 37.87599pt x 17.61336pt.
 
 
 [10
 
  <../../output/figures/statistical_tests_bootstrap.png> <../../output/figures/statistical_tests_consistency.png>]
-<../../output/figures/segmentation_income_performance.png, id=118, 1004.553pt x 353.6412pt>
+<../../output/figures/segmentation_income_performance.png, id=116, 1004.553pt x 353.6412pt>
 File: ../../output/figures/segmentation_income_performance.png Graphic file (type png)
 <use ../../output/figures/segmentation_income_performance.png>
-Package pdftex.def Info: ../../output/figures/segmentation_income_performance.png  used on input line 358.
-(pdftex.def)             Requested size: 199.15962pt x 70.11182pt.
-<../../output/figures/segmentation_income_features.png, id=119, 808.9422pt x 426.8748pt>
+Package pdftex.def Info: ../../output/figures/segmentation_income_performance.png  used on input line 379.
+(pdftex.def)             Requested size: 191.18895pt x 67.30583pt.
+<../../output/figures/segmentation_income_features.png, id=117, 802.4379pt x 426.8748pt>
 File: ../../output/figures/segmentation_income_features.png Graphic file (type png)
 <use ../../output/figures/segmentation_income_features.png>
-Package pdftex.def Info: ../../output/figures/segmentation_income_features.png  used on input line 358.
-(pdftex.def)             Requested size: 199.16153pt x 105.09654pt.
+Package pdftex.def Info: ../../output/figures/segmentation_income_features.png  used on input line 379.
+(pdftex.def)             Requested size: 179.90404pt x 95.70396pt.
 File: UNIL-LOGOTYPE-BLUE-RGB.png Graphic file (type png)
 <use UNIL-LOGOTYPE-BLUE-RGB.png>
-Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 358.
+Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 379.
 (pdftex.def)             Requested size: 37.87599pt x 17.61336pt.
 
 
 [11
 
  <../../output/figures/segmentation_income_performance.png> <../../output/figures/segmentation_income_features.png>]
-<../../output/figures/segmentation_regional_performance.png, id=129, 1004.553pt x 353.6412pt>
+<../../output/figures/segmentation_regional_performance.png, id=127, 1004.553pt x 353.6412pt>
 File: ../../output/figures/segmentation_regional_performance.png Graphic file (type png)
 <use ../../output/figures/segmentation_regional_performance.png>
-Package pdftex.def Info: ../../output/figures/segmentation_regional_performance.png  used on input line 388.
-(pdftex.def)             Requested size: 199.15962pt x 70.11182pt.
-<../../output/figures/segmentation_regional_features.png, id=130, 806.0514pt x 426.8748pt>
+Package pdftex.def Info: ../../output/figures/segmentation_regional_performance.png  used on input line 418.
+(pdftex.def)             Requested size: 191.18895pt x 67.30583pt.
+<../../output/figures/segmentation_regional_features.png, id=128, 806.0514pt x 426.8748pt>
 File: ../../output/figures/segmentation_regional_features.png Graphic file (type png)
 <use ../../output/figures/segmentation_regional_features.png>
-Package pdftex.def Info: ../../output/figures/segmentation_regional_features.png  used on input line 388.
-(pdftex.def)             Requested size: 199.16318pt x 105.47433pt.
+Package pdftex.def Info: ../../output/figures/segmentation_regional_features.png  used on input line 418.
+(pdftex.def)             Requested size: 180.71417pt x 95.70396pt.
 File: UNIL-LOGOTYPE-BLUE-RGB.png Graphic file (type png)
 <use UNIL-LOGOTYPE-BLUE-RGB.png>
-Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 388.
+Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 418.
 (pdftex.def)             Requested size: 37.87599pt x 17.61336pt.
 
 
 [12
 
  <../../output/figures/segmentation_regional_performance.png> <../../output/figures/segmentation_regional_features.png>]
-<../../output/figures/predictions_plot.png, id=140, 1293.3921pt x 714.7503pt>
+<../../output/figures/predictions_plot.png, id=138, 1293.3921pt x 714.7503pt>
 File: ../../output/figures/predictions_plot.png Graphic file (type png)
 <use ../../output/figures/predictions_plot.png>
-Package pdftex.def Info: ../../output/figures/predictions_plot.png  used on input line 418.
-(pdftex.def)             Requested size: 199.17116pt x 110.06534pt.
-<../../output/figures/error_analysis.png, id=141, 1293.3921pt x 1437.4503pt>
+Package pdftex.def Info: ../../output/figures/predictions_plot.png  used on input line 457.
+(pdftex.def)             Requested size: 173.17944pt x 95.70187pt.
+<../../output/figures/error_analysis.png, id=139, 1293.3921pt x 1437.4503pt>
 File: ../../output/figures/error_analysis.png Graphic file (type png)
 <use ../../output/figures/error_analysis.png>
-Package pdftex.def Info: ../../output/figures/error_analysis.png  used on input line 418.
-(pdftex.def)             Requested size: 107.63768pt x 119.62637pt.
+Package pdftex.def Info: ../../output/figures/error_analysis.png  used on input line 457.
+(pdftex.def)             Requested size: 86.10619pt x 95.69672pt.
 File: UNIL-LOGOTYPE-BLUE-RGB.png Graphic file (type png)
 <use UNIL-LOGOTYPE-BLUE-RGB.png>
-Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 418.
+Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 457.
 (pdftex.def)             Requested size: 37.87599pt x 17.61336pt.
 
 
@@ -1080,7 +1084,7 @@ Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 418.
  <../../output/figures/predictions_plot.png> <../../output/figures/error_analysis.png>]
 File: UNIL-LOGOTYPE-BLUE-RGB.png Graphic file (type png)
 <use UNIL-LOGOTYPE-BLUE-RGB.png>
-Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 458.
+Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 499.
 (pdftex.def)             Requested size: 37.87599pt x 17.61336pt.
 
 
@@ -1089,7 +1093,7 @@ Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 458.
 ]
 File: UNIL-LOGOTYPE-BLUE-RGB.png Graphic file (type png)
 <use UNIL-LOGOTYPE-BLUE-RGB.png>
-Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 503.
+Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 541.
 (pdftex.def)             Requested size: 37.87599pt x 17.61336pt.
 
 
@@ -1098,7 +1102,7 @@ Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 503.
 ]
 File: UNIL-LOGOTYPE-BLUE-RGB.png Graphic file (type png)
 <use UNIL-LOGOTYPE-BLUE-RGB.png>
-Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 538.
+Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 572.
 (pdftex.def)             Requested size: 37.87599pt x 17.61336pt.
 
 
@@ -1107,7 +1111,7 @@ Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 538.
 ]
 File: UNIL-LOGOTYPE-BLUE-RGB.png Graphic file (type png)
 <use UNIL-LOGOTYPE-BLUE-RGB.png>
-Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 567.
+Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 607.
 (pdftex.def)             Requested size: 37.87599pt x 17.61336pt.
 
 
@@ -1116,7 +1120,7 @@ Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 567.
 ]
 File: UNIL-LOGOTYPE-BLUE-RGB.png Graphic file (type png)
 <use UNIL-LOGOTYPE-BLUE-RGB.png>
-Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 620.
+Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 660.
 (pdftex.def)             Requested size: 37.87599pt x 17.61336pt.
 
 
@@ -1125,7 +1129,7 @@ Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 620.
 ]
 File: UNIL-LOGOTYPE-BLUE-RGB.png Graphic file (type png)
 <use UNIL-LOGOTYPE-BLUE-RGB.png>
-Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 662.
+Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 700.
 (pdftex.def)             Requested size: 37.87599pt x 17.61336pt.
 
 
@@ -1134,20 +1138,11 @@ Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 662.
 ]
 File: title-slide-background.png Graphic file (type png)
 <use title-slide-background.png>
-Package pdftex.def Info: title-slide-background.png  used on input line 666.
+Package pdftex.def Info: title-slide-background.png  used on input line 704.
 (pdftex.def)             Requested size: 455.24408pt x 257.19553pt.
 
 
 [20
-
-]
-File: UNIL-LOGOTYPE-BLUE-RGB.png Graphic file (type png)
-<use UNIL-LOGOTYPE-BLUE-RGB.png>
-Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 672.
-(pdftex.def)             Requested size: 37.87599pt x 17.61336pt.
-
-
-[21
 
 ]
 \tf@nav=\write7
@@ -1159,29 +1154,34 @@ Package pdftex.def Info: UNIL-LOGOTYPE-BLUE-RGB.png  used on input line 672.
 \tf@snm=\write9
 \openout9 = `ProjectPresentation.snm'.
 
-runsystem(latexminted cleantemp  --timestamp 20251230175047 97F0ED7B99412189B180091734A34CBB)...executed safely (allowed).
-
  (./ProjectPresentation.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
  ***********
-Package rerunfilecheck Info: File `ProjectPresentation.out' has not changed.
-(rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
+
+
+Package rerunfilecheck Warning: File `ProjectPresentation.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `ProjectPresentation.out':
+(rerunfilecheck)             Before: <no file>
+(rerunfilecheck)             After:  D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 30412 strings out of 473190
- 637005 string characters out of 5715801
- 1097717 words of memory out of 5000000
- 53056 multiletter control sequences out of 15000+600000
- 579532 words of font info for 86 fonts, out of 8000000 for 9000
+ 30430 strings out of 473190
+ 638933 string characters out of 5715801
+ 1104290 words of memory out of 5000000
+ 53079 multiletter control sequences out of 15000+600000
+ 581651 words of font info for 90 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 128i,14n,123p,606b,865s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi8.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/symbols/msam5.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfss0500.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfss0600.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfss0700.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfss0800.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfss1000.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfsx0500.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfsx0700.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfsx0800.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfsx1000.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfsx1095.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfsx1728.pfb>
-Output written on ProjectPresentation.pdf (21 pages, 6632348 bytes).
+ 128i,14n,123p,606b,1061s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi8.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfss0500.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfss0600.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfss0700.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfss0800.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfsx0500.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfsx0600.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfsx0700.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfsx0800.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfsx1000.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfsx1095.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfsx1728.pfb>
+Output written on ProjectPresentation.pdf (20 pages, 6543087 bytes).
 PDF statistics:
- 317 PDF objects out of 1000 (max. 8388607)
- 194 compressed objects within 2 object streams
- 43 named destinations out of 1000 (max. 500000)
+ 289 PDF objects out of 1000 (max. 8388607)
+ 176 compressed objects within 2 object streams
+ 41 named destinations out of 1000 (max. 500000)
  108 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -121,6 +121,7 @@ python 08_populate_paper_tables.py     # Generate LaTeX tables
 
 **Key Scripts:**
 - **01_data_collection.py**: Fetches 53 indicators from 2000-2023
+- **02_data_preprocessing.py**: Engineers 9 additional features (62 total predictors)
 - **03_model_training.py**: Trains all models, saves to `output/trained_models.pkl`
 - **06_segmentation_analysis.py**: Analyzes 7 regions and income quartiles
 - **07_statistical_tests.py**: Bootstrap + permutation tests with caching (significantly faster on reruns)
@@ -224,6 +225,8 @@ All outputs are saved in the `output/` folder:
 
 All data from [World Bank Open Data API](https://data.worldbank.org/)
 - 53 socioeconomic indicators from 2000-2023 (including GINI target variable)
+- 9 engineered features (urbanization rate, log GDP per capita, trade openness, etc.)
+- **62 total predictor variables**
 - API Docs: https://datahelpdesk.worldbank.org/knowledgebase/articles/889392
 
 ## Limitations

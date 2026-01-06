@@ -2,14 +2,39 @@
 
 % Use infolines as base
 \usefonttheme{default}
+\usefonttheme{structurebold}
 
-% tweak colours for Oxford Blue
+% Enhanced color palette
 \definecolor{unil-blue}{RGB}{43,100,246}
+\definecolor{unil-blue-dark}{RGB}{30,70,180}
+\definecolor{unil-blue-light}{RGB}{100,150,255}
 \definecolor{unil-white}{RGB}{255,255,255}
+\definecolor{unil-grey}{RGB}{245,245,245}
+\definecolor{unil-dark-grey}{RGB}{60,60,60}
+\definecolor{accent-orange}{RGB}{255,152,0}
+\definecolor{accent-green}{RGB}{76,175,80}
 \usecolortheme[named=unil-blue]{structure}
 
 %turn off the navigation symbols
 \setbeamertemplate{navigation symbols}{}
+
+% Squared block styles without shadows, using only unil-blue shades
+\setbeamertemplate{blocks}[default]
+\setbeamercolor{block title}{bg=unil-blue,fg=white}
+\setbeamercolor{block body}{bg=unil-blue!10,fg=black}
+\setbeamercolor{block title alerted}{bg=unil-blue-dark,fg=white}
+\setbeamercolor{block body alerted}{bg=unil-blue!15,fg=black}
+\setbeamercolor{block title example}{bg=unil-blue-light,fg=white}
+\setbeamercolor{block body example}{bg=unil-blue!8,fg=black}
+
+% Enhanced itemize/enumerate styling
+\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{enumerate items}[circle]
+\setbeamercolor{itemize item}{fg=unil-blue}
+\setbeamercolor{itemize subitem}{fg=unil-blue}
+\setbeamercolor{enumerate item}{fg=unil-blue}
+\setbeamercolor{enumerate subitem}{fg=unil-blue}
+\setbeamercolor{item projected}{bg=unil-blue,fg=white}
 
 % define useful layout lengths
 \newlength{\textmargin}
@@ -53,20 +78,27 @@
     \end{picture}
 }
 
-%% General slide header %%
+%% General slide header with enhanced styling %%
 \setbeamertemplate{frametitle}
 {
-  \rlap{%
-  \begin{minipage} [c][1.2\beamer@height][c]{0.95\textwidth}
-    {\usebeamercolor[black]{frametitle}\usebeamerfont{frametitle}\large\textbf\insertframetitle\par}
-    {\usebeamercolor[black]{framesubtitle}\usebeamerfont{framesubtitle}\insertframesubtitle\par}
-\end{minipage}
-\begin{minipage}{\dimexpr\logowidth+1mm\relax}%
-\hfill
-\vspace*{-2.5mm}
-\includegraphics[width=\logowidth]{UNIL-LOGOTYPE-BLUE-RGB.png}%
-\end{minipage}%
- }%
+  \vspace{2mm}
+  \noindent
+  \hspace{-\textmargin}%
+  \hspace{3mm}%
+  \begin{minipage}[c]{\dimexpr\textwidth-\logowidth-3mm\relax}
+    {\color{black}\usebeamerfont{frametitle}\large\textbf{\insertframetitle}\par}
+    \vspace{1mm}
+    {\color{black}\usebeamerfont{framesubtitle}\insertframesubtitle\par}
+  \end{minipage}%
+  \hfill
+  \begin{minipage}[c]{\logowidth}
+    \raggedleft
+    \includegraphics[width=\logowidth]{UNIL-LOGOTYPE-BLUE-RGB.png}%
+  \end{minipage}%
+  \hspace{-8mm}%
+  \hspace{-\textmargin}%
+  \par
+  \vspace{2mm}
  }%
 
 %Section title
